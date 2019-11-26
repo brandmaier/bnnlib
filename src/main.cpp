@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h> //for chdir
 #include "Sequence.h"
 #include "SequenceSet.h"
 #include "functions.h"

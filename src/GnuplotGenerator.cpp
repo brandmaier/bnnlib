@@ -9,6 +9,7 @@
 #include "ensembles/LSTMPlusEnsemble.h"
 #include "functions.h"
 #include <cassert>
+#include <unistd.h> //for chdir
 
 bool GnuplotGenerator::grid = false;
 bool GnuplotGenerator::output_screen = true;
