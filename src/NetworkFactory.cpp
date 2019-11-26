@@ -847,7 +847,7 @@ Network* NetworkFactory::createTestNetwork13(unsigned int in_size,	unsigned int 
 	Ensemble* hidden = new FeedforwardEnsemble(Node::SIGMOID_NODE, tan_size);
 	vector<Ensemble*> lstms( lstm_cells );
 	for (unsigned int i=0; i < lstm_cells; i++)
-		lstms[i] = new LSTMPlusEnsemble( false );	
+		lstms[i] = new LSTMPlusEnsemble( false, Node::SIGMOID_NODE );	
 		//lstms[i] = new LSTMEnsemble(true);
 	Ensemble* out = new FeedforwardEnsemble(Node::SIGMOID_NODE, out_size);
 	
@@ -1148,7 +1148,7 @@ Network* NetworkFactory::createExtendedLSTMHiddenLayerNetwork(unsigned int lstm_
 	return network;
 }
 
-Network* NetworkFactory::createFeedForwardNetwork(unsigned int in_size,int hid_size, unsigned int out_size)
+Network* NetworkFactory::createFeedForwardNetwork(unsigned int in_size,unsigned int hid_size, unsigned int out_size)
 {
 	unsigned int sizes[] = { hid_size };
 	return createFeedForwardNetwork(in_size, Node::TANH_NODE,1, sizes, Node::TANH_NODE, out_size);
@@ -1205,14 +1205,15 @@ Network* NetworkFactory::createFeedForwardNetwork(unsigned int in_size, int hid_
 	return net;
 }
 
-Network* NetworkFactory::createRecurrentNetwork(unsigned int in_size, int hid_size, unsigned int out_size)
+Network* NetworkFactory::createRecurrentNetwork(unsigned int in_size, unsigned int hid_size, unsigned int out_size)
 {
 	unsigned int sizes[] = { hid_size };
 	return createRecurrentNetwork(in_size, Node::TANH_NODE,1, sizes, Node::TANH_NODE, out_size);
 }
 
 
-Network* NetworkFactory::createRecurrentNetwork(unsigned int in_size, int hid_type, unsigned int num_layers, unsigned int layer_sizes[], int out_type, unsigned int out_size)
+Network* NetworkFactory::createRecurrentNetwork(unsigned int in_size, int hid_type, unsigned int num_layers, 
+			unsigned int layer_sizes[], int out_type, unsigned int out_size)
 {
 	Network* net = new Network();
 	

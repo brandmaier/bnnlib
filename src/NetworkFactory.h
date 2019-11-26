@@ -33,7 +33,7 @@ struct NetworkFactory
 	unsigned int out_type, unsigned int in_size,	unsigned int lstm_cells, unsigned int hidden_size, unsigned int out_size);
 
 	static Network* createFeedForwardNetwork(unsigned int in_size,int hid_type,unsigned int num_layers, unsigned int layer_sizes[], int out_type, unsigned int out_size);
-	static Network* createFeedForwardNetwork(unsigned int in_size,int hid_size, unsigned int out_size);
+	static Network* createFeedForwardNetwork(unsigned int in_size, unsigned int hid_size, unsigned int out_size);
 	static Network* createFeedForwardWTANetwork(unsigned int in_size, unsigned int layers, unsigned int layer_sizes[], unsigned int out_size);
 
 	static Network* createLSTMWTANetwork(unsigned int lstm_type, unsigned int lst_act_type,
@@ -43,7 +43,7 @@ struct NetworkFactory
 	static Network* createRecurrentNetwork(unsigned int in_size, int hid_type, unsigned int num_layers,unsigned int layer_sizes[], int out_type, unsigned int out_size);
 	static Network* createRecurrentWTANetwork(unsigned int in_size, int hid_type, unsigned int num_layers,unsigned int layer_sizes[], unsigned int out_size);
 
-	static Network* createRecurrentNetwork(unsigned int in_size, int hid_size, unsigned int out_size);
+	static Network* createRecurrentNetwork(unsigned int in_size, unsigned int hid_size, unsigned int out_size);
 
 
 	static Network* createCLSTM(unsigned int in, unsigned int hid, unsigned int out);
