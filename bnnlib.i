@@ -59,6 +59,7 @@ using namespace std;
 #include "src/nodes/GaussianNode.h"
 #include "src/nodes/LinearNode.h"
 #include "src/nodes/SigmoidNode.h"
+#include "src/nodes/ReLUNode.h"
 #include "src/GnuplotGenerator.h"
 #include "src/criteria/Criterion.h"
 #include "src/criteria/GeneralizationLoss.h"
