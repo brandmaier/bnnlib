@@ -1780,7 +1780,9 @@ Network* NetworkFactory::create_harmonic_generator(unsigned int num_generators, 
 
 }
 
-Network* NetworkFactory::create_stacked_slow(unsigned int in_size, unsigned int num_layers, unsigned int hid_size[], unsigned int hid_slow[], unsigned int out_size)
+	 
+Network* NetworkFactory::create_stacked_slow(unsigned int in_size, unsigned int num_layers,
+ unsigned int hid_size[], double hid_slow[], unsigned int out_size)
 {
 	Network* network = new Network();
 

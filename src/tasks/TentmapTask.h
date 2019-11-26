@@ -37,7 +37,7 @@ struct TentmapTask : Task
 		unsigned int hid_size[] = {10,10,10};
 		//unsigned int hid_size[] = {5,5,5};
 		//unsigned int hid_slow[] = {0,0.001,0.01};
-		unsigned int hid_slow[] = {0.01,0.1,1};
+		double hid_slow[] = {0.01,0.1,1};
 
 		unsigned int num = 3;
 		if (parameter_set.get_bool("slowness")) {

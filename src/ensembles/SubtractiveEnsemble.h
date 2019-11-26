@@ -32,7 +32,7 @@ struct SubtractiveEnsemble : FeedforwardEnsemble
 		for (unsigned int i=1; i < nodes.size(); i++)
 		{
 			for (unsigned int j=0; j < i; j++) {
-				Connection* c = Network::connect(nodes[j],nodes[i], -1.0);
+				Connection* c = Network::connect(nodes[j],nodes[i], true, -1.0);
 				c->freeze_weight = true;
 			}
 		}

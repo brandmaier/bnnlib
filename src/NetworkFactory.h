@@ -66,7 +66,8 @@ struct NetworkFactory
 
 	static Network* create_harmonic_generator(unsigned int generators, unsigned int hid_size, unsigned int out_size);
 
-	static Network* create_stacked_slow(unsigned int in_size, unsigned int num_layers, unsigned int hid_size[], unsigned int hid_slow[], unsigned int out_size);
+	static Network* create_stacked_slow(unsigned int in_size, unsigned int num_layers, 
+		 unsigned int hid_size[], double hid_slow[], unsigned int out_size);
 
 	static Network* create_slow_feature_network(unsigned int in_size,unsigned int hid_size, unsigned int out_size);
 	static Network* create_slow_feature_network_v2(unsigned int in_size,unsigned int hid_size, unsigned int out_size);

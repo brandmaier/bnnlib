@@ -17,7 +17,8 @@ struct SlowEnsemble : RecurrentEnsemble
 	bool increasing_slowness;
 	Node* zero_target_node;
 
-	SlowEnsemble(int node_type, unsigned int size, double factor, bool increasing_slowness) : RecurrentEnsemble(node_type, size)
+	SlowEnsemble(int node_type, unsigned int size, double factor, 
+	bool increasing_slowness) : RecurrentEnsemble(node_type, size)
 	{
 		name = "SlowEnsemble";
 		init();
