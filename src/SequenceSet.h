@@ -132,7 +132,7 @@ struct SequenceSet
 		ifstream ifs(filename.c_str());
 		string line;
 	
-		if (ifs == NULL)
+		if (!ifs)
 		{
 			throw FILE_NOT_FOUND_EXCEPTION;
 		}

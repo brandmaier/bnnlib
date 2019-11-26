@@ -433,12 +433,13 @@ void SequenceSet::scale(double factor)
 
 	DataSet* SequenceSet::load_from_proben_file(string filename)
 	{
-		ifstream ifs(filename.c_str());
+		std::ifstream ifs(filename.c_str());
 		string line;
 
-		if (ifs == NULL)
+		if (!ifs)
 		{
 			error("Sequence File not found!");
+			return(NULL);
 		}
 
 		// read header
@@ -585,12 +586,13 @@ void SequenceSet::scale(double factor)
 		ifstream ifs(filename.c_str());
 		string line;
 	
-		if (ifs == NULL)
+		if (!ifs)
 		{
 			//throw FILE_NOT_FOUND_EXCEPTION;
 			stringstream errormsg;
 			errormsg << "Could not find SequenceSet file '" << filename << "'"<<endl;
 			error(errormsg.str());
+			return;
 		}
 	
 		Sequence* cur_seq = new Sequence();
