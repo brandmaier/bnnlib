@@ -698,7 +698,7 @@ bool Network::has_cycle_rec(Node* parent, map<Node*,unsigned int>* nodehash)
 	{
 		Node* to = parent->outgoing_connections[j]->to;
 
-		if ((parent->outgoing_connections[j]->forward == true)) {
+		if (parent->outgoing_connections[j]->forward == true) {
 		 //(*nodehash)[to]++;
 		 if ((*nodehash)[to] == 1)
 		 {

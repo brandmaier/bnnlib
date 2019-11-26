@@ -94,7 +94,7 @@
 #include "classification/interfaces/ClassificatorInterface.h"
 #include "classification/interfaces/RecursiveThermometricClassificator.h"
 #include "classification/interfaces/WinnerTakesAllClassificator.h"
-//#include "trainer/SARPropTrainer.h"
+#include "trainer/SARPropTrainer.h"
 #include "callbacks/PickBestGeneralizingNetwork.h"
 // disable secure iterators
 #define _SECURE_SCL 0

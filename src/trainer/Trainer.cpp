@@ -609,7 +609,7 @@ void Trainer::backward_zero()
 
 
 
-/*
+
 	for (unsigned int i=0; i < network->size; i++)
 	{
 		for (unsigned int j=0; j < network->nodes[i]->outgoing_connections.size(); j++) {
