@@ -55,11 +55,11 @@ Creating Training Data
 
     }
 
-    ## 1 .: Position= 38.73575 
-    ## 2 .: Position= 16.5893 
-    ## 3 .: Position= 33.22922 
-    ## 4 .: Position= 27.42712 
-    ## 5 .: Position= 27.35967
+    ## 1 .: Position= 4.290826 
+    ## 2 .: Position= 25.17353 
+    ## 3 .: Position= 16.9166 
+    ## 4 .: Position= 35.97505 
+    ## 5 .: Position= 37.08733
 
 Creating a Trainer
 ------------------
@@ -140,7 +140,7 @@ Export Network
     ## NULL
 
     lines <- paste0(readLines("testfile.dot"),sep="",collapse="")
-    DOT::dot(lines,file="testfile.ps")
+    DOT::dot(lines,file="img/testfile.svg")
 
     ## <?xml version="1.0" encoding="UTF-8" standalone="no"?>
     ## <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
@@ -597,4 +597,4 @@ Export Network
     ## </g>
     ## </svg>
 
-![](testfile.ps)
+![](img/testfile.svg)
