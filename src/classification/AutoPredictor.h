@@ -22,6 +22,8 @@ struct TransferFunction
 
 	virtual void transfer(vector<weight_t>* in, vector<weight_t>* out) = 0;
 	virtual void transfer(vector<weight_t>* in) = 0;
+	
+	//virtual ~TransferFunction() = 0;
 };
 
 struct MappedTransferFunction : TransferFunction
@@ -215,6 +217,8 @@ struct LinearTransferFunction : TransferFunction
 
 struct DummyTransferFunction : TransferFunction
 {
+  //~DummyTransferFunction() {}
+  
 	void transfer(vector<weight_t>* in, vector<weight_t>* out)
 	{
 		// NOOP
@@ -237,6 +241,8 @@ struct MappedEmbeddedTransferFunction : TransferFunction
 		this->embedding_size = embedding_size;
 		this->mapping = *mapping;
 	}
+	
+//	~MappedEmbeddedTransferFunction() {}
 
 	void transfer(vector<weight_t>* in, vector<weight_t>* out)
 	{

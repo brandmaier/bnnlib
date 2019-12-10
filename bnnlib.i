@@ -14,7 +14,6 @@ using namespace std;
 %{
 #include <stdlib.h>
 #include <string>
-//#include "src/nodes/Node.h"
 #include "src/Network.h"
 #include "src/Sequence.h"
 #include "src/SequenceSet.h"
@@ -49,7 +48,6 @@ using namespace std;
 #include "src/errorfunctions/WinnerTakesAllErrorFunction.h"
 #include "src/errorfunctions/ManhattanError.h"
 #include "src/errorfunctions/CombinedErrorFunction.h"
-//#include "src/errorfunctions/ClassificationError.h"
 #include "src/networks/LSTMNetwork.h"
 #include "src/callbacks/ReportCallback.h"
 #include "src/callbacks/ZeroErrorFailReport.h"
@@ -139,6 +137,7 @@ namespace std {
 %include src/nodes/TanhNode.h
 %include src/nodes/LinearNode.h
 %include src/nodes/SigmoidNode.h
+%include src/nodes/ReLUNode.h
 %include src/Connection.h
 %include src/Network.h
 %include src/networks/LSTMNetwork.h

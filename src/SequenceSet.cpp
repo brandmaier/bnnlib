@@ -163,12 +163,6 @@ void SequenceSet::find_minmax()
 		}
 	}
 
-	//if isnan(input_min) or isnan(target_min) or isnan()
-
-	/*cout << "Minmax"<<endl;
-	cout << "input: " << input_min << " : " << input_max << endl;
-	cout << "output: " << target_min << " : " << target_max << endl;
-*/
 }
 
 void SequenceSet::scale_to_original()

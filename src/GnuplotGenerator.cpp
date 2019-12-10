@@ -10,6 +10,7 @@
 #include "functions.h"
 #include <cassert>
 #include <unistd.h> //for chdir
+#include <dirent.h>
 
 bool GnuplotGenerator::grid = false;
 bool GnuplotGenerator::output_screen = true;
@@ -146,6 +147,9 @@ void GnuplotGenerator::plot_shaded_curve(string title, vector<vector<weight_t>*>
 
 void GnuplotGenerator::plot(stringstream* sstream, vector<string>* titles, string title)
 {
+  DIR * mydir = opendir(".");
+  cout << mydir;
+  
 	if (titles->size() == 0)
 	{
 		warning("GnuplotGenerator: No titles");
