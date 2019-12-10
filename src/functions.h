@@ -24,7 +24,6 @@ using namespace std;
 typedef double weight_t;
 typedef std::string string_t;
 
-
 /*
 float tanh(float x)
 {

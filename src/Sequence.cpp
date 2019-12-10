@@ -203,7 +203,7 @@ double Sequence::get_weight(unsigned int index) {
 	if (index < input.size() && index >= 0)
   	return weight[index];
 	else
-	  return sqrt(-2);
+	  return std::numeric_limits<double>::quiet_NaN();
 }
 
 Sequence* Sequence::embed(unsigned int n)

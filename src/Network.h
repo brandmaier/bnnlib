@@ -211,6 +211,7 @@ struct Network {
 	int get_num_trainable_weights();
 
 	vector<Node*>* get_nodes_with_name(string name);
+	vector<string> get_node_names();
 
 	void add_ensemble(Ensemble* ensemble);
 	void add_ensemble(Ensemble* ensemble, bool add_all_nodes_to_network);

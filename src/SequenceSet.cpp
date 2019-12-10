@@ -352,7 +352,7 @@ void SequenceSet::scale(double factor)
 
 		// load training data
 
-		SequenceSet* val = new SequenceSet();
+		
 		dataset->training_set = _load_compml_sequence(directory+"/train", num_labels, num_features, label_map);
 		dataset->test_set = _load_compml_sequence(directory+"/test", num_labels, num_features, label_map);
 		dataset->validation_set = new SequenceSet();

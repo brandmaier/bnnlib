@@ -185,7 +185,7 @@ void CGTrainer::train(SequenceSet* sequence_set,SequenceSet* validation_set, uns
 			 }
 		}
 
-		double best_error;
+		double best_error = numeric_limits<double>::max();
 
 		if (bx==0) {
 			warning("Bracketing failed");
