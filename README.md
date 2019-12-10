@@ -55,11 +55,11 @@ Creating Training Data
 
     }
 
-    ## 1 .: Position= 36.45081 
-    ## 2 .: Position= 31.36322 
-    ## 3 .: Position= 9.471736 
-    ## 4 .: Position= 18.87072 
-    ## 5 .: Position= 27.44686
+    ## 1 .: Position= 11.82975 
+    ## 2 .: Position= 33.43796 
+    ## 3 .: Position= 1.964937 
+    ## 4 .: Position= 12.00704 
+    ## 5 .: Position= 6.60916
 
 Creating a Trainer
 ------------------
