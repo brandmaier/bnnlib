@@ -21,6 +21,8 @@ struct Sequence
 	unsigned int validation_end;
 	unsigned int test_begin;
 	unsigned int test_end;
+	
+	void add_from_array(double input[], double target[], unsigned int size);
 
 	void set_training_range(unsigned int training_begin, unsigned int training_end)
 	{

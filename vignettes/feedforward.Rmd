@@ -38,15 +38,15 @@ Convert data to Sequence format
 sequence_set <- SequenceSet()
 
 
-
+seq <- Sequence()
 for (i in 1:nrow(marketing)) {
   input <- marketing[i,1]
   target <- marketing[i,4]
- # Sequence_add(seq, input, target)
-  seq<-Sequence__SWIG_1(input, target, 1)
-  SequenceSet_add_sequence(sequence_set,seq)
+  Sequence_add_from_array(input, target, 1, 1)
+
 }
 
+SequenceSet_add_sequence(sequence_set,seq)
 
 cat("Sequences created: ",SequenceSet_size(sequence_set),"\n")
 cat("Input size",SequenceSet_input_size_get(sequence_set),"\n")
