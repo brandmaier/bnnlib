@@ -1,6 +1,9 @@
 bnnlib
 ======
 
+    knitr::include_graphics("img/Abstract-Banana.png")
+
+<img src="img/Abstract-Banana.png" width="496" height="25%" />
 ![](img/Abstract-Banana.png)
 
 `bnnlib` is a library for neural networks covering (deep) recurrent
@@ -74,7 +77,7 @@ Creating Training Data
     input <- rep(0,len)
     output <- rep(0,len)
 
-    pos <- runif(1,1,40)
+    pos <- sample(1:40,1)
     cat(i,".: Position=",pos,"\n")
     input[pos]<-1
     output[pos+delay]<-1
@@ -85,11 +88,11 @@ Creating Training Data
 
     }
 
-    ## 1 .: Position= 15.43406 
-    ## 2 .: Position= 6.562168 
-    ## 3 .: Position= 13.83218 
-    ## 4 .: Position= 10.19532 
-    ## 5 .: Position= 19.58159
+    ## 1 .: Position= 1 
+    ## 2 .: Position= 34 
+    ## 3 .: Position= 20 
+    ## 4 .: Position= 27 
+    ## 5 .: Position= 9
 
 Creating a Trainer
 ------------------
@@ -118,7 +121,7 @@ With ggplot2, we can plot the training set error over iterations:
       geom_smooth()+
       theme_minimal()
 
-![](README_files/figure-markdown_strict/unnamed-chunk-6-1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-7-1.png)
 
 Export Network
 --------------

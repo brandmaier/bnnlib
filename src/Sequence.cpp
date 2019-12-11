@@ -1,6 +1,7 @@
 #include "Sequence.h"
 #include "functions.h"
 //#include <strstream>
+#include <limits>
 #include <iostream>
 #include <fstream>
 #include <sstream>

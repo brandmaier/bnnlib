@@ -11,6 +11,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # bnnlib
 
+```{r out.height="25%"}
+knitr::include_graphics("img/Abstract-Banana.png")
+```
 ![](img/Abstract-Banana.png)
 
 `bnnlib` is a library for neural networks covering (deep) recurrent networks with long-short-term-memory (LSTM) cells. The library is written in C++ and offers R-bindings via a SWIG interface. 
@@ -64,7 +67,7 @@ len <- 50
 input <- rep(0,len)
 output <- rep(0,len)
 
-pos <- runif(1,1,40)
+pos <- sample(1:40,1)
 cat(i,".: Position=",pos,"\n")
 input[pos]<-1
 output[pos+delay]<-1
