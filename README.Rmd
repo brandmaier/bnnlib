@@ -1,19 +1,21 @@
 ---
-title: "Untitled"
+title: "Banana Neural Networks Library"
 author: "Andreas M. Brandmaier"
 date: "12/10/2019"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, cache=TRUE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # bnnlib
 
-`bnnlib` is a library for neural networks written covering (deep) recurrent networks with long-short-term-memory (LSTM) cells. The library is written in C++ and offers R-bindings via a SWIG interface.
+![](img/Abstract-Banana.png)
 
-The original code was written in 2008 and lied dormant for more than 10 years.
+`bnnlib` is a library for neural networks written covering (deep) recurrent networks with long-short-term-memory (LSTM) cells. The library is written in C++ and offers R-bindings via a SWIG interface. 
+
+The original code was written in 2008 and lied dormant for more than 10 years. It is now slowly revived as the 'banana neural network library'. The logo is from an anonymous contributor on publicdomainvectors.org (https://publicdomainvectors.org/en/free-clipart/Vector-clip-art-of-square-peeled-banana/31874.html). The logo was released under a public domain license in 2015.
 
 
 # Setup
@@ -103,6 +105,18 @@ DOT::dot(lines,file="img/testfile.svg")
 ```
 
 ![](img/testfile.svg)
+
+## Plotting the activations
+
+`bnnlib` can create plots of the node activations over time using `gnuplot`. The following plot shows the LSTM CEC nodes' activations over time for a selected sequence:
+
+```{r}
+node_vec <- Network_get_nodes_with_name(net,"CEC")
+GnuplotGenerator_plot_activations(net, seq1, node_vec)
+```
+
+![](img/gnuplot-example1.png)
+
 
 ## Testing the Network
 

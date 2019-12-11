@@ -1,12 +1,17 @@
 bnnlib
 ======
 
+![](img/Abstract-Banana.png)
+
 `bnnlib` is a library for neural networks written covering (deep)
 recurrent networks with long-short-term-memory (LSTM) cells. The library
 is written in C++ and offers R-bindings via a SWIG interface.
 
 The original code was written in 2008 and lied dormant for more than 10
-years.
+years. It is now slowly revived as the ‘banana neural network library’.
+The logo is from an anonymous contributor on publicdomainvectors.org
+(<a href="https://publicdomainvectors.org/en/free-clipart/Vector-clip-art-of-square-peeled-banana/31874.html" class="uri">https://publicdomainvectors.org/en/free-clipart/Vector-clip-art-of-square-peeled-banana/31874.html</a>).
+The logo was released under a public domain license in 2015.
 
 Setup
 =====
@@ -55,11 +60,11 @@ Creating Training Data
 
     }
 
-    ## 1 .: Position= 1.433392 
-    ## 2 .: Position= 12.02992 
-    ## 3 .: Position= 2.436079 
-    ## 4 .: Position= 33.79818 
-    ## 5 .: Position= 1.919985
+    ## 1 .: Position= 7.487987 
+    ## 2 .: Position= 2.737832 
+    ## 3 .: Position= 17.47511 
+    ## 4 .: Position= 16.41329 
+    ## 5 .: Position= 12.94901
 
 Creating a Trainer
 ------------------
@@ -135,4 +140,25 @@ With ggplot2, we can plot the training set error over iterations:
 Export Network
 --------------
 
+`bnnlib` supports export of network diagrams.
+
 ![](img/testfile.svg)
+
+Plotting the activations
+------------------------
+
+`bnnlib` can create plots of the node activations over time using
+`gnuplot`. The following plot shows the LSTM CEC nodes’ activations over
+time for a selected sequence:
+
+    node_vec <- Network_get_nodes_with_name(net,"CEC")
+    GnuplotGenerator_plot_activations(net, seq1, node_vec)
+
+    ## NULL
+
+![](img/gnuplot-example1.png)
+
+Testing the Network
+-------------------
+
+TODO
