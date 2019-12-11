@@ -5,7 +5,7 @@ CPP_FILES = $(shell find src/ -type f -name '*.cpp')
 
 
 # compile shared library for R
-r: bnnlib.cpp
+r: bnnlib.cpp $(CPP_FILES)
 	R CMD SHLIB --preclean bnnlib.cpp $(CPP_FILES)
 
 
@@ -23,12 +23,11 @@ readme:
 
 # compile with g++ to test c++98
 # creates executable (a.out) that can be run on command line
-gpp:
+gpp: $(CPP_FILES)
 	g++ -std=c++98 $(CPP_FILES)
 
 clean:
 	rm bnnlib.R
-#	rm bnnlib.py
 	rm bnnlib.cpp
 	rm bnnlib.o
 	rm bnnlib.so
@@ -40,3 +39,4 @@ python:
 	
 	
 	
+
