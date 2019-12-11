@@ -26,6 +26,7 @@ Connection::Connection(Node* node1, Node* node2, bool forward) : Trainable() {
 
 void Connection::init(Node* node1, Node* node2, bool forward)
 {
+  //this->init();
 	this->from = node1;
 	this->to = node2;
 	//this->weight =  rand() / (RAND_MAX + 1.) * 0.4 - 0.2;

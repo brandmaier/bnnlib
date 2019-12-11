@@ -8,7 +8,7 @@
  * the "learning rate", is approximated by a line search.
  *
  *  Created on: 08.04.2010
- *      Author: andreas
+ *      Author: Andreas Brandmaier
  */
 
 #ifndef CGTRAINER_H_

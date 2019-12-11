@@ -2,11 +2,13 @@
  * Trainable.h
  *
  *  Created on: Nov 26, 2009
- *      Author: brandmaier
+ *      Author: Andreas Brandmaier
  */
 
 #ifndef TRAINABLE_H_
 #define TRAINABLE_H_
+
+#include "functions.h" // defines weight_t
 
 struct Trainable
 {
@@ -33,7 +35,7 @@ struct Trainable
 		this->derivative = 0.0;
 	}
 
-	virtual void init()
+	void init()
 	{
 		this->derivative = 0.0;
 		this->previous_derivative = 0.0;

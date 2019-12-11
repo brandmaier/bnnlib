@@ -163,12 +163,6 @@ void SequenceSet::find_minmax()
 		}
 	}
 
-	//if isnan(input_min) or isnan(target_min) or isnan()
-
-	/*cout << "Minmax"<<endl;
-	cout << "input: " << input_min << " : " << input_max << endl;
-	cout << "output: " << target_min << " : " << target_max << endl;
-*/
 }
 
 void SequenceSet::scale_to_original()
@@ -358,7 +352,7 @@ void SequenceSet::scale(double factor)
 
 		// load training data
 
-		SequenceSet* val = new SequenceSet();
+		
 		dataset->training_set = _load_compml_sequence(directory+"/train", num_labels, num_features, label_map);
 		dataset->test_set = _load_compml_sequence(directory+"/test", num_labels, num_features, label_map);
 		dataset->validation_set = new SequenceSet();

@@ -54,7 +54,8 @@ void GateEnsemble::init(int node_type)
 	} else if (node_type == Node::LINEAR_NODE) {
 		input = new LinearNode();
 	} else {
-		error("Nodetype not supported in GateEnsemble");
+	  input = new LinearNode(); // fallback if not supported
+		error("Nodetype not supported in GateEnsemble.");
 	}
 	Node* mult = new PiNode();
 	Node* gate = new SigmoidNode();

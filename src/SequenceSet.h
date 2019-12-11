@@ -93,7 +93,10 @@ struct SequenceSet
 	
 	Sequence* get(unsigned int index)
 	{
-		return this->set[index];	
+	  if (index < this->size())
+		  return this->set[index];
+	  else
+	    return(NULL);
 	}
 
 	void apply_normalization(vector<weight_t>* input_means, vector<weight_t>* input_stds, vector<weight_t>* target_means, vector<weight_t>* target_stds);

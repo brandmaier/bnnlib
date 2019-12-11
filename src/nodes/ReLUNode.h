@@ -2,13 +2,13 @@
  *  LinearNode.h
  *  BNNlib
  *
- *  Created by Andreas Brandmaier on 20.08.09.
- *  Copyright 2009 __MyCompanyName__. All rights reserved.
+ *  Created by Andreas Brandmaier on 20.08.19.
+ *  Copyright 2019 Andreas Brandmaier. All rights reserved.
  *
  */
 
-#ifndef __LINEAR_H__
-#define __LINEAR_H__
+#ifndef __RELU_H__
+#define __RELU_H__
 
 #include <string>
 #include <sstream>

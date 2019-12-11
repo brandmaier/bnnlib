@@ -200,8 +200,10 @@ void Sequence::add(std::vector<weight_t>* input, std::vector<weight_t>* target)
 }
 
 double Sequence::get_weight(unsigned int index) {
-	assert(index < input.size() && index >= 0);
-	return weight[index];
+	if (index < input.size() && index >= 0)
+  	return weight[index];
+	else
+	  return std::numeric_limits<double>::quiet_NaN();
 }
 
 Sequence* Sequence::embed(unsigned int n)

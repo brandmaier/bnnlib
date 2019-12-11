@@ -1,0 +1,123 @@
+---
+title: "Banana Neural Networks Library"
+author: "Andreas M. Brandmaier"
+date: "12/10/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, cache=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# bnnlib
+
+![](img/Abstract-Banana.png)
+
+`bnnlib` is a library for neural networks written covering (deep) recurrent networks with long-short-term-memory (LSTM) cells. The library is written in C++ and offers R-bindings via a SWIG interface. 
+
+The original code was written in 2008 and lied dormant for more than 10 years. It is now slowly revived as the 'banana neural network library'. The logo is from an anonymous contributor on publicdomainvectors.org (https://publicdomainvectors.org/en/free-clipart/Vector-clip-art-of-square-peeled-banana/31874.html). The logo was released under a public domain license in 2015.
+
+
+# Setup
+
+```{r}
+dyn.load(paste("bnnlib", .Platform$dynlib.ext, sep=""))
+source("bnnlib.R")
+cacheMetaData(1)
+```
+
+# Usage
+
+## Create a Neural network
+
+`bnnlib` has some factory functions to easily create standard architectures of neural networks. This is a single hidden layer network with LSTM cells (Schmidhuber & Hochreiter, 1997). The function takes three arguments, the number of inputs nodes, the number of LSTM cells, and the number of output nodes. The following network has a single input node, two LSTM cells, and one output node:
+
+```{r}
+net <- LSTMNetwork(1,2,1)
+```
+
+## Creating Training Data
+
+```{r}
+
+seq <- SequenceSet()
+delay <- 10
+
+num.seq <- 5
+
+for (i in 1:num.seq) {
+len <- 50
+# create a sequence from scratch
+input <- rep(0,len)
+output <- rep(0,len)
+
+pos <- runif(1,1,40)
+cat(i,".: Position=",pos,"\n")
+input[pos]<-1
+output[pos+delay]<-1
+
+seq1<-Sequence(input,output,len)
+
+SequenceSet_add_sequence(seq,seq1)
+
+}
+```
+
+## Creating a Trainer
+
+There are different training algorithms available that mostly are different flavors of back-propagation.
+
+```{r}
+bp <- ImprovedRPropTrainer(net)
+```
+
+## Start the Training
+
+```{r}
+iterations <- 40
+steps.per.iteration <- 400
+err <- rep(NA, iterations)
+for (i in 1:iterations) {
+  cat("Training the network for ", steps.per.iteration," steps\n")
+  Trainer_train__SWIG_0(bp, seq, steps.per.iteration)
+  err[i] <- Network_evaluate_training_error__SWIG_0(net, seq)
+}
+```
+
+With ggplot2, we can plot the training set error over iterations:
+
+```{r warning=FALSE, message=FALSE}
+require(ggplot2)
+ggplot(data=data.frame(step=1:iterations,err),aes(x=step,y=err))+
+  geom_point()+
+  geom_smooth()+
+  theme_minimal()
+```
+
+## Export Network
+
+`bnnlib` supports export of network diagrams.
+
+```{r message=FALSE, include=FALSE}
+Network_export_to_dot_graph(net,"testfile.ps")
+lines <- paste0(readLines("testfile.dot"),sep="",collapse="")
+DOT::dot(lines,file="img/testfile.svg")
+```
+
+![](img/testfile.svg)
+
+## Plotting the activations
+
+`bnnlib` can create plots of the node activations over time using `gnuplot`. The following plot shows the LSTM CEC nodes' activations over time for a selected sequence:
+
+```{r}
+node_vec <- Network_get_nodes_with_name(net,"CEC")
+GnuplotGenerator_plot_activations(net, seq1, node_vec)
+```
+
+![](img/gnuplot-example1.png)
+
+
+## Testing the Network
+
+TODO

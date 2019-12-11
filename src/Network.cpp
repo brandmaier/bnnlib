@@ -2246,6 +2246,18 @@ void Network::load(string filename)
 	
 }
 
+
+vector<string> Network::get_node_names() 
+{
+  vector<string> result;
+  for (unsigned int i=0; i < this->nodes.size(); i++)
+  {
+    result.push_back( this->nodes[i]->name);
+  }
+  return(result);
+}
+ 
+
 vector<Node*>* Network::get_nodes_with_name(string name)
 {
 	vector<Node*>* result = new vector<Node*>();

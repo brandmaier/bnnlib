@@ -21,10 +21,8 @@ using namespace std;
 
 #define __BNNLIB_VERSION 0.7
 
-//#define weight_t double
 typedef double weight_t;
 typedef std::string string_t;
-
 
 /*
 float tanh(float x)
@@ -49,6 +47,8 @@ void print_vector(std::vector<float>* v);
 void print_vector(std::vector<std::vector<float>*>* v);
 void print_vector(std::vector<double>* v);
 void print_vector(std::vector<std::vector<double>*>* v);
+
+std::vector<double> toValue(std::vector<double>* v);
 
 void stripLeadingAndTrailingBlanks(string& StringToModify);
 /*

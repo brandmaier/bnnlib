@@ -473,3 +473,8 @@ unsigned int randomize_seed(unsigned int seed ) {
 	return seed;
 
 }
+
+std::vector<double> toValue(std::vector<double>* v) {
+  return(*v);
+}
+
