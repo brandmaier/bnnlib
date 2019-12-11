@@ -99,7 +99,7 @@ for (i in 1:iterations) {
 With ggplot2, we can plot the training set error over iterations:
 
 ```{r warning=FALSE, message=FALSE}
-require(ggplot2)
+library(ggplot2)
 ggplot(data=data.frame(step=1:iterations,err),aes(x=step,y=err))+
   geom_point()+
   geom_smooth()+
