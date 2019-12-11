@@ -33,7 +33,7 @@ clean:
 	rm bnnlib.so
 
 # build python wrapper with SWIG (builds bnnlib.cpp)
-python:
+python: bnnlib.cpp
 	swig -c++ -python -o bnnlib.cpp bnnlib.i
 	
 	
