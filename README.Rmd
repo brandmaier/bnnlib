@@ -9,12 +9,9 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# bnnlib
+# Banana Neural Networks Library (bnnlib)
 
-```{r out.height="25%"}
-knitr::include_graphics("img/Abstract-Banana.png")
-```
-![](img/Abstract-Banana.png)
+![](img/Abstract-Banana.png){width=200px}
 
 `bnnlib` is a library for neural networks covering (deep) recurrent networks with long-short-term-memory (LSTM) cells. The library is written in C++ and offers R-bindings via a SWIG interface. 
 
@@ -111,9 +108,10 @@ ggplot(data=data.frame(step=1:iterations,err),aes(x=step,y=err))+
 
 ## Export Network
 
-`bnnlib` supports export of network diagrams.
+`bnnlib` supports export of network diagrams. THis requires external libraries to render Graphviz files, e.g., the DOT package in R.
 
-```{r message=FALSE, include=FALSE}
+```{r message=FALSE}
+library(DOT)
 Network_export_to_dot_graph(net,"testfile.ps")
 lines <- paste0(readLines("testfile.dot"),sep="",collapse="")
 DOT::dot(lines,file="img/testfile.svg")
