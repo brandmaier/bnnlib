@@ -1,0 +1,95 @@
+---
+title: "FeedforwardNetwork"
+author: "Andreas M. Brandmaier"
+date: "12/11/2019"
+output: pdf_document
+#vignette: >
+#  %\VignetteIndexEntry{Vignette Title}
+#  %\VignetteEngine{knitr::rmarkdown}
+#  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
+source("../bnnlib.R")
+cacheMetaData(1)
+```
+
+## Feedforward Neural Network
+
+Create a neural network
+
+```{r}
+net <- NetworkFactory_createFeedForwardNetwork(1,20,1)
+```
+
+Load some data
+
+
+```{r}
+data("marketing", package = "datarium")
+head(marketing, 4)
+```
+
+Convert data to Sequence format
+```{r}
+sequence_set <- SequenceSet()
+
+
+
+for (i in 1:nrow(marketing)) {
+  input <- marketing[i,1]
+  target <- marketing[i,4]
+ # Sequence_add(seq, input, target)
+  seq<-Sequence__SWIG_1(input, target, 1)
+  SequenceSet_add_sequence(sequence_set,seq)
+}
+
+
+cat("Sequences created: ",SequenceSet_size(sequence_set),"\n")
+cat("Input size",SequenceSet_input_size_get(sequence_set),"\n")
+cat("Target size",SequenceSet_target_size_get(sequence_set),"\n")
+
+```
+
+Initialize training algorithm
+
+```{r}
+bp <- ImprovedRPropTrainer(net)
+
+cat("Using Trainer: ",Trainer_get_name(bp),"\n")
+```
+
+Start training
+
+```{r}
+iterations <- 40
+steps.per.iteration <- 10
+err <- rep(NA, iterations)
+for (i in 1:iterations) {
+  cat("Training the network for ", steps.per.iteration," steps\n")
+  Trainer_train__SWIG_0(bp, sequence_set, steps.per.iteration)
+  err[i] <- Network_evaluate_training_error__SWIG_0(net, seq)
+}
+```
+
+With ggplot2, we can plot the training set error over iterations:
+
+```{r warning=FALSE, message=FALSE}
+require(ggplot2)
+ggplot(data=data.frame(step=1:iterations,err),aes(x=step,y=err))+
+  geom_point()+
+  geom_smooth()+
+  theme_minimal()
+```
+
+Inspect output:
+
+```{r}
+Network_activate(net, SequenceSet_get(sequence_set,0))
+x<-Network_get_output(net,0)
+.Call('R_swig_toValue', x, package="bnnlib") 
+
+```

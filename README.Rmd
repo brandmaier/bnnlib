@@ -94,6 +94,8 @@ ggplot(data=data.frame(step=1:iterations,err),aes(x=step,y=err))+
 
 ## Export Network
 
+`bnnlib` supports export of network diagrams.
+
 ```{r message=FALSE, include=FALSE}
 Network_export_to_dot_graph(net,"testfile.ps")
 lines <- paste0(readLines("testfile.dot"),sep="",collapse="")
@@ -102,3 +104,6 @@ DOT::dot(lines,file="img/testfile.svg")
 
 ![](img/testfile.svg)
 
+## Testing the Network
+
+TODO
