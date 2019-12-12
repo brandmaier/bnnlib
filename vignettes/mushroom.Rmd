@@ -37,6 +37,7 @@ dataset <- SequenceSet_load_from_proben_file(temp)
 ```{r}
 SIGMOID_NODE = 2
 network <-NetworkFactory_createFeedForwardNetwork(125, 20, 2, SIGMOID_NODE)
+Network_reinitialise(network)
 cg <- CGTrainer(network)
 ```
 
@@ -76,5 +77,9 @@ for (i in 1:lngth) {
 predictions <- apply(result, 1, which.max)
 truths <-  apply(truth, 1, which.max)
 
-knitr::kable(table(truths, predictions))
+confusion.matrix <- table(truths, predictions)
+
+
+
+knitr::kable(confusion.matrix, row.names=TRUE)
 ```

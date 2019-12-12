@@ -33,6 +33,8 @@ using namespace std;
 #include "src/trainer/RPropTrainer.h"
 #include "src/trainer/MyRPropTrainer.h"
 #include "src/trainer/ImprovedRPropTrainer.h"
+#include "src/trainer/GeneticTrainer.h"
+#include "src/trainer/PSOTrainer.h"
 #include "src/callbacks/DebugCallback.h"
 #include "src/callbacks/GradientWatcher.h"
 #include "src/callbacks/DummyCallback.h"
