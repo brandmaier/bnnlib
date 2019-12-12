@@ -1,3 +1,15 @@
+#' Conversion to Sequence format
+#'
+#' Converts a data.frame to a \code{Sequence}
+#'
+#' @param x a \code{"data.frame"}
+#' @param input column id(s) of input parameters
+#' @param target column id(s) of target parameters
+#'
+#' @return Sequence
+#'
+#'
+#' @export
 toSequence <- function(x, input, target, ...)
 {
   if (inherits(x,"data.frame")) {
