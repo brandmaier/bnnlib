@@ -24,8 +24,11 @@ check: build
 	R CMD check --as-cran $(PKGNAME)_$(PKGVERS).tar.gz
 
 # compile shared library for R
-r: bnnlib.cpp $(CPP_FILES)
+rclean: bnnlib.cpp $(CPP_FILES)
 	R CMD SHLIB --preclean bnnlib.cpp $(CPP_FILES)
+
+r: bnnlib.cpp $(CPP_FILES)
+	R CMD SHLIB bnnlib.cpp $(CPP_FILES)
 
 
 # create R wrapper with SWIG

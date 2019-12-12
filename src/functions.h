@@ -45,8 +45,6 @@ void print_vector(std::vector<std::vector<float>*>* v);
 void print_vector(std::vector<double>* v);
 void print_vector(std::vector<std::vector<double>*>* v);
 
-std::vector<double> toValue(std::vector<double>* v);
-
 void stripLeadingAndTrailingBlanks(string& StringToModify);
 /*
 int my_random_int(int lowest, int highest)

@@ -85,11 +85,11 @@ Creating Training Data
 
     }
 
-    ## 1 .: Position= 22 
-    ## 2 .: Position= 2 
-    ## 3 .: Position= 13 
-    ## 4 .: Position= 1 
-    ## 5 .: Position= 30
+    ## 1 .: Position= 24 
+    ## 2 .: Position= 4 
+    ## 3 .: Position= 7 
+    ## 4 .: Position= 16 
+    ## 5 .: Position= 21
 
 Creating a Trainer
 ------------------
@@ -126,13 +126,7 @@ Export Network
 `bnnlib` supports export of network diagrams. THis requires external
 libraries to render Graphviz files, e.g., the DOT package in R.
 
-    library(DOT)
-    Network_export_to_dot_graph(net,"testfile.ps")
-
     ## NULL
-
-    lines <- paste0(readLines("testfile.dot"),sep="",collapse="")
-    DOT::dot(lines,file="img/testfile.svg")
 
     ## <?xml version="1.0" encoding="UTF-8" standalone="no"?>
     ## <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"

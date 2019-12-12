@@ -110,7 +110,7 @@ ggplot(data=data.frame(step=1:iterations,err),aes(x=step,y=err))+
 
 `bnnlib` supports export of network diagrams. THis requires external libraries to render Graphviz files, e.g., the DOT package in R.
 
-```{r message=FALSE}
+```{r message=FALSE, echo=FALSE, include=TRUE}
 library(DOT)
 Network_export_to_dot_graph(net,"testfile.ps")
 lines <- paste0(readLines("testfile.dot"),sep="",collapse="")
