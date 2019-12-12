@@ -14,10 +14,11 @@ using namespace std;
 %{
 #include <stdlib.h>
 #include <string>
+#include "src/definitions.h"
 #include "src/Network.h"
 #include "src/Sequence.h"
 #include "src/SequenceSet.h"
-#include "src/functions.h"
+//#include "src/functions.h"
 #include "src/NetworkFactory.h"
 #include "src/GnuplotGenerator.h"
 #include "src/TrainingConfiguration.h"
@@ -131,7 +132,8 @@ namespace std {
 %ignore MyRPropTrainer::gamma_max;
 
 %include std_string.i
-%include src/functions.h
+//%include src/functions.h
+%include src/definitions.h
 %include src/Trainable.h
 %include src/nodes/Node.h
 %include src/nodes/TanhNode.h

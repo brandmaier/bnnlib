@@ -1,8 +1,27 @@
+PKGNAME := $(shell sed -n "s/Package: *\([^ ]*\)/\1/p" DESCRIPTION)
+PKGVERS := $(shell sed -n "s/Version: *\([^ ]*\)/\1/p" DESCRIPTION)
+PKGSRC  := $(shell basename `pwd`)
+
 all: r
 .PHONY: all clean
 
 CPP_FILES = $(shell find src/ -type f -name '*.cpp')
 
+
+rd:
+	Rscript -e 'roxygen2::roxygenise(".")'
+
+build:
+	cd ..;\
+	R CMD build $(PKGSRC)
+
+install:
+	cd ..;\
+	R CMD INSTALL $(PKGNAME)_$(PKGVERS).tar.gz
+
+check: build
+	cd ..;\
+	R CMD check --as-cran $(PKGNAME)_$(PKGVERS).tar.gz
 
 # compile shared library for R
 r: bnnlib.cpp $(CPP_FILES)

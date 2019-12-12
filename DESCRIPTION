@@ -1,0 +1,18 @@
+Package: bnn
+Type: Package
+Title: Banana Neural Networks (bnn)
+Author: Andreas M. Brandmaier <andy@brandmaier.de>
+Maintainer: Andreas M. Brandmaier <andy@brandmaier.de>
+Depends:
+  R (>= 2.10)
+Suggests:
+  knitr,
+  rmarkdown
+Description: An R-wrapper to the C++ recurrent neural network implementation bnnlib.
+License: GPL-3
+Encoding: UTF-8
+LazyLoad: yes
+Version: 0.7.0
+Date: 2019-12-05
+RoxygenNote: 6.1.1
+VignetteBuilder: knitr

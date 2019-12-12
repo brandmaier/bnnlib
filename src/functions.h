@@ -10,6 +10,7 @@
 #ifndef __FUNCTIONS_H__
 #define __FUNCTIONS_H__
 
+#include "definitions.h"
 #include <vector>
 #include <ostream>
 #include <fstream>
@@ -19,10 +20,6 @@
 
 using namespace std;
 
-#define __BNNLIB_VERSION 0.7
-
-typedef double weight_t;
-typedef std::string string_t;
 
 /*
 float tanh(float x)

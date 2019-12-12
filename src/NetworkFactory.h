@@ -34,6 +34,7 @@ struct NetworkFactory
 
 	static Network* createFeedForwardNetwork(unsigned int in_size,int hid_type,unsigned int num_layers, unsigned int layer_sizes[], int out_type, unsigned int out_size);
 	static Network* createFeedForwardNetwork(unsigned int in_size, unsigned int hid_size, unsigned int out_size);
+	static Network* createFeedForwardNetwork(unsigned int in_size, unsigned int hid_size, unsigned int out_size, int out_type);
 	static Network* createFeedForwardWTANetwork(unsigned int in_size, unsigned int layers, unsigned int layer_sizes[], unsigned int out_size);
 
 	static Network* createLSTMWTANetwork(unsigned int lstm_type, unsigned int lst_act_type,

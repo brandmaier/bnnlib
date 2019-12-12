@@ -1154,6 +1154,12 @@ Network* NetworkFactory::createFeedForwardNetwork(unsigned int in_size,unsigned 
 	return createFeedForwardNetwork(in_size, Node::TANH_NODE,1, sizes, Node::TANH_NODE, out_size);
 }
 
+Network* NetworkFactory::createFeedForwardNetwork(unsigned int in_size, unsigned int hid_size, unsigned int out_size, int out_type)
+{
+  unsigned int sizes[] = { hid_size };
+  return createFeedForwardNetwork(in_size, Node::TANH_NODE,1, sizes, out_type, out_size);
+}
+
 
 Network* NetworkFactory::createFeedForwardNetwork(unsigned int in_size, int hid_type,unsigned int num_layers, unsigned int layer_sizes[], int out_type, unsigned int out_size)
 {

@@ -22,7 +22,9 @@ cacheMetaData(1)
 Create a neural network
 
 ```{r}
-net <- NetworkFactory_createFeedForwardNetwork(3,20,1)
+LINEAR_NODE = 3
+
+net <- NetworkFactory_createFeedForwardNetwork(3,20,1, LINEAR_NODE)
 ```
 
 Load some data
@@ -31,20 +33,16 @@ Load some data
 ```{r}
 data("marketing", package = "datarium")
 head(marketing, 4)
+
+marketing$sales <- marketing$sales/max(marketing$sales)
 ```
 
 Convert data to Sequence format
 ```{r}
 sequence_set <- SequenceSet()
 
-
-seq <- Sequence()
-for (i in 1:nrow(marketing)) {
-  input <- as.numeric( marketing[i,1:3] )
-  target <- c(marketing[i,4],0)
-  Sequence_add_from_array(seq, input, target, 3, 1)
-
-}
+source("../R/toSequence.R")
+seq <- toSequence(marketing, 1:3, 4)
 
 SequenceSet_add_sequence(sequence_set,seq)
 
@@ -52,8 +50,8 @@ cat("Sequences created: ",SequenceSet_size(sequence_set),"\n")
 cat("Input size",SequenceSet_input_size_get(sequence_set),"\n")
 cat("Target size",SequenceSet_target_size_get(sequence_set),"\n")
 
-.Call('R_swig_toValue', Sequence_get_target(seq,0), package="bnnlib") 
-.Call('R_swig_toValue', Sequence_get_target(seq,1), package="bnnlib") 
+#.Call('R_swig_toValue', Sequence_get_target(seq,0), package="bnnlib") 
+#.Call('R_swig_toValue', Sequence_get_target(seq,1), package="bnnlib") 
 
 ```
 
@@ -73,7 +71,7 @@ steps.per.iteration <- 10
 err <- rep(NA, iterations+1)
 err[1] <- Network_evaluate_training_error__SWIG_0(net, seq)
 for (i in 1:iterations) {
-  cat("Training the network for ", steps.per.iteration," steps\n")
+  #cat("Training the network for ", steps.per.iteration," steps\n")
   Trainer_train__SWIG_0(bp, sequence_set, steps.per.iteration)
   err[i+1] <- Network_evaluate_training_error__SWIG_0(net, seq)
 }
@@ -94,6 +92,6 @@ Inspect output:
 ```{r}
 Network_activate(net, SequenceSet_get(sequence_set,0))
 x<-Network_get_output(net,0)
-.Call('R_swig_toValue', x, package="bnnlib") 
+#.Call('R_swig_toValue', x, package="bnnlib") 
 
 ```
