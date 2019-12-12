@@ -50,8 +50,8 @@ cat("Sequences created: ",SequenceSet_size(sequence_set),"\n")
 cat("Input size",SequenceSet_input_size_get(sequence_set),"\n")
 cat("Target size",SequenceSet_target_size_get(sequence_set),"\n")
 
-#.Call('R_swig_toValue', Sequence_get_target(seq,0), package="bnnlib") 
-#.Call('R_swig_toValue', Sequence_get_target(seq,1), package="bnnlib") 
+.Call('R_swig_toValue', Sequence_get_target(seq,0), package="bnnlib") 
+.Call('R_swig_toValue', Sequence_get_target(seq,1), package="bnnlib") 
 
 ```
 
