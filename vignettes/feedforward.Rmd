@@ -22,7 +22,7 @@ cacheMetaData(1)
 Create a neural network
 
 ```{r}
-net <- NetworkFactory_createFeedForwardNetwork(1,20,1)
+net <- NetworkFactory_createFeedForwardNetwork(3,20,1)
 ```
 
 Load some data
@@ -40,9 +40,9 @@ sequence_set <- SequenceSet()
 
 seq <- Sequence()
 for (i in 1:nrow(marketing)) {
-  input <- marketing[i,1]
-  target <- marketing[i,4]
-  Sequence_add_from_array(input, target, 1, 1)
+  input <- as.numeric( marketing[i,1:3] )
+  target <- c(marketing[i,4],0)
+  Sequence_add_from_array(seq, input, target, 3, 1)
 
 }
 
@@ -51,6 +51,9 @@ SequenceSet_add_sequence(sequence_set,seq)
 cat("Sequences created: ",SequenceSet_size(sequence_set),"\n")
 cat("Input size",SequenceSet_input_size_get(sequence_set),"\n")
 cat("Target size",SequenceSet_target_size_get(sequence_set),"\n")
+
+.Call('R_swig_toValue', Sequence_get_target(seq,0), package="bnnlib") 
+.Call('R_swig_toValue', Sequence_get_target(seq,1), package="bnnlib") 
 
 ```
 
@@ -67,11 +70,12 @@ Start training
 ```{r}
 iterations <- 40
 steps.per.iteration <- 10
-err <- rep(NA, iterations)
+err <- rep(NA, iterations+1)
+err[1] <- Network_evaluate_training_error__SWIG_0(net, seq)
 for (i in 1:iterations) {
   cat("Training the network for ", steps.per.iteration," steps\n")
   Trainer_train__SWIG_0(bp, sequence_set, steps.per.iteration)
-  err[i] <- Network_evaluate_training_error__SWIG_0(net, seq)
+  err[i+1] <- Network_evaluate_training_error__SWIG_0(net, seq)
 }
 ```
 
@@ -79,7 +83,7 @@ With ggplot2, we can plot the training set error over iterations:
 
 ```{r warning=FALSE, message=FALSE}
 require(ggplot2)
-ggplot(data=data.frame(step=1:iterations,err),aes(x=step,y=err))+
+ggplot(data=data.frame(step=1:(iterations+1),err),aes(x=step,y=err))+
   geom_point()+
   geom_smooth()+
   theme_minimal()
