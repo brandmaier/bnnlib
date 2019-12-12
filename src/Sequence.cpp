@@ -185,12 +185,17 @@ unsigned int Sequence::get_maximum_index(unsigned int time)
 	return max_index;
 }
 
-void Sequence::add_from_array(double input[], double target[], unsigned int size) {
-  std::vector<weight_t>* inp  = new std::vector<double>();
-  std::vector<weight_t>* tgt = new std::vector<double>();
+void Sequence::add_from_array(double input[], double target[], unsigned int input_size, unsigned int target_size) {
   
-  for (int i=0; i< size; i++) {
+  std::vector<weight_t>* inp  = new std::vector<weight_t>();
+  std::vector<weight_t>* tgt = new std::vector<weight_t>();
+  
+  
+  for (int i=0; i< input_size; i++) {
     inp->push_back( input[i]);
+ 
+  }
+  for (int i=0; i < target_size; i++) {
     tgt->push_back( target[i]);
   }
   

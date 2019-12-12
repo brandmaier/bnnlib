@@ -12,11 +12,12 @@
 #include "../Network.h"
 #include "../SequenceSet.h"
 #include "../ensembles/LSTMCounterEnsemble.h"
+#include "../ensembles/LSTMForgetEnsemble.h"
 
 struct BiasWeightWatcher : CallbackHandler
 {
 
-	void callback(Network* net, SequenceSet* set)
+	void callback(Network* net,Trainer* trainer, SequenceSet* set)
 	{
 		cout << "BiasWeightWatcher" << endl;
 		vector<Ensemble*>* ensembles = net->get_ensembles_by_type(Ensemble::LSTM_FORGET_ENSEMBLE);

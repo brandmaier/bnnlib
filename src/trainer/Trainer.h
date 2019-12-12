@@ -94,7 +94,7 @@ struct Trainer
 	virtual void change_weights();
 	virtual void change_weight(Trainable* c)=0;
 
-	void train(SequenceSet* sequences, unsigned int iterations);
+	virtual void train(SequenceSet* sequences, unsigned int iterations);
 	virtual void train(SequenceSet* sequenceset,SequenceSet* testset,  unsigned int iterations);
 	void train(DataSet* dataset,  unsigned int iterations);
 

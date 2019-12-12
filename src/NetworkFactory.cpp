@@ -1619,7 +1619,6 @@ Network* NetworkFactory::create_2ndorder(unsigned int in_size, unsigned int out_
 
 Network* NetworkFactory::create_2ndorder_lstm(unsigned int in_size, unsigned int lstm_size, unsigned int out_size)
 {
-	unsigned int second_size = lstm_size;
 
 	Network* net = new Network();
 

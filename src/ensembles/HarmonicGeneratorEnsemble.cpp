@@ -17,20 +17,15 @@
 		for (unsigned int i=0; i < nodes.size();i++)
 			inputs.push_back( nodes[i] );
 
-		//double phi = 45;
 
 		// self connections
 		for (unsigned int i=0; i < nodes.size(); i++)
 		{
-			double r = rand_uniform_01();
 			Connection* c3 = Network::connect(nodes[i], nodes[i], false);
 			//c3->weight = 0.01;
 		}
 
-		// ring connection
-		//double value = 2+3* rand_uniform_01();
-
-
+    // ring connection
 		for (unsigned int i=0; i < nodes.size()-1; i++)
 		{
 			Connection* c1 = Network::connect(nodes[i], nodes[i+1], false);
