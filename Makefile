@@ -59,6 +59,8 @@ python: bnnlib.cpp
 	swig -c++ -python -o bnnlib.cpp bnnlib.i
 	
 	
-	
+vignettes/trainer: 
+	R -e "rmarkdown::render('vignettes/trainer.Rmd',output_file='trainer.pdf')"
+		
 	
 

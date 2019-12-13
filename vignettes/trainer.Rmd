@@ -1,5 +1,5 @@
 ---
-title: "Trainer"
+title: "Comparing Different Training Algorithms"
 author: "Andreas M. Brandmaier"
 date: "12/12/2019"
 output:
@@ -11,9 +11,13 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+In this document, we will compare the convergence of different training algorithms for a given dataset and network architecture. The data will be simulated from a simple toy problem, in which there are four i.i.d. Gaussian predictors and a single metric outcome. 
+
 ## Load Library
 
-```{r pressure, echo=FALSE}
+First, we load the shared library.
+
+```{r pressure, echo=TRUE}
 
 
   dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
@@ -24,31 +28,43 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Generate Data
 
+Next, we simulate some data in a data.frame and convert this to bnn's Sequence format:
+
 ```{r}
 source("../R/toSequence.R")
 set <- SequenceSet()
 N <- 100
 M <- 5
 simdata <- data.frame(matrix(data=rnorm(N*M),nrow = N))
-simdata[,M] <- simdata[,1]+simdata[,2]-3*simdata[,3]
+simdata[,M] <- simdata[,1]+simdata[,2]-ifelse(simdata[,3]>0,2,0)
 seq <- toSequence(simdata,1:4,5)
 SequenceSet_add_sequence(set, seq)
+```
 
+This is a sanity check, whether the input and output size is correct.
+
+```{r}
 Sequence_get_target_size(seq)
 Sequence_get_input_size(seq)
 ```
 
 ## Create Network
 
+Now, we create a feed-forward network with a single hidden layer of 10 neurons. 
+
 ```{r}
-net <- NetworkFactory_createFeedForwardNetwork(M-1,5,1,3)
+LINEAR_NODE = 3 #this is a bnnlib constant
+
+net <- NetworkFactory_createFeedForwardNetwork(M-1,10,1,LINEAR_NODE)
 ```
 
 ## Trainer
 
+Let's generate a list of different training algorithms and run them each for 100 steps. Save the results in `err.data`:
+
 ```{r}
 trainer <- list(CGTrainer(net), BackpropTrainer(net), ImprovedRPropTrainer(net),
-ARPropTrainer(net) )
+ARPropTrainer(net) , QuickpropTrainer(net))
 
 steps <- 100
 err.data <- matrix(data=NA,nrow=length(trainer)*steps,ncol=3)
@@ -72,10 +88,14 @@ for (i in 1:length(trainer)) {
 err.data$trainer<-factor(err.data$trainer)
 ```
 
-Plot errors
+Plot the errors
 
 ```{r}
 library(ggplot2)
 
-ggplot(data=err.data, aes(x=step,y=error,group=trainer,col=trainer))+geom_point()+geom_line()
+ggplot(data=err.data, 
+       aes(x=step,y=error,group=trainer,col=trainer))+
+  geom_point()+
+  geom_line()+
+  theme_minimal()
 ```

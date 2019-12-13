@@ -13,7 +13,7 @@
 #include "Trainer.h"
 #include "../Trainable.h"
 
-struct ARPropTrainer : Trainer
+struct ARPropTrainer : public Trainer
 {
 	ARPropTrainer(Network* network);
 	~ARPropTrainer();
