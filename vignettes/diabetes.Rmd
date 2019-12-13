@@ -1,0 +1,93 @@
+---
+title: "Mushroom"
+author: "Andreas M. Brandmaier"
+date: "12/12/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Classification with Feedforward Networks
+
+Example from the Proben1 dataset.
+
+```{r pressure, echo=FALSE}
+
+
+  dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
+  source("../bnnlib.R")
+  cacheMetaData(1)
+
+```
+
+Download the mushroom dataset in Proben1 file format directly from github:
+
+```{r}
+temp <- tempfile()
+download.file("https://raw.githubusercontent.com/jeffheaton/proben1/master/diabetes/diabetes1.dt",temp)
+dataset <- SequenceSet_load_from_proben_file(temp)
+```
+
+
+```{r}
+
+SIGMOID_NODE = 2
+LINEAR_NODE = 3
+network <-NetworkFactory_createFeedForwardNetwork(DataSet_get_input_size(dataset), 
+                                                  50, DataSet_get_target_size(dataset), LINEAR_NODE)
+Network_reinitialise(network)
+
+#cg <- CGTrainer(network)
+cg <- ImprovedRPropTrainer(network)
+Trainer_batch_learning_set(cg, TRUE)
+```
+
+Train the network for some steps
+
+```{r}
+Trainer_add_abort_criterion__SWIG_0( cg, ConvergenceCriterion(), 5 )
+Trainer_train__SWIG_1(cg, DataSet_get_training_set(dataset), DataSet_get_validation_set(dataset), 1000)
+```
+
+Evaluate network performance using a winner-takes-all loss:
+
+```{r}
+error_function = WinnerTakesAllErrorFunction();
+
+Network_evaluate_error__SWIG_1(network, DataSet_get_test_set(dataset), error_function)
+
+```
+
+Inspect network predictions
+
+```{r}
+test_sequence_set <- DataSet_get_test_set(dataset)
+lngth <- SequenceSet_size(test_sequence_set)
+
+result <- matrix(NA, nrow=lngth, ncol=2)
+truth <- matrix(NA, lngth, ncol=2)
+for (i in 1:lngth) {
+    sq<-SequenceSet_get(test_sequence_set, i-1)
+  Network_activate(network, sq)
+  x<- Network_get_output(network,0)
+  result[i,] <- .Call('R_swig_toValue', x, package="bnnlib")
+  x<-Sequence_get_target(sq, 0)
+  truth[i,] <- .Call('R_swig_toValue', x, package="bnnlib")
+  
+}
+
+predictions <- apply(result, 1, which.max)
+truths <-  apply(truth, 1, which.max)
+
+confusion.matrix <- table(truths, predictions)
+
+
+
+knitr::kable(confusion.matrix, row.names=TRUE)
+
+```

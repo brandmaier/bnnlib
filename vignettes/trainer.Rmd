@@ -64,7 +64,7 @@ Let's generate a list of different training algorithms and run them each for 100
 
 ```{r}
 trainer <- list(CGTrainer(net), BackpropTrainer(net), ImprovedRPropTrainer(net),
-ARPropTrainer(net) , QuickpropTrainer(net))
+ARPropTrainer(net) , QuickpropTrainer(net), RPropTrainer(net))
 
 steps <- 100
 err.data <- matrix(data=NA,nrow=length(trainer)*steps,ncol=3)
