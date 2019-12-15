@@ -48,20 +48,22 @@ Start training
 
 ```{r training, echo=FALSE}
 
-connectivity = .8 # between 0 and 1
-hidden_layer_size = 10
-num_backward_connections = 5*hidden_layer_size
+#TANH_NODE = 3
+#layers = c(4,4)
+#network = NetworkFactory_createRecurrentNetwork(1,4,1)
 
-network = NetworkFactory_create_random_gate_network(1,hidden_layer_size,1,
-			connectivity,num_backward_connections)
+network = LSTMNetwork(1,1,1)
 
 training_set = SequenceSet("../datasets/parity.dat")
 
+SequenceSet_get_input_size(training_set)
+SequenceSet_get_target_size(training_set)
+
 trainer = ImprovedRPropTrainer(network);
 		
-	Trainer_learning_rate_set( trainer, 0.0001 );
+	T#rainer_learning_rate_set( trainer, 0.0001 );
 
-Trainer_batch_learning_set(trainer, TRUE)
+#Trainer_batch_learning_set(trainer, TRUE)
 
 
 #	trainer->abort_criteria.push_back( new ConvergenceCriterion(10e-7) );
@@ -71,12 +73,43 @@ Trainer_batch_learning_set(trainer, TRUE)
 	Trainer_train2(trainer, training_set, 1000)
 
 	
-	x = Network_test_sequence( network, training_set, TRUE)
+
 
 	#net->export_to_dot_graph("graph");
+
+#		x = Network_test_sequence( network, training_set, TRUE)	#
+#		values <- .Call('R_swig_toValue',  Trainer_error_train_get(trainer), package="bnnlib") 
+#	library(ggplot2)#
+#	ggplot2::ggplot(data.frame(x=1:length(values),values),aes(x=x,y=values))+geom_point()+
+#	  geom_line()+geom_smooth()	
+		
+		seq1 <- SequenceSet_get(training_set,0)
+#		Network_activate_and_return_activations()
+
+		#		Network_activate_and_return_activations(network, )
+		
+
 	
 	
 
+```
+
+Collect outputs
+
+```{r}
+ Network_activate(network, seq1)
+ln <-Sequence_size(seq1)
+  vals <- rep(NA,ln)
+  trt <- rep(NA, ln)
+  for (i in 1:ln) {
+		outp <- Network_get_output(network,i)
+		vals[i] <- .Call('R_swig_toValue',  outp, package="bnnlib") 
+		outp <- Sequence_get_target(seq1, i-1)
+		trt[i] <- .Call('R_swig_toValue',  outp, package="bnnlib") 
+  }
+  print(vals)
+  plot(vals)
+  points(trt, col="green")
 ```
 
 
