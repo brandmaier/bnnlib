@@ -1,0 +1,82 @@
+---
+title: "Parity"
+author: "Andreas M. Brandmaier"
+date: "12/15/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setup
+
+First, we load the shared library.
+
+```{r load, echo=TRUE}
+
+
+  dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
+  source("../bnnlib.R")
+  cacheMetaData(1)
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+library(reshape2)
+library(ggplot2)
+maxx <- 20
+raw <- read.csv("../datasets/parity.dat")[,1]
+x <- raw[seq(1,maxx,2)] # take every other
+y <- raw[seq(2,maxx,2)] # take every other
+dat <- rbind(x,y)
+#colnames(dat) <- c("A","B")
+mdat <- melt(dat)
+mdat$value <- factor(mdat$value)
+library(reshape2)
+ggplot(data=mdat, aes(x=Var2,y=Var1,fill=value))+geom_raster()+
+  xlab("Input/Output")+ylab("Time")
+```
+
+Start training
+
+
+
+```{r training, echo=FALSE}
+
+connectivity = .8 # between 0 and 1
+hidden_layer_size = 10
+num_backward_connections = 5*hidden_layer_size
+
+network = NetworkFactory_create_random_gate_network(1,hidden_layer_size,1,
+			connectivity,num_backward_connections)
+
+training_set = SequenceSet("../datasets/parity.dat")
+
+trainer = ImprovedRPropTrainer(network);
+		
+	Trainer_learning_rate_set( trainer, 0.0001 );
+
+Trainer_batch_learning_set(trainer, TRUE)
+
+
+#	trainer->abort_criteria.push_back( new ConvergenceCriterion(10e-7) );
+
+#Trainer_add_abort_criterion( ConvergenceCriterion(.00001))
+
+	Trainer_train2(trainer, training_set, 1000)
+
+	
+	x = Network_test_sequence( network, training_set, TRUE)
+
+	#net->export_to_dot_graph("graph");
+	
+	
+
+```
+
+
