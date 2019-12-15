@@ -319,7 +319,9 @@ void CGTrainer::train(SequenceSet* sequence_set,SequenceSet* validation_set, uns
 //		alpha = best_alpha;
 
 		if (abs(best_error-cur_error) < 10e-15) {
+#ifdef DEBUG
 			cout << "* simple gradient step"<<endl;
+#endif
 			// simple Gradient Descent
 			unsigned int k=0;
 			for (unsigned int i=0; i < network->size; i++) {
@@ -332,7 +334,9 @@ void CGTrainer::train(SequenceSet* sequence_set,SequenceSet* validation_set, uns
 				}
 			}
 		} else {
+#ifdef DEBUG
 			cout << "* alpha="<<alpha << " beta=" << beta << " error=" << best_error << endl;
+#endif
 		}
 
 		//double alpha = 0.1;

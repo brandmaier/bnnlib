@@ -15,7 +15,7 @@
 
 struct Node;
 
-struct Connection : Trainable {
+struct Connection : public Trainable {
 
 	Node* from;
 	Node* to;

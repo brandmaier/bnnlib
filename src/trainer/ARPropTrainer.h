@@ -26,7 +26,7 @@ struct ARPropTrainer : public Trainer
 	static weight_t gamma_max;
 	static weight_t gamma_min;
 
-	unsigned int q;
+	unsigned int q = 0;
 
 	virtual string get_name()
 	{

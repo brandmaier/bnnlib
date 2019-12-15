@@ -1,0 +1,81 @@
+---
+title: "Mackey Glass"
+author: "Andreas M. Brandmaier"
+date: "12/15/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setup
+
+First, we load the shared library.
+
+```{r load, echo=TRUE}
+
+
+  dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
+  source("../bnnlib.R")
+  cacheMetaData(1)
+
+```
+
+This is the Mackey-Glass time series: 
+
+```{r}
+x <- read.csv("../datasets/mackey-glass.dat")[,1]
+x <- x[seq(1,length(x),2)] # take every other
+dat <- data.frame(x=1:length(x),y=x)
+dat1 <- dat[1:500,]
+dat2 <- dat[500:1000,]
+library(ggplot2)
+ggplot(data=dat, mapping = aes(x=x,y=y) )+geom_line()+
+  theme_minimal()+ ggtitle("Mackey Glass Series","Observations 1 to 500")
+ggplot(data=dat2, mapping = aes(x=x,y=y) )+geom_line()+ 
+  theme_minimal()+ ggtitle("Mackey Glass Series","Observations 500 to 1000")
+
+```
+
+You can also embed plots, for example:
+
+```{r training, echo=FALSE}
+
+connectivity = .8 # between 0 and 1
+hidden_layer_size = 3
+num_backward_connections = 5*hidden_layer_size
+
+network = NetworkFactory_create_random_gate_network(1,hidden_layer_size,1,
+			connectivity,num_backward_connections);
+
+ training_set = SequenceSet("../datasets/mackey-glass.dat");
+
+SequenceSet_scale_to_minmax(training_set, -1,+1);
+
+trainer = ImprovedRPropTrainer(network);
+		
+	Trainer_learning_rate_set( trainer, 0.0001 );
+
+Trainer_batch_learning_set(trainer, TRUE)
+
+
+#	trainer->abort_criteria.push_back( new ConvergenceCriterion(10e-7) );
+
+#Trainer_add_abort_criterion( ConvergenceCriterion(.00001))
+
+	Trainer_train2(trainer, training_set, 200)
+
+#	GnuplotGenerator_plot_vector__SWIG_0("Training Error", Trainer_error_train_get(trainer))
+
+	values <- .Call('R_swig_toValue',  Trainer_error_train_get(trainer), package="bnnlib") 
+	
+	library(ggplot2)
+	ggplot2::ggplot(data.frame(x=1:length(values),values),aes(x=x,y=values))+geom_point()+
+	  geom_line()+geom_smooth()
+#	GnuplotGenerator_plot_vector__SWIG_0()
+#	network->test_sequence( training_set, true );
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

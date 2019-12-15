@@ -1,6 +1,6 @@
 /*
- * RPropTrainer.h
- *
+ * SARPropTrainer.h
+ *  A Simulated Annealing Enhancement To Resilient Back Propagation
  *  Created on: Oct 19, 2009
  *      Author: brandmaier
  */

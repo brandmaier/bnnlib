@@ -17,7 +17,7 @@
 #include "Trainer.h"
 #include "../Network.h"
 
-struct CGTrainer : Trainer
+struct CGTrainer : public Trainer
 {
 	double alpha,beta;	// "momentum" term
 	SequenceSet* sequenceset;

@@ -24,8 +24,8 @@ struct CallbackHandler;
 struct Trainer
 {
 	Trainer();
+  
 	virtual ~Trainer() {
-
 		abort_criteria.clear();
 		callbacks.clear();
 	}
@@ -94,6 +94,10 @@ struct Trainer
 	virtual void change_weights();
 	virtual void change_weight(Trainable* c)=0;
 
+	virtual void train2(SequenceSet* sequences, unsigned int iterations) {
+	    train(sequences, iterations);
+	}
+	
 	virtual void train(SequenceSet* sequences, unsigned int iterations);
 	virtual void train(SequenceSet* sequenceset,SequenceSet* testset,  unsigned int iterations);
 	void train(DataSet* dataset,  unsigned int iterations);

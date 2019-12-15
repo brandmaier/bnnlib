@@ -23,7 +23,7 @@ struct TransferFunction
 	virtual void transfer(vector<weight_t>* in, vector<weight_t>* out) = 0;
 	virtual void transfer(vector<weight_t>* in) = 0;
 	
-	//virtual ~TransferFunction() = 0;
+	virtual ~TransferFunction() {};
 };
 
 struct MappedTransferFunction : TransferFunction

@@ -16,7 +16,7 @@ weight_t ARPropTrainer::eta_plus = 1.2;
 weight_t ARPropTrainer::gamma_min = 0;
 weight_t ARPropTrainer::gamma_max = 50.0;
 
-//ARPropTrainer(Network* network);
+
 ARPropTrainer::~ARPropTrainer() {}
 
 
@@ -91,6 +91,8 @@ void ARPropTrainer::change_weight(Trainable* c)
 		 change = c->gamma * (c->derivative>=0?+1:-1);
 	}
 
+	//cout << "Change: " << change << " sign: " << sign << endl;
+	
 	/*if (c->tag) {
 		cout << "Change: " << change << " sign: " << sign << endl;
 	}*/
@@ -106,8 +108,8 @@ void ARPropTrainer::change_weight(Trainable* c)
 	}*/
 
 
-	//std::cout << " Change : " << change << " und sign " << sign <<
-	//		 " derivs:" << c->derivative << "," << c->previous_derivative << " gamma: " << c->gamma << endl;
+	std::cout << " Change : " << change << " und sign " << sign <<
+			 " derivs:" << c->derivative << "," << c->previous_derivative << " gamma: " << c->gamma << endl;
 
 	c->weight += change;
 	c->previous_weight_change = change;

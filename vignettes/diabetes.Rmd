@@ -39,7 +39,7 @@ dataset <- SequenceSet_load_from_proben_file(temp)
 SIGMOID_NODE = 2
 LINEAR_NODE = 3
 network <-NetworkFactory_createFeedForwardNetwork(DataSet_get_input_size(dataset), 
-                                                  50, DataSet_get_target_size(dataset), LINEAR_NODE)
+                                                  50, DataSet_get_target_size(dataset), SIGMOID_NODE)
 Network_reinitialise(network)
 
 #cg <- CGTrainer(network)
@@ -50,8 +50,10 @@ Trainer_batch_learning_set(cg, TRUE)
 Train the network for some steps
 
 ```{r}
-Trainer_add_abort_criterion__SWIG_0( cg, ConvergenceCriterion(), 5 )
-Trainer_train__SWIG_1(cg, DataSet_get_training_set(dataset), DataSet_get_validation_set(dataset), 1000)
+Trainer_get_name(cg)
+#Trainer_add_abort_criterion__SWIG_0( cg, ConvergenceCriterion(), 5 )
+Trainer_add_callback(cg, ClassificationCallback(DataSet_get_training_set(dataset)), 5)
+Trainer_train__SWIG_1(cg, DataSet_get_training_set(dataset), DataSet_get_validation_set(dataset), 100)
 ```
 
 Evaluate network performance using a winner-takes-all loss:
@@ -86,7 +88,7 @@ truths <-  apply(truth, 1, which.max)
 
 confusion.matrix <- table(truths, predictions)
 
-
+mean(predictions==truth)
 
 knitr::kable(confusion.matrix, row.names=TRUE)
 

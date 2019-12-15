@@ -25,12 +25,12 @@ void QuickpropTrainer::change_weight(Trainable* conn)
 				return;
 			}
 
-/*			weight_t change = momentum*learning_rate*conn->derivative
+			weight_t change = momentum*learning_rate*conn->derivative
 					+ (1.0-momentum)*conn->previous_weight_change;
-*/
+
 			weight_t divisor = (conn->previous_derivative-conn->derivative);
 
-			weight_t change = 0.0;
+//			weight_t change = 0.0;
 			if (divisor != 0.0) {
 			 change = conn->previous_weight_change
 					 *(conn->derivative/(conn->previous_derivative-conn->derivative))
