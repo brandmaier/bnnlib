@@ -1,0 +1,174 @@
+---
+title: "Classify Frequencies"
+author: "Andreas M. Brandmaier"
+date: "12/16/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setup
+
+First, we load the shared library.
+
+```{r load, echo=TRUE}
+
+
+  dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
+  source("../bnnlib.R")
+  cacheMetaData(1)
+
+```
+
+## Generate Frequency Data
+
+We generate data from an oscillator that switches between three different frequencies. The switches occur randomly at a chance of 1% (and a switch may choose the identical frequency). We generate multiple sequences each with a length of 1000.
+
+```{r}
+set.seed(1235)
+par(mfrow=c(2,2))
+seqset <- SequenceSet()
+
+# simulate frequency data
+freqs <- c(50, 77, 91)
+num.freqs <- length(freqs)
+ts.len <- 1000
+num.seqs <- 4
+
+for (j in 1:num.seqs) {
+
+x <- 1:ts.len
+y<-rep(NA, ts.len)
+truth <- matrix(0, nrow=ts.len, ncol=length(freqs))
+
+freq <- sample(freqs,1)
+for (i in 1:ts.len) {
+  y[i] <- sin(x[i]*freq)
+  if (runif(1)>.99) {
+    freq <- sample(freqs,1)
+  }
+  truth[i, which(freqs==freq)] <- 1
+}
+
+plot(x,y, type="l")
+
+
+
+seqdf <- data.frame(y, truth)
+source("../R/toSequence.R")
+seq <- toSequence(seqdf, 1, 2:(1+num.freqs))
+
+SequenceSet_add_sequence(seqset, seq)
+
+}
+
+```
+
+We set up a recurrent neural network with a winner-takes-all output function that normalizes the sum of outputs to one and guarantuees that each output is non-negative. The network has a total of three output nodes, one for each possible frequency and learns to encode/predict the probability with which each of the frequencies is "on". Ideally, the network should always select one of the outputs to be close to "1" and the others "0" since this is a noise-free environment. From this task, it is not possible to infer the occurence of a switch, so there will always be some prediction error when a switch occurs but it should be possible to quickly stabilize to the correct prediction.
+
+```{r network}
+in_size <- 1
+out_size <- length(freqs)
+hid_size <- 20
+
+TANH_NODE = 1
+
+network = LSTMNetwork(in_size,hid_size,out_size)
+network = NetworkFactory_createRecurrentWTANetwork(in_size=in_size, hid_type=TANH_NODE, num_layers=2,
+                                    layer_sizes=c(5,5),  out_size=out_size);
+
+```
+
+Initialize Trainer:
+
+```{r}
+
+			trainer = 
+					ImprovedRPropTrainer(network);
+			#learning_rate = 0.0001;
+			Trainer_learning_rate_set( trainer, 0.0001 )
+```
+
+Train the network
+
+```{r}
+Trainer_train2(trainer, seqset, 1000)
+
+Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(0.0001),10 )
+```
+
+Plot the training error.
+
+```{r}
+x <- Trainer_error_train_get(trainer)
+
+library(ggplot2)
+	values <- .Call('R_swig_toValue',  x, package="bnnlib") 
+	ggplot(data.frame(x=1:length(values),values),aes(x=x,y=values))+geom_line()+
+	  theme_minimal()+ggtitle("Trainingset Error")
+```
+
+
+## Predictions
+
+Investigate the predictions on the training set. Extract predictions and sequence information and store in matrices.
+
+```{r}
+seq1<-SequenceSet_get(seqset,0)
+ Network_activate(network, seq1)
+ln <-Sequence_size(seq1)
+  vals <-  matrix(NA, nrow=ln, ncol=length(freqs))
+  trt <- matrix(NA, nrow=ln, ncol=length(freqs))
+  inp <- rep(NA, ln)
+  for (i in 1:ln) {
+		outp <- Network_get_output(network,i)
+		vals[i,] <- .Call('R_swig_toValue',  outp, package="bnnlib") 
+		outp <- Sequence_get_target(seq1, i-1)
+		trt[i, ] <- .Call('R_swig_toValue',  outp, package="bnnlib") 
+		inpp <- Sequence_get_input(seq1, i-1)
+		inp[i] <- .Call('R_swig_toValue',  inpp, package="bnnlib") 
+  }
+  
+```
+
+Use ggplot for a pretty rendering of these data.
+  
+```{r}
+library(ggplot2)
+  melted <- reshape2::melt(vals)
+  melted$Var2 <- factor(melted$Var2)
+  #melted <- melted[1:1000,]
+  p1 <- ggplot(data=melted, aes(x=Var1,y=value,group=Var2,group=Var2,color=Var2))+geom_point()+geom_line()+
+    theme_minimal()+ theme(legend.position="bottom")+ ylab("Value")+xlab("Time")+ ggtitle("True Value")
+
+ 
+  melted <- reshape2::melt(trt)
+     melted$Var2 <- factor(melted$Var2)  
+  p2<- ggplot(data=melted, aes(x=Var1,y=value,group=Var2,group=Var2,color=Var2))+geom_point()+geom_line()+
+    theme_minimal()+ theme(legend.position="bottom")+ ylab("Value")+xlab("Time")+ ggtitle("Prediction")
+  
+  p3 <- ggplot(data=data.frame(x=1:length(inp),y=inp), aes(x=x,y=y))+geom_line()+ theme_minimal()+
+    ylab("Value")+xlab("Time")+ggtitle("Time Series")
+ 
+  g_legend<-function(a.gplot){
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)
+}
+
+mylegend<-g_legend(p1)
+  
+  library(gridExtra)
+  
+#  grid.arrange(g1,g2,g3, nrow=3)
+  
+pl <- grid.arrange(arrangeGrob(p1 + theme(legend.position="none"),
+                         p2 + theme(legend.position="none"), p3,
+                         nrow=3),
+             mylegend, nrow=2,heights=c(10, 1))
+  
+(pl)  
+```

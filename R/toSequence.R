@@ -1,6 +1,6 @@
 #' Conversion to Sequence format
 #'
-#' Converts a data.frame to a \code{Sequence}
+#' Converts a data.frame to a \code{Sequence}.
 #'
 #' @param x a \code{"data.frame"}
 #' @param input column id(s) of input parameters
