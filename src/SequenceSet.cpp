@@ -121,7 +121,7 @@ unsigned int SequenceSet::size()
 
 SequenceSet::~SequenceSet()
 {
-	cout << "Calling destructor of SequenceSet " << this->name  << endl;
+//	cout << "Calling destructor of SequenceSet " << this->name  << endl;
 	if (this->input_is_normalized == true)
 	{
 		delete input_means;

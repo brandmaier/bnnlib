@@ -30,7 +30,7 @@ Sequence::Sequence()
 
 Sequence::~Sequence() {
   
-  cout << "Calling destructor of Sequence '" << name << "'"<< endl;
+//  cout << "Calling destructor of Sequence '" << name << "'"<< endl;
   
 	training_begin=0;
 	training_end=0;

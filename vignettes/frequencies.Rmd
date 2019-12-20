@@ -67,7 +67,7 @@ sim.frequencies <- function(freqs, ts.len = 1000, num.seqs = 4) {
     seq <- toSequence(seqdf, 1, 2:(1+num.freqs))
     
     
-    SequenceSet_add_sequence(seqset, seq)
+    SequenceSet_add_copy_of_sequence(seqset, seq)
   }
   
   return(seqset)

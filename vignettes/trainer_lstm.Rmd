@@ -50,7 +50,7 @@ output[pos+delay]<-1
 
 seq1<-Sequence(input,output,len)
 
-SequenceSet_add_sequence(seq,seq1)
+SequenceSet_add_copy_of_sequence(seq,seq1)
 
 }
 ```
@@ -79,13 +79,9 @@ Let's generate a list of different training algorithms and run them each for 100
 
 ```{r}
 
-trainer <- list( ImprovedRPropTrainer(net), ImprovedRPropTrainer(net), BackpropTrainer(net), BackpropTrainer(net), QuickpropTrainer(net))
-
-#trainer <- list( ARPropTrainer(net))
-
-
-#Trainer_learning_rate_set(trainer[[4]], 0.01)
-#t2 <- 
+trainer <- list( ImprovedRPropTrainer(net), ImprovedRPropTrainer(net), 
+                 BackpropTrainer(net), BackpropTrainer(net), QuickpropTrainer(net),
+                 ARPropTrainer(net))
 
 steps <- 30
 steps.per.iteration <- 1

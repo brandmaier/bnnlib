@@ -44,7 +44,7 @@ sequence_set <- SequenceSet()
 source("../R/toSequence.R")
 seq <- toSequence(marketing, 1:3, 4)
 
-SequenceSet_add_sequence(sequence_set,seq)
+SequenceSet_add_copy_of_sequence(sequence_set,seq)
 
 cat("Sequences created: ",SequenceSet_size(sequence_set),"\n")
 cat("Input size",SequenceSet_input_size_get(sequence_set),"\n")
