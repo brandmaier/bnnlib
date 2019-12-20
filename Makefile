@@ -6,6 +6,7 @@ all: r
 .PHONY: all clean
 
 CPP_FILES = $(shell find src/ -type f -name '*.cpp')
+O_FILES = $(shell find src/ -type f -name '*.o')
 
 
 rd:

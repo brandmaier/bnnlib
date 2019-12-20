@@ -70,26 +70,22 @@ Creating Training Data
 
     for (i in 1:num.seq) {
     len <- 50
-    # create a sequence from scratch
+    # create a sequence  with length 'len' of inputs and outputs that all
+    # are zero
     input <- rep(0,len)
     output <- rep(0,len)
 
+    # sample a position at which a spike occurs in the input
+    # the matching output will have a spike after some delay
     pos <- sample(1:40,1)
-    cat(i,".: Position=",pos,"\n")
     input[pos]<-1
     output[pos+delay]<-1
 
+    # create sequence and add to sequence set
     seq1<-Sequence(input,output,len)
-
-    SequenceSet_add_sequence(seq,seq1)
+    SequenceSet_add_copy_of_sequence(seq,seq1)
 
     }
-
-    ## 1 .: Position= 33 
-    ## 2 .: Position= 25 
-    ## 3 .: Position= 8 
-    ## 4 .: Position= 21 
-    ## 5 .: Position= 11
 
 Creating a Trainer
 ------------------
