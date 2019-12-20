@@ -23,7 +23,15 @@ Sequence::Sequence(weight_t inputs[], weight_t targets[], unsigned int num_sampl
 	}
 }
 
+Sequence::Sequence()
+{
+  
+};
+
 Sequence::~Sequence() {
+  
+  cout << "Calling destructor of Sequence '" << name << "'"<< endl;
+  
 	training_begin=0;
 	training_end=0;
 	validation_begin=0;
@@ -77,6 +85,25 @@ bool Sequence::load_from_file(string filename)
 	
 	return true;
 }
+
+unsigned int Sequence::get_input_size() { 
+  if (input.size() > 0) { 
+    return input[0]->size(); 
+  } else {
+    cout << "Error in computing input size of Sequence";
+    return (0);
+  }	  
+}
+
+unsigned int Sequence::get_target_size() { 
+  if(target.size() > 0) 
+    return target[0]->size(); 
+  else {
+    cout << "Error in computing target size of Sequence";
+    return (0);    
+  }
+}
+
 
 void Sequence::load_raw_sequence_from_file(string filename)
 {
@@ -152,10 +179,44 @@ std::vector<std::vector<weight_t>*>* Sequence::get_targets_between(unsigned int 
 
 }
 
-std::vector<weight_t>* Sequence::get_input(unsigned int index) { assert(index < input.size() && index >= 0); return input[index]; }
+bool Sequence::sanity_check() 
+{
+  bool sane = true;
+  if (target.size()!=input.size()){ 
+    sane = false;
+    cout << "Target and input size do not match! Input size "<< input.size() << " Target size: " << target.size() << endl;
+  }
+    
+    
+  return(sane);
+}
+
+weight_t Sequence::get_target_at(unsigned int index, unsigned int pos) {
+  vector<weight_t>* seq = this->get_target(index);
+  if (seq == NULL) return(NAN);
+  return( (*seq)[pos] );
+}
+
+weight_t Sequence::get_input_at(unsigned int index, unsigned int pos) {
+  vector<weight_t>* seq = this->get_input(index);
+  if (seq == NULL) return(NAN);
+  return( (*seq)[pos] );
+}
+
+std::vector<weight_t>* Sequence::get_input(unsigned int index) 
+{ 
+  if(index < input.size() && index >= 0) 
+    return input[index]; 
+  else
+    return NULL;
+}
+
 std::vector<weight_t>* Sequence::get_target(unsigned int index) {
-	assert(index < target.size() && index >= 0);
-	return target[index];
+	if(index < target.size() && index >= 0)
+	  return target[index];
+	else
+	  return NULL;
+	
 }
 
 void Sequence::append(Sequence* sequence)
@@ -225,6 +286,17 @@ double Sequence::get_weight(unsigned int index) {
 	  return std::numeric_limits<double>::quiet_NaN();
 }
 
+unsigned int Sequence::size() { 
+  
+  if (target.size()==input.size()){ 
+    return target.size();
+  } else {
+    cout << "Error in computing sequence size: Target ("<< target.size() <<") and Input Size ("<< input.size()<<") do not match!" << endl;
+    return(0);
+  }
+  
+  }
+
 Sequence* Sequence::embed(unsigned int n)
 {
 	Sequence* sequence = new Sequence();
@@ -256,5 +328,3 @@ Sequence* Sequence::embed(unsigned int n)
 
 	return sequence;
 }
-
-//void load_raw_sequence(string filename);

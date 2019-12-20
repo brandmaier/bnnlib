@@ -30,6 +30,15 @@ SequenceSet::SequenceSet(Sequence* sequence)
 	add_sequence(sequence);
 }
 
+SequenceSet::SequenceSet(unsigned int num)
+{
+  init();
+  for (unsigned int i=0; i < num; i++) {
+    Sequence* seq = new Sequence();
+    this->add_sequence(seq);
+  }
+}
+
 SequenceSet::SequenceSet(SequenceSet &sequence_set)
 {
 	/*this->set =
@@ -112,7 +121,7 @@ unsigned int SequenceSet::size()
 
 SequenceSet::~SequenceSet()
 {
-//	cout << "norm " <<  << endl;
+	cout << "Calling destructor of SequenceSet " << this->name  << endl;
 	if (this->input_is_normalized == true)
 	{
 		delete input_means;
@@ -125,10 +134,10 @@ SequenceSet::~SequenceSet()
 	}
 
 
-	for (unsigned int i=0; i < set.size(); i++)
+	/*for (unsigned int i=0; i < set.size(); i++)
 	{
 		delete set[i];
-	}
+	}*/
 
 }
 
@@ -684,13 +693,14 @@ void SequenceSet::scale(double factor)
 		find_minmax();
 	}
 
+void SequenceSet::add_copy_of_sequence(Sequence* sequence) {
+  Sequence* seqcopy = new Sequence(*sequence);
+  this->add_sequence(seqcopy);
+}
+  
+
 	void SequenceSet::add_sequence(Sequence* sequence)
 	{
-		set.push_back( sequence );
-		element_count += sequence->size();
-
-
-
 
 		if (input_size == 0)
 		{
@@ -699,13 +709,19 @@ void SequenceSet::scale(double factor)
 		} else {
 			if (input_size != sequence->get_input_size()){
 				error("Cannot add Sequence to SequenceSet. Input Size mismatch!");
+			  return;
 			}
 			if (target_size != sequence->get_target_size()){
 				error("Cannot add Sequence to SequenceSet. Target Size mismatch!");
+			  return;
 			}
 		}
 
-		find_minmax();	//TODO not efficient!
+		find_minmax();	//TODO not efficient if adding multiple sequences
+		
+		set.push_back( sequence );
+		element_count += sequence->size();
+		
 
 	}
 	

@@ -10,7 +10,7 @@
 
 #include "ClassificatorInterface.h"
 
-class WinnerTakesAllClassificator : ClassificatorInterface
+class WinnerTakesAllClassificator : public ClassificatorInterface
 {
 public:
 

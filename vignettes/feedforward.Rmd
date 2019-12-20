@@ -67,7 +67,7 @@ Start training
 
 ```{r}
 iterations <- 40
-steps.per.iteration <- 10
+steps.per.iteration <- 1
 err <- rep(NA, iterations+1)
 err[1] <- Network_evaluate_training_error__SWIG_0(net, seq)
 for (i in 1:iterations) {

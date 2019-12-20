@@ -30,7 +30,6 @@ rclean: bnnlib.cpp $(CPP_FILES)
 r: bnnlib.cpp $(CPP_FILES)
 	R CMD SHLIB bnnlib.cpp $(CPP_FILES)
 
-
 # create R wrapper with SWIG
 bnnlib.cpp: bnnlib.i
 	swig -c++ -r -o bnnlib.cpp bnnlib.i

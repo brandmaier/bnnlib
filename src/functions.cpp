@@ -346,7 +346,7 @@ float dln(float x) {
 void error(string message)
 {
 	cout << "\033[0;31mERROR: " << message << "\033[0m" << endl;
-	exit(0);	
+	//exit(0);	
 }
 
 void line()

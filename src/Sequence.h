@@ -22,6 +22,38 @@ struct Sequence
 	unsigned int test_begin;
 	unsigned int test_end;
 	
+	// copy constructor
+	Sequence(Sequence &s2) {
+	  name = s2.name;
+	  training_begin = s2.training_begin;
+	  training_end = s2.training_end;
+	  validation_begin = s2.validation_begin;
+	  validation_end = s2.validation_end;
+	  test_begin = s2.test_begin;
+	  test_end = s2.test_end;
+	  
+	  // copy vector using copy constructor
+	  weight = std::vector<weight_t>(s2.weight);
+	  // TODO: deep-copy of inputs and targets
+	  for (unsigned int i=0; i < s2.target.size(); i++) {
+	    std::vector<weight_t>* t = s2.target[i];
+	    std::vector<weight_t>* tnew = new std::vector<weight_t>();
+	    for (unsigned int j=0; j < t->size(); j++) {
+	      tnew->push_back( (*t)[j] );
+	    }
+	    
+	    std::vector<weight_t>* refi = s2.input[i];
+	    std::vector<weight_t>* inew = new std::vector<weight_t>();
+	    for (unsigned int j=0; j < refi->size(); j++) {
+	      inew->push_back( (*refi)[j] );
+	    }	    
+	    
+	    this->add(inew, tnew);
+	    
+	  }
+	  
+	}
+	
 	void add_from_array(double input[], double target[], unsigned int input_size, unsigned int target_size);
 
 	void set_training_range(unsigned int training_begin, unsigned int training_end)
@@ -42,21 +74,24 @@ struct Sequence
 		this->test_end = test_end;
 	}
 
-	Sequence() {
-
-	};
+	Sequence();
 
 	Sequence(weight_t inputs[], weight_t targets[], unsigned int num_samples);
 
 	~Sequence();
 	
-	unsigned int size() { assert(target.size()==input.size()); return target.size();}
+	unsigned int size();
 
-	unsigned int get_input_size() { assert(input.size() > 0); return input[0]->size(); }
-	unsigned int get_target_size() { assert(target.size() > 0); return target[0]->size(); }
+	unsigned int get_input_size();
+	
+	unsigned int get_target_size();
 
 	std::vector<std::vector<weight_t>*>* get_targets_between(unsigned int start, unsigned int end);
 
+	weight_t get_target_at(unsigned int index, unsigned int pos);
+	weight_t get_input_at(unsigned int index, unsigned int pos);
+	
+	bool sanity_check();
 
 	std::vector<weight_t>* get_input(unsigned int index);
 	std::vector<weight_t>* get_target(unsigned int index);

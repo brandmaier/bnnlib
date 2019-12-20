@@ -26,7 +26,7 @@ struct SequenceSet
 	
 	static const int FILE_NOT_FOUND_EXCEPTION = 1;
 	
-	std::vector<Sequence*> set;
+	std::vector<Sequence*> set; // central storage of all sequences
 	
 	string name;
 
@@ -49,6 +49,7 @@ struct SequenceSet
 	SequenceSet(const std::string &filename);
 	SequenceSet(const char* filename);
 	SequenceSet(SequenceSet &sequence_set);
+	SequenceSet(unsigned int num);
 	
 	~SequenceSet();
 	
@@ -65,6 +66,7 @@ struct SequenceSet
 	void init();
 
 	void add_sequence(Sequence* sequence);
+	void add_copy_of_sequence(Sequence* sequence);
 	void add_sequence_set(SequenceSet* sequence_set);
 	
 	void load_from_file(std::string filename);
@@ -93,10 +95,11 @@ struct SequenceSet
 	
 	Sequence* get(unsigned int index)
 	{
-	  if (index < this->size())
+	  if (index >= 0 && index < this->size())
 		  return this->set[index];
-	  else
-	    return(NULL);
+	  else {
+	    return NULL;
+	  }
 	}
 
 	void apply_normalization(vector<weight_t>* input_means, vector<weight_t>* input_stds, vector<weight_t>* target_means, vector<weight_t>* target_stds);
