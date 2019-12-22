@@ -61,6 +61,9 @@ python: bnnlib.cpp
 	
 vignettes/trainer: 
 	R -e "rmarkdown::render('vignettes/trainer.Rmd',output_file='trainer.pdf')"
+
+vignettes/frequencies: 
+	R -e "rmarkdown::render('vignettes/frequencies.Rmd',output_file='frequencies.pdf')"
 		
 	
 

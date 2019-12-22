@@ -33,9 +33,10 @@ Next, we simulate some data in a data.frame and convert this to bnn's Sequence f
 ```{r}
 
 seq <- SequenceSet()
+test <- SequenceSet()
 delay <- 10
 
-num.seq <- 5
+num.seq <- 10
 
 for (i in 1:num.seq) {
 len <- 50
@@ -50,9 +51,15 @@ output[pos+delay]<-1
 
 seq1<-Sequence(input,output,len)
 
-SequenceSet_add_copy_of_sequence(seq,seq1)
-
+if (i > num.seq/2) {
+  SequenceSet_add_copy_of_sequence(test, seq1)
+} else {
+  SequenceSet_add_copy_of_sequence(seq,seq1)
 }
+  
+}
+
+
 ```
 
 This is a sanity check, whether the input and output size is correct.
@@ -79,11 +86,12 @@ Let's generate a list of different training algorithms and run them each for 100
 
 ```{r}
 
-trainer <- list( ImprovedRPropTrainer(net), ImprovedRPropTrainer(net), 
+trainer <- list(
                  BackpropTrainer(net), BackpropTrainer(net), QuickpropTrainer(net),
-                 ARPropTrainer(net))
+                 ARPropTrainer(net),
+                  ImprovedRPropTrainer(net), ImprovedRPropTrainer(net))
 
-steps <- 30
+steps <- 80
 steps.per.iteration <- 1
 err.data <- matrix(data=NA,nrow=length(trainer)*steps,ncol=3)
 err.data <- data.frame(err.data)
@@ -120,4 +128,25 @@ ggplot(data=err.data,
   geom_point()+
   geom_line()+
   theme_minimal()
+```
+
+
+# Test set predictions
+
+```{r}
+#s1 = SequenceSet_get(test, 0)
+s1 = SequenceSet_get(seq, 0)
+Network_activate(net, s1)
+
+ln <- Sequence_size(s1)
+  
+ xs <- rep(NA, ln)
+ for (i in 1:ln) {
+		x <- Network_get_output(net,i)
+		x <- .Call('R_swig_toValue', x, package="bnnlib") 
+		xs[i] <- x
+ }
+
+ 
+ggplot(data=data.frame(x=1:ln, y=x), aes(x=x,y=y))+geom_line() 
 ```

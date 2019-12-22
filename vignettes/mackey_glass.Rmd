@@ -78,4 +78,16 @@ Trainer_batch_learning_set(trainer, TRUE)
 
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Forecasting the time-series
+
+```{r}
+sequence = SequenceSet_get(training_set,0)
+
+predictor = AutoPredictor__SWIG_2(network, DummyTransferFunction() );
+x <- AutoPredictor_predict( predictor, sequence, Sequence_size(sequence), 1);
+
+
+#	AutoPredictor predictor2(network, new LinearTransferFunction() );
+#		predictor2.predict_and_plot( sequence, sequence->size(), 1000);
+
+```

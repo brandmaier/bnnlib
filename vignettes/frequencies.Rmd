@@ -15,8 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 First, we load the shared library.
 
-```{r load, echo=TRUE}
-
+```{r fireup, echo=TRUE}
 
   dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
   source("../bnnlib.R")
@@ -28,9 +27,9 @@ First, we load the shared library.
 
 We generate data from an oscillator that switches between three different frequencies. The switches occur randomly at a chance of 1% (and a switch may choose the identical frequency). We generate multiple sequences each with a length of 1000.
 
-```{r}
-set.seed(1235345)
-par(mfrow=c(2,2))
+```{r generate}
+set.seed(123535)
+
 
 source("../R/toSequence.R")
 
@@ -63,7 +62,7 @@ sim.frequencies <- function(freqs, ts.len = 1000, num.seqs = 4) {
     
     
     seqdf <- data.frame(y, truth)
-    Sequence_name_set(seq, paste0("Sequence #",j))
+ #   Sequence_name_set(seq, paste0("Sequence #",j))
     seq <- toSequence(seqdf, 1, 2:(1+num.freqs))
     
     
@@ -78,9 +77,14 @@ testset <- sim.frequencies(freqs)
 
 ```
 
+Plot data
+```{r plot}
+par(mfrow=c(2,2))
+```
+
 Some sanity checks:
 
-```{r}
+```{r sanity}
 
 SequenceSet_size(seqset)
 SequenceSet_size(testset)
@@ -207,7 +211,7 @@ plot(pl)
 Same on test set
 
 
-```{r eval=FALSE, include=FALSE}
+```{r test}
 seq1<-SequenceSet_get(testset,0)
  Network_activate(network, seq1)
 ln <-Sequence_size(seq1)
@@ -226,7 +230,7 @@ ln <-Sequence_size(seq1)
 ```
 
  
-```{r include=FALSE, eval=FALSE}
+```{r test2}
 library(ggplot2)
   melted <- reshape2::melt(vals)
   melted$Var2 <- factor(melted$Var2)

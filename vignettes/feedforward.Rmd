@@ -90,8 +90,10 @@ ggplot(data=data.frame(step=1:(iterations+1),err),aes(x=step,y=err))+
 Inspect output:
 
 ```{r}
-Network_activate(net, SequenceSet_get(sequence_set,0))
+seq1 <- SequenceSet_get(sequence_set,0)
+Network_activate(net, seq1)
 x<-Network_get_output(net,0)
-#.Call('R_swig_toValue', x, package="bnnlib") 
+
+.Call('R_swig_toValue', x, package="bnnlib") 
 
 ```
