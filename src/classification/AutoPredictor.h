@@ -12,6 +12,7 @@
 #include "../Sequence.h"
 #include <vector>
 
+
 /**
  * TransferFunction specifies the way prediction from the output layer
  * are fed back to the input layer.
@@ -213,6 +214,61 @@ struct LinearTransferFunction : TransferFunction
 	 {
 		 // NOOP
 	 }
+};
+
+struct LinearAddedNoiseTransferFunction : TransferFunction
+{
+  
+  double noise_strength;
+  
+  LinearAddedNoiseTransferFunction(double noise_strength)
+  {
+    this->noise_strength = noise_strength;
+  }
+  
+  void transfer(vector<weight_t>* in, vector<weight_t>* out)
+  {
+    assert(in->size() == out->size());
+    
+    for (unsigned int i=0; i < in->size();i++)
+    {
+      (*in)[i] = (*out)[i] + rand()/(RAND_MAX+1.0)*noise_strength;
+    }
+  }
+  
+  void transfer(vector<weight_t>* in)
+  {
+    // NOOP
+  }
+};
+
+struct LinearDampenedTransferFunction : TransferFunction
+{
+  
+  double dampening_strength;
+  
+  LinearDampenedTransferFunction(double dampening_strength)
+  {
+  //dampening_strength = max(0, dampening_strength);
+    //dampening_strength = min(1, dampening_strength);
+    
+    this->dampening_strength = dampening_strength;
+  }
+  
+  void transfer(vector<weight_t>* in, vector<weight_t>* out)
+  {
+    assert(in->size() == out->size());
+    
+    for (unsigned int i=0; i < in->size();i++)
+    {
+      (*in)[i] = (*out)[i] * dampening_strength;
+    }
+  }
+  
+  void transfer(vector<weight_t>* in)
+  {
+    // NOOP
+  }
 };
 
 struct DummyTransferFunction : TransferFunction

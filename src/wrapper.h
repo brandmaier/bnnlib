@@ -17,8 +17,7 @@ std::vector<double> toValue(std::vector<double>* v);
 
 std::vector<double> getRow(vector<vector<weight_t>*>* x, unsigned int i);
 
-unsigned int getLength(vector<vector<weight_t>*>* x) {
-  return(x->size());
-}
+unsigned int getLength(vector<vector<weight_t>*>* x);
+
 
 #endif

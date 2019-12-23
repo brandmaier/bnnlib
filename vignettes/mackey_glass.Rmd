@@ -43,7 +43,7 @@ You can also embed plots, for example:
 ```{r training, echo=FALSE}
 
 connectivity = .8 # between 0 and 1
-hidden_layer_size = 3
+hidden_layer_size = 10
 num_backward_connections = 5*hidden_layer_size
 
 network = NetworkFactory_create_random_gate_network(1,hidden_layer_size,1,
@@ -64,7 +64,7 @@ Trainer_batch_learning_set(trainer, TRUE)
 
 #Trainer_add_abort_criterion( ConvergenceCriterion(.00001))
 
-	Trainer_train2(trainer, training_set, 200)
+	Trainer_train2(trainer, training_set, 500)
 
 #	GnuplotGenerator_plot_vector__SWIG_0("Training Error", Trainer_error_train_get(trainer))
 
@@ -87,18 +87,19 @@ sequence = SequenceSet_get(training_set,0)
  setClass("_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_p_t_t", contains = 'ExternalReference')
 
 predictor = AutoPredictor__SWIG_2(network, LinearTransferFunction() )
+predictor = AutoPredictor__SWIG_2(network, LinearAddedNoiseTransferFunction(.1) )
+predictor = AutoPredictor__SWIG_2(network, LinearDampenedTransferFunction(.99) )
 
-time_steps <- 100
-context <- 50
+time_steps <- 400
+context <- 200
 x = AutoPredictor_predict( predictor, sequence, time_steps, context)
 
 #x = Network_activate_and_return_activations(network, sequence)
 ```
 
 ```{r broken}
-vals <- sapply(1:100, FUN = function(index){getRow(x, index-1)})
-vals
-getLength(x)
+vals <- sapply(1:time_steps, FUN = function(index){getRow(x, index-1)})
+#getLength(x)
 plot(vals,type="l")
 #	AutoPredictor predictor2(network, new LinearTransferFunction() );
 #		predictor2.predict_and_plot( sequence, sequence->size(), 1000);

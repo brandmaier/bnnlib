@@ -72,7 +72,7 @@ sim.frequencies <- function(freqs, ts.len = 1000, num.seqs = 4) {
   return(seqset)
 }
 
-seqset <- sim.frequencies(freqs)
+seqset <- sim.frequencies(freqs, num.seqs = 8)
 testset <- sim.frequencies(freqs)
 
 ```
@@ -106,13 +106,13 @@ We set up a recurrent neural network with a winner-takes-all output function tha
 ```{r network}
 in_size <- 1
 out_size <- length(freqs)
-hid_size <- 20
+#hid_size = 20
 
 TANH_NODE = 1
 
-network = LSTMNetwork(in_size,hid_size,out_size)
+#network = LSTMNetwork(in_size,hid_size,out_size)
 network = NetworkFactory_createRecurrentWTANetwork(in_size=in_size, hid_type=TANH_NODE, num_layers=2,
-                                    layer_sizes=c(5,5),  out_size=out_size);
+                                    layer_sizes=c(8,8),  out_size=out_size);
 
 ```
 
