@@ -102,7 +102,7 @@ ln <-Sequence_size(seq1)
   vals <- rep(NA,ln)
   trt <- rep(NA, ln)
   for (i in 1:ln) {
-		outp <- Network_get_output(network,i)
+		outp <- Network_get_output(network,i-1)
 		vals[i] <- .Call('R_swig_toValue',  outp, package="bnnlib") 
 		outp <- Sequence_get_target(seq1, i-1)
 		trt[i] <- .Call('R_swig_toValue',  outp, package="bnnlib") 
