@@ -24,7 +24,7 @@ Create a neural network
 ```{r}
 LINEAR_NODE = 3
 
-net <- NetworkFactory_createFeedForwardNetwork(3,20,1, LINEAR_NODE)
+net <- NetworkFactory_createFeedForwardNetwork(3,25,1, LINEAR_NODE)
 ```
 
 Load some data
@@ -34,7 +34,6 @@ Load some data
 data("marketing", package = "datarium")
 head(marketing, 4)
 
-marketing$sales <- marketing$sales/max(marketing$sales)
 ```
 
 Convert data to Sequence format
@@ -66,14 +65,13 @@ cat("Using Trainer: ",Trainer_get_name(bp),"\n")
 Start training
 
 ```{r}
-iterations <- 40
+iterations <- 200
 steps.per.iteration <- 1
 err <- rep(NA, iterations+1)
-err[1] <- Network_evaluate_training_error__SWIG_0(net, seq)
+err[1] <- Network_evaluate_training_error__SWIG_0(net, sequence_set)
 for (i in 1:iterations) {
-  #cat("Training the network for ", steps.per.iteration," steps\n")
   Trainer_train__SWIG_0(bp, sequence_set, steps.per.iteration)
-  err[i+1] <- Network_evaluate_training_error__SWIG_0(net, seq)
+  err[i+1] <- Network_evaluate_training_error__SWIG_0(net, sequence_set)
 }
 ```
 
@@ -82,7 +80,7 @@ With ggplot2, we can plot the training set error over iterations:
 ```{r warning=FALSE, message=FALSE}
 require(ggplot2)
 ggplot(data=data.frame(step=1:(iterations+1),err),aes(x=step,y=err))+
-  geom_point()+
+  geom_point()+ geom_line()+
   geom_smooth()+
   theme_minimal()
 ```
@@ -90,10 +88,14 @@ ggplot(data=data.frame(step=1:(iterations+1),err),aes(x=step,y=err))+
 Inspect output:
 
 ```{r}
-seq1 <- SequenceSet_get(sequence_set,0)
-Network_activate(net, seq1)
-x<-Network_get_output(net,0)
 
-.Call('R_swig_toValue', x, package="bnnlib") 
+outputs <- getOutputs(net, seq)
+targets <- getTargets(seq)
+ggplot(data=data.frame(outputs=outputs, targets=targets), aes(y=outputs,x=targets))+
+  geom_point()+
+  theme_minimal()+
+  xlab("Targets")+ylab("Predictions")+
+  geom_smooth()+
+  ggtitle("Sales")
 
 ```

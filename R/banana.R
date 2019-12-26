@@ -26,12 +26,19 @@ has.trainer <- function(x) {
   if (!is.null(x$trainer)) return (TRUE)  
 }
 
+#'
+#' test whether a banana object has an associated sequenceset
+#'
 has.sequenceset <- function(x) {
   if (!inherits(x,"banana")) stop("Not a banana object.")
   if (!is.null(x$sequenceset)) return (TRUE)
 }
 
 
+#'
+#' pipe command to add elements to a banana object
+#'
+#' @export
 `%>%` <- function(x,y) {
   
   

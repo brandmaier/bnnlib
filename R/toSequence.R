@@ -35,10 +35,43 @@ toSequence <- function(x, input, target, sequence=NULL, ...)
   
 }
 
-toDataFrame <- function(x, ...) {
+setClass("_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_p_t_t", contains = 'ExternalReference')
+
+getTargets <- function(x, ...) {
+  if (inherits(x,"_p_Sequence"))
+    seq <- x
+  else
+    stop("Unknown format!")
+  
+  slen <- Sequence_size(seq)
+  df <- matrix(NA, nrow=slen, ncol=Sequence_get_target_size(seq))
+  for (i in 1:slen) {
+    df[i,] <-  .Call('R_swig_toValue',   Sequence_get_target(seq, i-1), package="bnnlib")
+  }
+  return(df)
+}
+
+getInputs <- function(x, ...) {
+  if (inherits(x,"_p_Sequence"))
+    seq <- x
+  else
+    stop("Unknown format!")
+  
+  slen <- Sequence_size(seq)
+  df <- matrix(NA, nrow=slen, ncol=Sequence_get_input_size(seq))
+  for (i in 1:slen) {
+    df[i,] <-  .Call('R_swig_toValue',   Sequence_get_input(seq, i-1), package="bnnlib")
+  }
+  return(df)
+}
+
+
+getOutputs <- function(network, x, index=NULL, ...) {
   
   if (inherits(x,"_p_Sequence"))
     seq <- x
+  else
+    stop("Unknown format")
   #seq1<-SequenceSet_get(testset,0)
   slen <- Sequence_size(seq)
   Network_activate(network, seq)

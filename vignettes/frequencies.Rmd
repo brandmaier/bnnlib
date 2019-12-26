@@ -76,18 +76,26 @@ testset <- sim.frequencies(freqs)
 
 ```
 
-Plot data
+Plot data from training set:
+
 ```{r plot}
 
-seq1<-SequenceSet_get(seqset,0)
+plotinput <- function(index) {
+seq1<-SequenceSet_get(seqset,index-1)
 ln <- Sequence_size(seq1)
 vals <-  rep(NA, ln)
   for (i in 1:ln) {
 		outp <- Sequence_get_input(seq1, i-1)
 		vals[i] <- .Call('R_swig_toValue',  outp, package="bnnlib") 
   }
-plot(vals)
-#par(mfrow=c(2,2))
+plot(vals, type="l")
+}
+
+par(mfrow=c(2,2))
+plotinput(1)
+plotinput(2)
+plotinput(3)
+plotinput(4)
 ```
 
 We set up a recurrent neural network with a winner-takes-all output function that normalizes the sum of outputs to one and guarantuees that each output is non-negative. The network has a total of three output nodes, one for each possible frequency and learns to encode/predict the probability with which each of the frequencies is "on". Ideally, the network should always select one of the outputs to be close to "1" and the others "0" since this is a noise-free environment. From this task, it is not possible to infer the occurence of a switch, so there will always be some prediction error when a switch occurs but it should be possible to quickly stabilize to the correct prediction.
@@ -117,9 +125,9 @@ Trainer_learning_rate_set( trainer, 0.0001 )
 Train the network
 
 ```{r training}
-Trainer_train2(trainer, seqset, 1000)
+Trainer_train2(trainer, seqset, 500)
 
-Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(0.001),10 )
+Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(0.01),10 )
 ```
 
 Plot the training error.
@@ -192,7 +200,7 @@ pl <- grid.arrange(arrangeGrob(p1 + theme(legend.position="none"),
                          nrow=3),
              mylegend, nrow=2,heights=c(10, 1))
   
-plot(pl)  
+#plot(pl)  
 ```
 
 Same on test set
@@ -252,15 +260,13 @@ pl <- grid.arrange(arrangeGrob(p1 + theme(legend.position="none"),
                          nrow=3),
              mylegend, nrow=2,heights=c(10, 1))
   
-plot(pl)  
+#plot(pl)  
 ```
 
 
 ```{r}
 setClass("_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_p_t_t", contains = 'ExternalReference')
-seq1<-SequenceSet_get(testset,0)
-slen <- Sequence_size(seq1)
-Network_activate(network, seq1)
-data = Network_get_outputs_until(network, slen)
-getRow(data, 0)
+
+outputs <- getOutputs(seq1)
+outputs.long <- reshape2::melt(outputs)
 ```
