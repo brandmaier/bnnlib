@@ -34,3 +34,18 @@ toSequence <- function(x, input, target, sequence=NULL, ...)
   }
   
 }
+
+toDataFrame <- function(x, ...) {
+  
+  if (inherits(x,"_p_Sequence"))
+    seq <- x
+  #seq1<-SequenceSet_get(testset,0)
+  slen <- Sequence_size(seq)
+  Network_activate(network, seq)
+  data = Network_get_outputs_until(network, slen)
+  df <- matrix(NA, nrow=slen, ncol=Sequence_get_target_size(seq))
+  for (i in 1:slen) {
+    df[i, ] = getRow(data, i-1)
+  }
+  return(df)
+}

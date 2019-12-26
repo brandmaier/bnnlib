@@ -18,17 +18,17 @@ print.banana <- function(x, ...) {
 
 has.network <- function(x) {
   if (!inherits(x,"banana")) stop("Not a banana object.")
-  if (!is.null(x$network)) return TRUE
+  if (!is.null(x$network)) return (TRUE);
 }
 
 has.trainer <- function(x) {
   if (!inherits(x,"banana")) stop("Not a banana object.")
-  if (!is.null(x$trainer)) return TRUE  
+  if (!is.null(x$trainer)) return (TRUE)  
 }
 
 has.sequenceset <- function(x) {
   if (!inherits(x,"banana")) stop("Not a banana object.")
-  if (!is.null(x$sequenceset)) return TRUE
+  if (!is.null(x$sequenceset)) return (TRUE)
 }
 
 
@@ -58,6 +58,32 @@ train <- function(x, steps=1) {
   Trainer_train_sequenceset(x, x$sequenceset, steps)
 }
 
-predict.bnn <- function(x, newdata=NULL, ...) {
+#' predict
+#' 
+#' Implementation of generic \code{predict} function
+#' 
+#' @param x A bnn object
+#' 
+#' @export
+  
+predict.bnn <- function(x, newdata=NULL, index=NULL, ...) {
+  
+  stopifnot(inherits("x","banana"))
+  
+  network <- x$network
+  
+  if (inherits(newdata,"Sequence")) {
+    sq <- newdata
+  } else if (inherits(newdata, "SequenceSet")) {
+    sq<-SequenceSet_get(newdata, index-1)
+  
+  } 
+  
+  Network_activate(network, sq)
+  ouputs <- Network_get_outputs_until(network, Sequence_size(sq))
+  
+  return(outputs)
   
 }
+
+

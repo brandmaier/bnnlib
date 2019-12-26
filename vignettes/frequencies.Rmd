@@ -13,14 +13,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Setup
 
-First, we load the shared library.
+First, we load the shared library, some packages, and extra R code.
 
 ```{r fireup, echo=TRUE}
 
-  dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
-  source("../bnnlib.R")
-  cacheMetaData(1)
+dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
+source("../bnnlib.R")
+cacheMetaData(1)
 
+library(gridExtra)
+
+source("../R/toSequence.R")
 ```
 
 ## Generate Frequency Data
@@ -29,9 +32,6 @@ We generate data from an oscillator that switches between three different freque
 
 ```{r generate}
 set.seed(123535)
-
-
-source("../R/toSequence.R")
 
 # simulate frequency data
 freqs = c(50, 77, 91)
@@ -62,7 +62,6 @@ sim.frequencies <- function(freqs, ts.len = 1000, num.seqs = 4) {
     
     
     seqdf <- data.frame(y, truth)
- #   Sequence_name_set(seq, paste0("Sequence #",j))
     seq <- toSequence(seqdf, 1, 2:(1+num.freqs))
     
     
@@ -79,26 +78,16 @@ testset <- sim.frequencies(freqs)
 
 Plot data
 ```{r plot}
-par(mfrow=c(2,2))
-```
 
-Some sanity checks:
-
-```{r sanity}
-
-SequenceSet_size(seqset)
-SequenceSet_size(testset)
-
-SequenceSet_get_input_size(seqset)
-SequenceSet_get_target_size(seqset)
-SequenceSet_get_target_size(testset)
-
-seq <- SequenceSet_get(seqset, 0)
-Sequence_size(seq)
-Sequence_get_input_size(seq)
-Sequence_get_target_size(seq)
-
-Sequence_get_target_at(seq, 0, 0)
+seq1<-SequenceSet_get(seqset,0)
+ln <- Sequence_size(seq1)
+vals <-  rep(NA, ln)
+  for (i in 1:ln) {
+		outp <- Sequence_get_input(seq1, i-1)
+		vals[i] <- .Call('R_swig_toValue',  outp, package="bnnlib") 
+  }
+plot(vals)
+#par(mfrow=c(2,2))
 ```
 
 We set up a recurrent neural network with a winner-takes-all output function that normalizes the sum of outputs to one and guarantuees that each output is non-negative. The network has a total of three output nodes, one for each possible frequency and learns to encode/predict the probability with which each of the frequencies is "on". Ideally, the network should always select one of the outputs to be close to "1" and the others "0" since this is a noise-free environment. From this task, it is not possible to infer the occurence of a switch, so there will always be some prediction error when a switch occurs but it should be possible to quickly stabilize to the correct prediction.
@@ -106,37 +95,36 @@ We set up a recurrent neural network with a winner-takes-all output function tha
 ```{r network}
 in_size <- 1
 out_size <- length(freqs)
-#hid_size = 20
+
 
 TANH_NODE = 1
 
+#hid_size = 20
 #network = LSTMNetwork(in_size,hid_size,out_size)
+
 network = NetworkFactory_createRecurrentWTANetwork(in_size=in_size, hid_type=TANH_NODE, num_layers=2,
                                     layer_sizes=c(8,8),  out_size=out_size);
 
 ```
 
-Initialize Trainer:
+Initialize Trainer and set learning rate:
 
 ```{r}
-
-			trainer = 
-					ImprovedRPropTrainer(network);
-			#learning_rate = 0.0001;
-			Trainer_learning_rate_set( trainer, 0.0001 )
+trainer = ImprovedRPropTrainer(network);
+Trainer_learning_rate_set( trainer, 0.0001 )
 ```
 
 Train the network
 
-```{r}
+```{r training}
 Trainer_train2(trainer, seqset, 1000)
 
-Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(0.0001),10 )
+Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(0.001),10 )
 ```
 
 Plot the training error.
 
-```{r}
+```{r plottraining}
 x <- Trainer_error_train_get(trainer)
 
 library(ggplot2)
@@ -196,9 +184,8 @@ library(ggplot2)
 
 mylegend<-g_legend(p1)
   
-  library(gridExtra)
+
   
-#  grid.arrange(g1,g2,g3, nrow=3)
   
 pl <- grid.arrange(arrangeGrob(p1 + theme(legend.position="none"),
                          p2 + theme(legend.position="none"), p3,
@@ -266,4 +253,14 @@ pl <- grid.arrange(arrangeGrob(p1 + theme(legend.position="none"),
              mylegend, nrow=2,heights=c(10, 1))
   
 plot(pl)  
+```
+
+
+```{r}
+setClass("_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_p_t_t", contains = 'ExternalReference')
+seq1<-SequenceSet_get(testset,0)
+slen <- Sequence_size(seq1)
+Network_activate(network, seq1)
+data = Network_get_outputs_until(network, slen)
+getRow(data, 0)
 ```
