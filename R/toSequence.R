@@ -82,3 +82,15 @@ getOutputs <- function(network, x, index=NULL, ...) {
   }
   return(df)
 }
+
+getActivations <- function(network, sequence) {
+  x <- Network_activate_and_return_activations(network, sequence)
+  num_nodes <- Network_get_num_nodes(network);
+  ln <- Sequence_size(sequence)
+  datfr <- matrix(NA, nrow=ln, ncol=num_nodes)
+  for (i in 1:num_nodes) {
+    rowdat<-  getRow(x,i-1)
+    datfr[,i] <- rowdat
+  }
+  return(datfr)
+}

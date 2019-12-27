@@ -105,6 +105,8 @@ struct Network {
 	void reset(bool keep_derivatives);
 	void reset_gamma(double value);
 	void debug();
+	
+	unsigned int get_num_nodes() { return(this->nodes.size()); }
 
 	/*
 	 * returns a vector of activations of all output nodes at the given time.

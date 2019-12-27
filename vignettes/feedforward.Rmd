@@ -19,7 +19,7 @@ cacheMetaData(1)
 
 ## Feedforward Neural Network
 
-Create a neural network
+Create a feed-forward neural network with 3 inputs, 25 hidden units, and 1 output. The output node is linear.
 
 ```{r}
 LINEAR_NODE = 3
@@ -27,7 +27,7 @@ LINEAR_NODE = 3
 net <- NetworkFactory_createFeedForwardNetwork(3,25,1, LINEAR_NODE)
 ```
 
-Load some data
+Load the marketing dataset from the datarium package.
 
 
 ```{r}
@@ -42,15 +42,11 @@ sequence_set <- SequenceSet()
 
 source("../R/toSequence.R")
 seq <- toSequence(marketing, 1:3, 4)
-
 SequenceSet_add_copy_of_sequence(sequence_set,seq)
 
 cat("Sequences created: ",SequenceSet_size(sequence_set),"\n")
 cat("Input size",SequenceSet_input_size_get(sequence_set),"\n")
 cat("Target size",SequenceSet_target_size_get(sequence_set),"\n")
-
-.Call('R_swig_toValue', Sequence_get_target(seq,0), package="bnnlib") 
-.Call('R_swig_toValue', Sequence_get_target(seq,1), package="bnnlib") 
 
 ```
 

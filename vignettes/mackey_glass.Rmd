@@ -46,8 +46,8 @@ connectivity = .8 # between 0 and 1
 hidden_layer_size = 10
 num_backward_connections = 5*hidden_layer_size
 
-network = NetworkFactory_create_random_gate_network(1,hidden_layer_size,1,
-			connectivity,num_backward_connections);
+#network = NetworkFactory_create_random_gate_network(1,hidden_layer_size,1,
+#			connectivity,num_backward_connections);
 
 network = LSTMNetwork(1, 10, 1);
 
@@ -105,6 +105,16 @@ vals <- sapply(1:time_steps, FUN = function(index){getRow(x, index-1)})
 plot(vals,type="l")
 #	AutoPredictor predictor2(network, new LinearTransferFunction() );
 #		predictor2.predict_and_plot( sequence, sequence->size(), 1000);
+```
 
+```{r}
+x <- Network_activate_and_return_activations(network, sequence)
+num_nodes <- Network_get_num_nodes(network);
+ln <- Sequence_size(sequence)
+datfr <- matrix(NA, nrow=ln, ncol=num_nodes)
+for (i in 1:num_nodes) {
+  rowdat<-  getRow(x,i-1)
+ datfr[,i] <- rowdat
+}
 ```
 
