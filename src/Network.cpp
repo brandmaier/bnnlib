@@ -1709,14 +1709,32 @@ weight_t Network::calculate_SSE(std::vector<std::vector<weight_t>*>* a, std::vec
  * */
 void Network::export_to_dot_graph(string filename)
 {
+  string dotfilename = filename;
+  dotfilename.append(".dot");
+  
+  std::ofstream out(dotfilename.c_str());
+  
+  out << to_dot_graph();
+    
+  out.close();	
+  
+  stringstream cmd;
+  cmd << "dot "<<filename <<".dot -Tpng > "<<filename<<".png";
+  cout << "executing: " << cmd.str() << endl;
+  int returnvalue = system(cmd.str().c_str());
+  
+  if (returnvalue != 0)
+    error("Problem in Dot Graph generation");
+}
+
+
+string Network::to_dot_graph()
+{
 	assert(size > 0);
 	
 	bool show_weights = true;
 
-	string dotfilename = filename;
-	dotfilename.append(".dot");
-
-	std::ofstream out(dotfilename.c_str());
+   std::basic_stringstream<char> out;
 		
 	// ratio=auto;rankdir=TB;
 	out << "digraph G { mclimit=1000;\n";
@@ -1783,16 +1801,10 @@ void Network::export_to_dot_graph(string filename)
 	}		
 		
 		out << "}\n";
+	
+	return(out.str());
 		
-		out.close();	
-		
-		stringstream cmd;
-		cmd << "dot "<<filename <<".dot -Tpng > "<<filename<<".png";
-		cout << "executing: " << cmd.str() << endl;
-		int returnvalue = system(cmd.str().c_str());
-
-		if (returnvalue != 0)
-			error("Problem in Dot Graph generation");
+	
 }
 
 
@@ -2255,6 +2267,11 @@ vector<string> Network::get_node_names()
     result.push_back( this->nodes[i]->name);
   }
   return(result);
+}
+
+string Network::get_node_name(unsigned int i)
+{
+    return(this->nodes[i]->name);
 }
  
 

@@ -119,7 +119,8 @@ struct Network {
 	void add_output_to_input_feedback(bool trainable);
 
 	void export_to_dot_graph(string filename);
-
+	string to_dot_graph();
+	
 	void reinitialise();
 
 	void reserve( unsigned int buffer_size );
@@ -214,6 +215,7 @@ struct Network {
 
 	vector<Node*>* get_nodes_with_name(string name);
 	vector<string> get_node_names();
+	string get_node_name(unsigned int i);
 
 	void add_ensemble(Ensemble* ensemble);
 	void add_ensemble(Ensemble* ensemble, bool add_all_nodes_to_network);

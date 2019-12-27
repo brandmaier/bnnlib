@@ -116,5 +116,8 @@ for (i in 1:num_nodes) {
   rowdat<-  getRow(x,i-1)
  datfr[,i] <- rowdat
 }
+
+#nodenames <- Network_get_node_names(network)
+#getString(nodenames, 0)
 ```
 

@@ -11,3 +11,7 @@ std::vector<double> getRow(vector<vector<weight_t>*>* x, unsigned int i) {
 unsigned int getLength(vector<vector<weight_t>*>* x) {
   return(x->size());
 }
+
+string getString(std::vector<string> x, unsigned int i) { return(x[i]);}
+
+void setRandomSeed(int i) { srand(i); }

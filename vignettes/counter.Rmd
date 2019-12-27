@@ -1,0 +1,117 @@
+---
+title: "Counter"
+author: "Andreas M. Brandmaier"
+date: "12/27/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Setup
+
+First, we load the shared library.
+
+```{r load, echo=TRUE}
+
+
+  dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
+  source("../bnnlib.R")
+  cacheMetaData(1)
+
+  source("../R/toSequence.R")
+  
+```
+
+## Generate Data
+
+Generate some sequences with a counting task. 
+
+```{r}
+set.seed(234) # for all R commands
+setRandomSeed(234) # for all C++ commands
+
+seqset <- SequenceSet()
+
+max.num.spikes <- 5
+
+for (i in 1:20) {
+ln <- sample(20:100,1)
+input <- rep(0,ln)
+num.spikes <- sample(1:max.num.spikes,1)
+input[sample(1:ln,num.spikes,replace=FALSE)]<-1
+target <- cumsum(input)/max.num.spikes
+
+seq <- toSequence( data.frame(input,target),1,2)
+
+
+SequenceSet_add_copy_of_sequence(seqset, seq)
+}
+```
+
+
+## Training
+
+```{r training, echo=FALSE}
+
+network = LSTMNetwork(1,1,1)
+
+trainer = ImprovedRPropTrainer(network)
+Trainer_train__SWIG_0(trainer, seqset, 400)
+
+
+```
+
+Plot the training error.
+
+```{r plottraining}
+x <- Trainer_error_train_get(trainer)
+
+library(ggplot2)
+	values <- .Call('R_swig_toValue',  x, package="bnnlib") 
+	ggplot(data.frame(x=1:length(values),values),aes(x=x,y=values))+geom_line()+
+	  theme_minimal()+ggtitle("Trainingset Error")
+```
+
+Get activations
+
+```{r}
+seq <- SequenceSet_get(seqset, 0)
+x = getActivations(network, seq)
+
+
+nms <- rep(NA, ncol(x))
+for (i in 1:ncol(x))
+  nms[i] = Network_get_node_name(network, i-1)
+
+nms <- make.unique(nms)
+
+xlong <- reshape2::melt(x)
+xlong$Var2 <- factor(xlong$Var2, labels = nms)
+ggplot(data=xlong, aes(x=Var1,y=value,group=Var2,col=Var2))+geom_line()
+
+
+xlongfilt <- xlong[substr(xlong$Var2,1,3)=="CEC",]
+ggplot(data=xlongfilt, aes(x=Var1,y=value,group=Var2,col=Var2))+geom_line()
+
+```
+
+Check target and outputs
+
+```{r}
+plot_to<-function(index) {
+seq <- SequenceSet_get(seqset, index-1)
+outputs <- getOutputs(network, seq)
+targets <- getTargets(seq)
+
+df <- data.frame(vals=c(outputs,targets),time=rep(1:length(outputs),2),
+                 grp=factor(rep(c("output","target"),each=length(outputs))))
+
+pl <- ggplot(data=df, aes(x=time,y=vals,group=grp,col=grp))+geom_line()
+(pl)
+}
+
+plot_to(1)
+```
