@@ -37,8 +37,8 @@ seqset <- SequenceSet()
 
 max.num.spikes <- 5
 
-for (i in 1:20) {
-ln <- sample(20:100,1)
+for (i in 1:50) {
+ln <- sample(20:150,1)
 input <- rep(0,ln)
 num.spikes <- sample(1:max.num.spikes,1)
 input[sample(1:ln,num.spikes,replace=FALSE)]<-1
@@ -56,7 +56,8 @@ SequenceSet_add_copy_of_sequence(seqset, seq)
 
 ```{r training, echo=FALSE}
 
-network = LSTMNetwork(1,1,1)
+#network = LSTMNetwork(1,1,1)
+network = RecurrentNetwork(1,10,1)
 
 trainer = ImprovedRPropTrainer(network)
 Trainer_train__SWIG_0(trainer, seqset, 400)
@@ -114,4 +115,5 @@ pl <- ggplot(data=df, aes(x=time,y=vals,group=grp,col=grp))+geom_line()
 }
 
 plot_to(1)
+plot_to(20)
 ```

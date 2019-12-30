@@ -1,0 +1,127 @@
+---
+title: "Autoassociator"
+author: "Andreas M. Brandmaier"
+date: "12/29/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setup
+
+First, we load the shared library.
+
+```{r load, echo=TRUE}
+
+
+  dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
+  source("../bnnlib.R")
+  cacheMetaData(1)
+
+  source("../R/toSequence.R")
+  
+```
+
+## Generate Data
+
+Generate some sequences with a counting task. 
+
+```{r}
+set.seed(234) # for all R commands
+setRandomSeed(234) # for all C++ commands
+
+sequence_set <- SequenceSet()
+
+ln <- 100
+dims <- 5
+input <- matrix(NA, nrow=ln,ncol=dims)
+
+truths <- abs(rnorm(ln))+1
+modes <- sample(c(1,2),ln, replace=TRUE)
+
+for (i in 1:ln) {
+ truth <- truths[i]
+  mode <- modes[i]
+  if (mode==1)
+    x <- c(truth, truth*truth, log(truth),truth*3.5,truth*truth*truth)
+  else
+    x <- c(truth, truth, truth, log(truth),log(truth))
+  
+  x <- x + rnorm(5,0,.1)
+  input[i,] <- x
+}
+target <- input
+
+#target
+
+seq <- toSequence( data.frame(input,target),1:5,6:10)
+SequenceSet_add_copy_of_sequence(sequence_set, seq)
+```
+
+
+## Feedforward Neural Network
+
+Create a feed-forward neural network with 3 inputs, 25 hidden units, and 1 output. The output node is linear.
+
+```{r}
+LINEAR_NODE = 3
+
+net <- NetworkFactory_createFeedForwardNetwork(dims,2,dims, LINEAR_NODE)
+```
+
+
+Initialize training algorithm
+
+```{r}
+trainer <- ImprovedRPropTrainer(net)
+
+cat("Using Trainer: ",Trainer_get_name(trainer),"\n")
+
+ Network_evaluate_training_error__SWIG_0(net, sequence_set)
+ 
+ 
+Trainer_train__SWIG_0(trainer, sequence_set, 400)
+
+Network_evaluate_training_error__SWIG_0(net, sequence_set)
+ 
+
+```
+
+Obtain hidden layer activations:
+
+```{r}
+x = getActivations(net, seq)
+nms <- rep(NA, ncol(x))
+for (i in 1:ncol(x))
+  nms[i] = Network_get_node_name(net, i-1)
+
+nms <- make.unique(nms)
+
+
+acts <- getActivations(net, seq)
+acts.long <- reshape2::melt(acts)
+acts.long$Var2 <- factor(acts.long$Var2, labels = nms)
+library(ggplot2)
+ggplot(acts.long, aes(x=Var1, y=value,group=Var2, col=Var2))+geom_line()
+
+# filter only latens
+
+acts <- getActivations(net, seq)
+acts <- acts[1:100,] # TODO: fix
+acts <- cbind(acts, modes, truths)
+colnames(acts)[1:length(nms)]<-nms
+acts.long <- reshape2::melt(acts)
+acts.sub <- acts.long[acts.long$Var2 %in% c("Tanh6","Tanh7","modes"),]
+ggplot(acts.sub, aes(x=Var1, y=value,group=Var2, col=Var2))+geom_line()
+
+```
+
+Get architecture:
+
+```{r echo=FALSE}
+dot.lang <- Network_to_dot_graph(net)
+require("DOT")
+DOT::dot(dot.lang)
+```
