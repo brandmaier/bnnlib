@@ -267,6 +267,6 @@ pl <- grid.arrange(arrangeGrob(p1 + theme(legend.position="none"),
 ```{r}
 setClass("_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_p_t_t", contains = 'ExternalReference')
 
-outputs <- getOutputs(seq1)
+outputs <- getOutputs(network, seq1)
 outputs.long <- reshape2::melt(outputs)
 ```

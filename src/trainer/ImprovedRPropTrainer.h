@@ -20,10 +20,7 @@ struct ImprovedRPropTrainer : Trainer
 	ImprovedRPropTrainer(Network* network);
 	~ImprovedRPropTrainer() {};
 
-//	void change_weights();
 	void change_weight(Trainable* c);
-
-//	void reset();
 
 	// R-Prop constants
 	static weight_t eta_minus;

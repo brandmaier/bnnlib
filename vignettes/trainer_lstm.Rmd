@@ -31,10 +31,11 @@ First, we load the shared library.
 Next, we simulate some data in a data.frame and convert this to bnn's Sequence format:
 
 ```{r}
+set.seed(34235)
 
 seq <- SequenceSet()
 test <- SequenceSet()
-delay <- 10
+delay <- 20
 
 num.seq <- 10
 
@@ -44,7 +45,7 @@ len <- 50
 input <- rep(0,len)
 output <- rep(0,len)
 
-pos <- sample(1:40,1)
+pos <- sample(1:(len-delay-1),1)
 cat(i,".: Position=",pos,"\n")
 input[pos]<-1
 output[pos+delay]<-1
@@ -87,7 +88,7 @@ Let's generate a list of different training algorithms and run them each for 100
 ```{r}
 
 trainer <- list(
-                 BackpropTrainer(net), BackpropTrainer(net), QuickpropTrainer(net),
+                 BackpropTrainer(net), BackpropTrainer(net),
                  ARPropTrainer(net),
                   ImprovedRPropTrainer(net), ImprovedRPropTrainer(net))
 

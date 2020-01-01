@@ -2,7 +2,9 @@
 title: "Autoassociator"
 author: "Andreas M. Brandmaier"
 date: "12/29/2019"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -120,7 +122,7 @@ ggplot(acts.sub, aes(x=Var1, y=value,group=Var2, col=Var2))+geom_line()
 
 Get architecture:
 
-```{r echo=FALSE}
+```{r results="asis"}
 dot.lang <- Network_to_dot_graph(net)
 require("DOT")
 DOT::dot(dot.lang)

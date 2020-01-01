@@ -96,8 +96,12 @@ void ARPropTrainer::change_weight(Trainable* c)
 	/*if (c->tag) {
 		cout << "Change: " << change << " sign: " << sign << endl;
 	}*/
-	/*Connection* conn = dynamic_cast<Connection*>(c);
-	if (conn != NULL) {
+
+	
+	phase = !phase;
+	
+	//Connection* conn = dynamic_cast<Connection*>(c);
+	/*if (conn != NULL) {
 		if( (conn->to->functional_type == Node::LSTM_INPUT_GATE) || (conn->to->functional_type == Node::LSTM_OUTPUT_GATE)) {
 			if (sign < 0) {
 				double corr = 1+(rand_uniform_01()*(1.0/exp2f(total_iterations*0.01)));
@@ -111,6 +115,17 @@ void ARPropTrainer::change_weight(Trainable* c)
 	std::cout << " Change : " << change << " und sign " << sign <<
 			 " derivs:" << c->derivative << "," << c->previous_derivative << " gamma: " << c->gamma << endl;
 
+	// phase
+	if (phase) {
+	  if (c->tag) {
+	    change=0.1*change;
+	  } 
+	} else {
+	  if (!c->tag) {
+	    change=0.1*change;
+	  }
+	}
+	
 	c->weight += change;
 	c->previous_weight_change = change;
 	c->previous_derivative = c->derivative;

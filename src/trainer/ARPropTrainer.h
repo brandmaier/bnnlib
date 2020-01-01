@@ -27,6 +27,8 @@ struct ARPropTrainer : public Trainer
 	static weight_t gamma_min;
 
 	unsigned int q = 0;
+	
+	bool phase = true;
 
 	virtual string get_name()
 	{
