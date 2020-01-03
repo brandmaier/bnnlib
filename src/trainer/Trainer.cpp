@@ -53,6 +53,11 @@ string Trainer::get_name()
 	return "Generic Trainer";
 }
 
+void Trainer::prepare_step()
+{
+  return;
+}
+
 
 void Trainer::train(SequenceSet* sequenceset,SequenceSet* validation_set,  unsigned int iterations)
 {
@@ -102,6 +107,7 @@ void Trainer::train(SequenceSet* sequenceset,SequenceSet* validation_set,  unsig
 
 		for (unsigned int i=0; i < iterations; i++, i_every++)
 		{
+		  this->prepare_step();
 
 			//  [1] perform weight changes, adapt learning rate
 			this->train_sequenceset(sequenceset);

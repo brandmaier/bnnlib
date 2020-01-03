@@ -1,0 +1,109 @@
+---
+title: "ImageCompression"
+author: "Andreas M. Brandmaier"
+date: "1/1/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+  dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
+  source("../bnnlib.R")
+  cacheMetaData(1)
+  
+source("../R/toSequence.R")
+source("../R/bnn.R")
+```
+
+## Load Images
+
+```{r cars}
+library(png)
+library(raster)
+
+images <- c("bottle1.png","bottle2.png","bottle3.png","fish1.png","fish2.png","fish3.png")
+
+path<-"../OpenclipartShapes/"
+
+
+sw<-function(pic)
+{
+	temp <- (pic[,,1]+pic[,,2]+pic[,,3])/3
+	return(as.matrix(temp))
+}
+
+downsample<-function(pic)
+{
+  pic[seq(1,1000,12),seq(1,1000,12)]
+}
+
+
+sequence_set <- SequenceSet()
+
+for (fname in images) {
+  img <- readPNG(paste0(path,fname))
+  img <- downsample(sw(img))
+
+
+  data.row <- as.vector(img)
+  data.row <- data.frame(t(data.row)) # 1x 7056
+
+ln <- length(img)
+
+sequence <- toSequence(data.row, 1:ln, 1:ln)
+
+SequenceSet_add_copy_of_sequence(sequence_set, sequence)
+}
+```
+
+## Create auto-associator
+
+```{r pressure, echo=FALSE}
+dim <- 84
+dims <- dim*dim
+```
+
+## Feedforward Neural Network
+
+Create a feed-forward neural network with 3 inputs, 25 hidden units, and 1 output. The output node is linear.
+
+```{r}
+LINEAR_NODE = 3
+
+net <- NetworkFactory_createFeedForwardNetwork(dims,4,dims, LINEAR_NODE)
+```
+
+
+Initialize training algorithm
+
+```{r}
+trainer <- ImprovedRPropTrainer(net)
+
+cat("Using Trainer: ",Trainer_get_name(trainer),"\n")
+
+ Network_evaluate_training_error__SWIG_0(net, sequence_set)
+ 
+Sys.time()
+Trainer_train__SWIG_0(trainer, sequence_set, 50)
+Sys.time()
+
+Network_evaluate_training_error__SWIG_0(net, sequence_set)
+ 
+```
+
+Obtain hidden activations
+
+```{r}
+x = getActivations(net, sequence)
+```
+
+# Plot latent space projections
+
+```{r}
+source("../R/plotActivations.R")
+plotActivations(net, sequence, node.names = c("Tanh1","Tanh2","Tanh3"))
+```

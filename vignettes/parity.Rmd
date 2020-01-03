@@ -63,7 +63,7 @@ trainer = ImprovedRPropTrainer(network);
 		
 	T#rainer_learning_rate_set( trainer, 0.0001 );
 
-#Trainer_batch_learning_set(trainer, TRUE)
+Trainer_batch_learning_set(trainer, TRUE)
 
 
 #	trainer->abort_criteria.push_back( new ConvergenceCriterion(10e-7) );
@@ -111,5 +111,13 @@ ln <-Sequence_size(seq1)
   plot(vals)
   points(trt, col="green")
 ```
+
+```{r}
+source("../R/toSequence.R")
+x <- getOutputs(network, seq1)
+x
+```
+
+
 
 

@@ -98,6 +98,8 @@ struct Trainer
 	    train(sequences, iterations);
 	}
 	
+	virtual void prepare_step();
+	
 	virtual void train(SequenceSet* sequences, unsigned int iterations);
 	virtual void train(SequenceSet* sequenceset,SequenceSet* testset,  unsigned int iterations);
 	void train(DataSet* dataset,  unsigned int iterations);

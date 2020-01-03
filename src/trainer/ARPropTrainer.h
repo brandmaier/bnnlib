@@ -34,6 +34,8 @@ struct ARPropTrainer : public Trainer
 	{
 		return "Andys RProp";
 	}
+	
+	virtual void prepare_step();
 };
 
 #endif /* ARPropTRAINER_H_ */

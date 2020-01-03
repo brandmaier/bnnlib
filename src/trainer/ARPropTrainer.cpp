@@ -46,6 +46,15 @@ ARPropTrainer::ARPropTrainer(Network* network) : Trainer()
 	q = 1;
 }
 
+void ARPropTrainer::prepare_step()
+{
+  phase = !phase;
+  cout << "Setting Phase to " << phase << endl;
+  
+  return;
+}
+
+
 void ARPropTrainer::change_weight(Trainable* c)
 {
 	if (c->freeze_weight == true)
@@ -98,7 +107,7 @@ void ARPropTrainer::change_weight(Trainable* c)
 	}*/
 
 	
-	phase = !phase;
+
 	
 	//Connection* conn = dynamic_cast<Connection*>(c);
 	/*if (conn != NULL) {
