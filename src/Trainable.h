@@ -12,12 +12,16 @@
 
 struct Trainable
 {
-
+  static const unsigned int gradients_size = 5;
+  
 	weight_t derivative;
 	weight_t previous_derivative;
 	weight_t gamma;
 	weight_t previous_weight_change;
 	weight_t weight;
+	
+	weight_t gradients[gradients_size];
+	unsigned int gradients_pointer;
 
 	bool tag;	// bool tag for various purposes
 
@@ -44,6 +48,10 @@ struct Trainable
 		this->gamma = 0.1;
 		this->freeze_weight = false;
 		this->tag = false;
+		
+		this->gradients_pointer = 0;
+		for (unsigned int i=0; i < gradients_size; i++) 
+		  this->gradients[i] = 0.0;
 	}
 
 };

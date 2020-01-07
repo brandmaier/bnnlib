@@ -216,6 +216,65 @@ struct LinearTransferFunction : TransferFunction
 	 }
 };
 
+struct WinnerTakesAllTransferFunction : TransferFunction
+{
+  void transfer(vector<weight_t>* in, vector<weight_t>* out)
+  {
+    assert(in->size() == out->size());
+    
+    unsigned int max_index = 0;
+    for (unsigned int i=0; i < in->size();i++)
+    {
+      if ((*out)[i] > (*out)[max_index]) max_index=i;
+    }
+    
+    for (unsigned int i=0; i < in->size();i++)
+    {
+      if (i==max_index)
+        (*in)[i] = 1;
+      else
+        (*in)[i] = 0;
+    }
+  }
+  
+  void transfer(vector<weight_t>* in)
+  {
+    // NOOP
+  }
+};
+
+struct ProbabilisticWinnerTakesAllTransferFunction : TransferFunction
+{
+  void transfer(vector<weight_t>* in, vector<weight_t>* out)
+  {
+    assert(in->size() == out->size());
+    
+    double r = ((double) rand() / (RAND_MAX));
+    double sum = 0.0;
+    
+    // initialize inputs with 0
+    for (unsigned int i=0; i < in->size();i++)
+    {
+      (*in)[i] = 0;
+    }
+    
+    // find the peak activation
+    bool done = false;
+    for (unsigned int i=0; i < in->size();i++)
+    {
+      sum += (*out)[i];
+      if (r <= sum) { (*in)[i]=1; i=in->size(); done=true; }
+    }
+    if (!done) (*out)[in->size()-1] = 1; // catch numeric integration problems
+    
+  }
+  
+  void transfer(vector<weight_t>* in)
+  {
+    // NOOP
+  }
+};
+
 struct LinearAddedNoiseTransferFunction : TransferFunction
 {
   

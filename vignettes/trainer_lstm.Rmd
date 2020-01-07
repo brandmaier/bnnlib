@@ -90,7 +90,7 @@ Let's generate a list of different training algorithms and run them each for 100
 trainer <- list(
                  BackpropTrainer(net), BackpropTrainer(net), RPropTrainer(net),
                  ARPropTrainer(net),
-                  ImprovedRPropTrainer(net), ImprovedRPropTrainer(net))
+                  ImprovedRPropTrainer(net), ImprovedRPropTrainer(net), RMSPropTrainer(net))
 
 steps <- 80
 steps.per.iteration <- 1

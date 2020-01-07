@@ -31,6 +31,7 @@ using namespace std;
 #include "src/trainer/Trainer.h"
 #include "src/trainer/BackpropTrainer.h"
 #include "src/trainer/RPropTrainer.h"
+#include "src/trainer/RMSPropTrainer.h"
 #include "src/trainer/MyRPropTrainer.h"
 #include "src/trainer/ImprovedRPropTrainer.h"
 #include "src/trainer/GeneticTrainer.h"
@@ -162,6 +163,7 @@ namespace std {
 %include src/trainer/BackpropTrainer.h
 %include src/trainer/MyRPropTrainer.h
 %include src/trainer/RPropTrainer.h
+%include src/trainer/RMSPropTrainer.h
 %include "src/trainer/ImprovedRPropTrainer.h"
 %include "src/trainer/QuickpropTrainer.h"
 %include "src/criteria/Criterion.h"
