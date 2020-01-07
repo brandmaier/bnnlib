@@ -1,0 +1,212 @@
+---
+title: "Grammar Learning"
+author: "Andreas M. Brandmaier"
+date: "1/6/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setup
+
+First, we load the shared library, some packages, and extra R code.
+
+```{r fireup, echo=TRUE}
+
+dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
+source("../bnnlib.R")
+cacheMetaData(1)
+
+library(gridExtra)
+library(tictoc)
+
+source("../R/toSequence.R")
+```
+
+
+## Generate Data
+
+Generate data from a simple state machine.
+Transitions are:
+- from A to B
+- from B to A or C
+- from C to CB (always two Cs then B)
+
+```{r}
+total.size <- 4000
+text <- rep("A",total.size)
+for (i in 2:total.size) {
+  if (text[i-1]=="A") { text[i]="B"}
+  if (text[i-1]=="B") {
+    if (runif(1)<.5) text[i]="A"
+    else text[i]="C"
+  }
+  if (text[i-1]=="C") {
+    if (text[i-2]=="C")
+     text[i]="B"
+    else
+     text[i]="C"
+  }
+}
+
+
+```
+
+# Get a 0-1-Matrix for a given Alphabet and Text.
+
+```{r}
+# Get a 0-1 Matrix for a given alphabet and text.
+
+
+myletters <- c("A","B","C")
+
+# function that looks up whether a letter from the alphabet is in x, gives back True or False 
+where_in_alphabet_ <- function(x, alphabet = myletters) {alphabet %in% x}
+
+# 0-1 Matrix with option to return True-False Matrix when setting numeric = FALSE 
+where_in_alphabet <- function(x, alphabet = letters, numeric = TRUE){
+  out <- t(apply(matrix(x), 1, where_in_alphabet_, alphabet = alphabet))
+  colnames(out) <- alphabet
+  rownames(out) <- x
+  if (numeric) out <- out*1
+  out
+}
+
+tic()
+tfmatrix = where_in_alphabet(text, myletters)
+toc()
+
+head(tfmatrix)
+
+```
+
+
+```{r}
+
+
+
+tic()
+seqset = SequenceSet()
+seq = Sequence()
+
+ln <- ncol(tfmatrix)
+
+for (i in 1:(min(nrow(tfmatrix)-1,40000))  ) {
+  input_vals = tfmatrix[i,]
+  target_vals = tfmatrix[i+1,]
+  
+ Sequence_add_from_array(seq, input_vals, target_vals, ln, ln)
+}
+  
+ SequenceSet_add_copy_of_sequence(seqset, seq)
+ toc()
+```
+
+
+```{r network}
+
+
+
+TANH_NODE = 1
+
+#hid_size = 4
+#network = LSTMNetwork(ln,hid_size,ln)
+
+network = NetworkFactory_createRecurrentWTANetwork(in_size=ln, hid_type=TANH_NODE, num_layers=2,
+                                    layer_sizes=c(5,5),  out_size=ln);
+
+```
+
+## Auto-predict
+
+A function to generate text from the network:
+
+```{r autopred}
+
+predict.text <- function(context=20, probabilistic=TRUE) {
+
+sequence = SequenceSet_get(seqset,0)
+
+
+ setClass("_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_p_t_t", contains = 'ExternalReference')
+
+
+if (!probabilistic) {
+  predictor = AutoPredictor__SWIG_2(network, WinnerTakesAllTransferFunction() )
+} else {
+  predictor = AutoPredictor__SWIG_2(network, ProbabilisticWinnerTakesAllTransferFunction() )
+}
+
+time_steps <- 400
+x = AutoPredictor_predict( predictor, sequence, time_steps, context)
+vals <- sapply(1:time_steps, FUN = function(index){getRow(x, index-1)})
+#char.ids <- apply(vals,2, which.max)
+
+
+generate_text2 <- function(tfmatrix, alphabet = letters) {
+  # browser()
+  outputvector <- vector(mode = "character", length = nrow(tfmatrix))
+  for (i in seq_len(NROW(tfmatrix))) {
+    replace <- alphabet[which.max(tfmatrix[i, ])]
+    if(length(replace) == 0L) replace <- NA_character_ #control for case of numbers, other non-alphabetic elements
+    outputvector[i] <- replace
+  }
+  outputvector
+}
+
+paste0(generate_text2(t(vals), alphabet=myletters),collapse = "")
+
+}
+#x = Network_activate_and_return_activations(network, sequence)
+```
+
+
+Since the network only has random initial weights, the text will be random:
+
+```{r}
+predict.text()
+```
+
+Initialize Trainer and set learning rate:
+
+```{r}
+trainer = ImprovedRPropTrainer(network);
+Trainer_learning_rate_set( trainer, 0.01 )
+```
+
+Train the network
+
+```{r training}
+Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(0.001),1 )
+
+tic()
+Trainer_train2(trainer, seqset, 500)
+toc()
+
+	values <- .Call('R_swig_toValue',  Trainer_error_train_get(trainer), package="bnnlib") 
+	
+	library(ggplot2)
+	ggplot2::ggplot(data.frame(x=1:length(values),values),aes(x=x,y=values))+geom_point()+
+	  geom_line()+geom_smooth()
+```
+
+## Generate new sequences
+
+```{r}
+chop <- function(txt) { sapply(seq(1,nchar(txt),30),function(x){ substr(txt,x,x+30)})}
+```
+
+Generating new text from the network using probability mapping:
+
+```{r}
+chop(predict.text(1))
+```
+
+Generating new text from network using MAP mapping:
+```{r}
+chop(predict.text(1,FALSE))
+```
