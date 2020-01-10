@@ -2680,7 +2680,7 @@ void Network::sort_nodes(vector<Node*>* in, vector<Node*>* out)
  * - tag all output nodes
  *
  */
-void Network::sort_nodes_deprecated(vector<Node*>* in, vector<Node*>* out)
+/*void Network::sort_nodes_deprecated(vector<Node*>* in, vector<Node*>* out)
 {
 	//int removed = remove_secluded_nodes();
 	time_t start_sorting = time(NULL);
@@ -2846,6 +2846,7 @@ void Network::sort_nodes_deprecated(vector<Node*>* in, vector<Node*>* out)
 
 	cout << "Sorting took " << (time(NULL)-start_sorting)/60.0 << "min" << endl;
 }
+*/
 
 /**
  * removes all nodes that do not have incoming or outgoing connections

@@ -17,8 +17,6 @@ struct RMSPropTrainer : Trainer
 
 	void change_weight(Trainable* c);
 	
-	// RMS-Prop moving average
-	static weight_t squared_gradient_moving_average;
 
 	static weight_t beta;
 	

@@ -19,6 +19,8 @@ struct Trainable
 	weight_t gamma;
 	weight_t previous_weight_change;
 	weight_t weight;
+	weight_t rms;
+	weight_t rms_sq;
 	
 	weight_t gradients[gradients_size];
 	unsigned int gradients_pointer;
@@ -48,6 +50,9 @@ struct Trainable
 		this->gamma = 0.1;
 		this->freeze_weight = false;
 		this->tag = false;
+		this->rms = 0.0;
+		this->rms_sq = 0.0;
+		
 		
 		this->gradients_pointer = 0;
 		for (unsigned int i=0; i < gradients_size; i++) 

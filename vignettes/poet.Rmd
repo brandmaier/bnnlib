@@ -78,14 +78,19 @@ seq = Sequence()
 
 ln <- ncol(tfmatrix)
 
-for (i in 1:(min(nrow(tfmatrix)-1,40000))  ) {
+for (i in 1:(min(nrow(tfmatrix)-1,80000))  ) {
   input_vals = tfmatrix[i,]
   target_vals = tfmatrix[i+1,]
   
  Sequence_add_from_array(seq, input_vals, target_vals, ln, ln)
+ 
+ if (i %% 100==0) {
+   SequenceSet_add_copy_of_sequence(seqset, seq)
+   seq = Sequence()
+ }
 }
   
- SequenceSet_add_copy_of_sequence(seqset, seq)
+ 
  toc()
 ```
 
@@ -99,9 +104,10 @@ TANH_NODE = 1
 #hid_size = 40
 #network = LSTMNetwork(ln,hid_size,ln)
 
-network = NetworkFactory_createRecurrentWTANetwork(in_size=ln, hid_type=TANH_NODE, num_layers=2,
-                                    layer_sizes=c(80,26),  out_size=ln);
+network = NetworkFactory_createRecurrentWTANetwork(in_size=ln, hid_type=TANH_NODE, num_layers=1,
+                                    layer_sizes=c(80),  out_size=ln);
 
+Network_error_function_set(network, WinnerTakesAllErrorFunction())
 ```
 
 ## Auto-predict
@@ -110,7 +116,7 @@ A function to generate text from the network:
 
 ```{r autopred}
 
-predict.text <- function(context=20, probabilistic=TRUE) {
+predict.text <- function(context=50, probabilistic=TRUE) {
 
 sequence = SequenceSet_get(seqset,0)
 
@@ -158,6 +164,7 @@ Initialize Trainer and set learning rate:
 
 ```{r}
 trainer = ImprovedRPropTrainer(network);
+#trainer = ADAMTrainer(network)
 Trainer_learning_rate_set( trainer, 0.01 )
 ```
 
@@ -187,5 +194,5 @@ Generating new text from the network:
 
 
 ```{r}
-chop(predict.text(10))
+predict.text(50)
 ```

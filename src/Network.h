@@ -106,6 +106,11 @@ struct Network {
 	void reset_gamma(double value);
 	void debug();
 	
+	
+	unsigned int get_num_ensembles() {
+	  return (this->ensembles.size());
+	}
+	
 	unsigned int get_num_nodes() { return(this->nodes.size()); }
 
 	/*
@@ -227,7 +232,7 @@ struct Network {
 	void sort_nodes(vector<Node*>* in, vector<Node*>* out);
 	void sort_nodes();
 	void sort_nodes(Ensemble* in, Ensemble* out);
-	void sort_nodes_deprecated(vector<Node*>* in, vector<Node*>* out);
+//	void sort_nodes_deprecated(vector<Node*>* in, vector<Node*>* out);
 	void _sort_nodes_rec(Node* node, set<Node*>* tagged,  int* id, vector<Node*>* nodes);
 
 	void randomize();

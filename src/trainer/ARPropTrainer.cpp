@@ -121,8 +121,8 @@ void ARPropTrainer::change_weight(Trainable* c)
 	}*/
 
 
-	std::cout << " Change : " << change << " und sign " << sign <<
-			 " derivs:" << c->derivative << "," << c->previous_derivative << " gamma: " << c->gamma << endl;
+//	std::cout << " Change : " << change << " und sign " << sign <<
+//			 " derivs:" << c->derivative << "," << c->previous_derivative << " gamma: " << c->gamma << endl;
 
 	// phase
 	if (phase) {

@@ -12,23 +12,26 @@ bnn <- function() {
 }
 
 print.banana <- function(x, ...) {
-  if (!inherits(x,"banana")) stop("Wrong class type.")
-  cat("Banana Object (bnnlib)\n")
+  if (!inherits(x,"banana")) ui_stop("Wrong class type.")
+  ui_message("Banana Object (bnnlib)\n")
 }
 
+#' @export
 has.network <- function(x) {
-  if (!inherits(x,"banana")) stop("Not a banana object.")
+  if (!inherits(x,"banana")) ui_stop("Not a banana object.")
   if (!is.null(x$network)) return (TRUE);
 }
 
+#' @export
 has.trainer <- function(x) {
-  if (!inherits(x,"banana")) stop("Not a banana object.")
+  if (!inherits(x,"banana")) ui_stop("Not a banana object.")
   if (!is.null(x$trainer)) return (TRUE)  
 }
 
 #'
 #' test whether a banana object has an associated sequenceset
-#'
+#' 
+#' @export
 has.sequenceset <- function(x) {
   if (!inherits(x,"banana")) stop("Not a banana object.")
   if (!is.null(x$sequenceset)) return (TRUE)
@@ -39,6 +42,7 @@ has.sequenceset <- function(x) {
 #' pipe command to add elements to a banana object
 #'
 #' @export
+#' 
 `%>%` <- function(x,y) {
   
   
@@ -50,6 +54,15 @@ has.sequenceset <- function(x) {
     y$sequenceset <- x
   } else if (inherits(x, "_p_Network")) {
     y$network <- x
+  } else if (inherits(x,"_p_Ensemble")) {
+    
+    if (is.null(y$network)) {
+      y$network = Network()
+    }
+    
+    Network_ensembles_get(y$network, Network_get_ensembles_size(y$network))
+    Network_add_ensemble()
+    
   }
   
   return(y)

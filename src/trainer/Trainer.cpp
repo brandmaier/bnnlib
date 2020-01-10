@@ -149,7 +149,16 @@ void Trainer::train(SequenceSet* sequenceset,SequenceSet* validation_set,  unsig
 
 
 
-
+/**
+ * Run training of a single epoch using a SequenceSet
+ * 
+ * First, the trainer is reset.
+ * For batch learning, the
+ *  network is reset once, then all Sequences are run trough
+ *  the network, gradients computed and then
+ *  a single weight change takes place
+ * 
+ */
 void Trainer::train_sequenceset(SequenceSet* sequences)
 {
 	reset();

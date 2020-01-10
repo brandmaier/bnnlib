@@ -28,10 +28,11 @@ First, we load the shared library.
 
 ## Generate Data
 
-Next, we simulate some data in a data.frame and convert this to bnn's Sequence format:
+Next, we simulate some data in a `data.frame` and convert this to bnn's `Sequence` format. 
 
 ```{r}
 set.seed(34235)
+
 
 seq <- SequenceSet()
 test <- SequenceSet()
@@ -60,16 +61,15 @@ if (i > num.seq/2) {
   
 }
 
-
 ```
 
-This is a sanity check, whether the input and output size is correct.
+Each of the sequences has a length of `r len` and we created `r num.seq` many sequences. Half of them are in the SequenceSet called `test` and the other half in the SequenceSet called `seq`. This is how the sequences look like:
 
 ```{r}
-Sequence_get_target_size(seq1)
-Sequence_get_input_size(seq1)
-SequenceSet_get_input_size(seq)
-SequenceSet_get_target_size(seq)
+source("../R/toSequence.R")
+source("../R/plot.io.R")
+library(ggplot2)
+plot.io(SequenceSet_get(seq, 0))
 ```
 
 ## Create Network
@@ -87,36 +87,37 @@ Let's generate a list of different training algorithms and run them each for 100
 
 ```{r}
 
-trainer <- list(
+
+trainer <- list( RMSPropTrainer(net), ADAMTrainer(net),
                  BackpropTrainer(net), BackpropTrainer(net), RPropTrainer(net),
                  ARPropTrainer(net),
-                  ImprovedRPropTrainer(net), ImprovedRPropTrainer(net), RMSPropTrainer(net))
+                  ImprovedRPropTrainer(net))
 
-steps <- 80
-steps.per.iteration <- 1
-err.data <- matrix(data=NA,nrow=length(trainer)*steps,ncol=3)
+steps <- 280
+err.data <- matrix(data=NA,nrow=steps,ncol=length(trainer))
 err.data <- data.frame(err.data)
-names(err.data) <- c("error","trainer","step")
-k <- 1
+names(err.data) <- c("error")
+elapsed.time <- list()
+last.timestamp <- proc.time()
+
 
 for (i in 1:length(trainer)) {
   bp <- trainer[[i]]
   Network_reinitialise(net)
 
-  for (j in 1:steps) {
+    Trainer_train__SWIG_0(bp, seq, steps)
     
-    #Trainer_train__SWIG_0(bp, seq, steps.per.iteration)
-    #Trainer_train2(bp, seq, 1)
-    Trainer_train_sequenceset(bp, seq)
+    elapsed.time[[i]] <- proc.time()-last.timestamp
+    last.timestamp <- proc.time()
     
-    err.data[k,1] <- Network_evaluate_training_error__SWIG_0(net, seq)
-    err.data[k,2] <- paste0(i,":", Trainer_get_name(bp))
-    err.data[k,3] <- j
-    k<-k+1
-  }
+    x<-Trainer_error_train_get(bp)
+    err.data[,i] <- .Call('R_swig_toValue',  x, package="bnnlib") 
+    colnames(err.data)[i] <- paste0(i,":", Trainer_get_name(bp))
+    
 }
 
-err.data$trainer<-factor(err.data$trainer)
+err.data$time <- 1:steps
+
 ```
 
 Plot the errors
@@ -124,8 +125,10 @@ Plot the errors
 ```{r}
 library(ggplot2)
 
-ggplot(data=err.data, 
-       aes(x=step,y=error,group=trainer,col=trainer))+
+err.data.long <- reshape2::melt(err.data,id.vars="time")
+
+ggplot(data=err.data.long, 
+       aes(x=time,y=value,group=variable,col=variable))+
   geom_point()+
   geom_line()+
   theme_minimal()
@@ -134,20 +137,22 @@ ggplot(data=err.data,
 
 # Test set predictions
 
+To test the generalization performance of the network, we take a `Sequence` previously unseen by the network and feed it to the network. 
+
 ```{r}
-#s1 = SequenceSet_get(test, 0)
-s1 = SequenceSet_get(seq, 0)
-Network_activate(net, s1)
+source("../R/toSequence.R")
+s1 = SequenceSet_get(test, 0)
+input = getInputs(s1)
+target <- getTargets(s1)
+spike.position = which.max(getInputs(s1))
+```
 
-ln <- Sequence_size(s1)
-  
- xs <- rep(NA, ln)
- for (i in 1:ln) {
-		x <- Network_get_output(net,i)
-		x <- .Call('R_swig_toValue', x, package="bnnlib") 
-		xs[i] <- x
- }
+The position of the input spike is at time point `r spike.position`, that is, we expect the network to generate an output spike after a delay of `r delay` on time point `r spike.position+delay`. 
 
- 
-ggplot(data=data.frame(x=1:ln, y=x), aes(x=x,y=y))+geom_line() 
+```{r fig.cap="This is the figure caption."}
+output = getOutputs(net, s1)
+ln <- length(output)
+longdat <- reshape2::melt(data.frame(id=1:ln,target,output),id.vars="id")
+ggplot(data=longdat, aes(x=id,y=value,group=variable,col=variable))+geom_line()+
+  theme_minimal()+xlab("Time")+ylab("Activation")
 ```
