@@ -1,3 +1,7 @@
+#setClass("_p_FeedforwardEnsemble",contain="_p_Ensemble")
+
+setClass('_p_FeedforwardEnsemble', contains = c('ExternalReference','_p_Ensemble'))
+
 bnn <- function() {
   
   # create object as empty list
@@ -5,6 +9,7 @@ bnn <- function() {
   x$trainer <- NULL
   x$network <- NULL
   x$sequenceset <- NULL
+  x$verbose <- TRUE
     
   class(x) <- "banana"
   
@@ -45,7 +50,6 @@ has.sequenceset <- function(x) {
 #' 
 `%>%` <- function(x,y) {
   
-  
   if (inherits(x,"_p_Trainer")) {
     y$trainer <- x
   
@@ -57,11 +61,29 @@ has.sequenceset <- function(x) {
   } else if (inherits(x,"_p_Ensemble")) {
     
     if (is.null(y$network)) {
+      ui_message("Creating new network")
       y$network = Network()
     }
     
-    Network_ensembles_get(y$network, Network_get_ensembles_size(y$network))
-    Network_add_ensemble()
+    
+    last_ensemble = Network_ensembles_get(y$network, Network_get_ensembles_size(y$network))
+    # add ensemble
+    Network_add_ensemble__SWIG_0(nn,ens1)
+    
+    Network_connect_ensembles__SWIG_0(nn,ens1,ens2, TRUE)
+    
+    
+    Network_sort_nodes(nn)
+    
+    ui_message("Number of nodes: ", Network_get_num_nodes(nn)," Number of trainable weights ",Network_get_num_trainable_weights(nn))
+    
+    if (y$verbose) {
+      
+    } 
+  } else {
+    
+    ui_fail("Unknown types. Could not combine them.")
+    return(NULL)
     
   }
   

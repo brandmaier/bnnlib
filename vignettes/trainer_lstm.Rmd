@@ -98,13 +98,15 @@ err.data <- matrix(data=NA,nrow=steps,ncol=length(trainer))
 err.data <- data.frame(err.data)
 names(err.data) <- c("error")
 elapsed.time <- list()
-last.timestamp <- proc.time()
+
 
 
 for (i in 1:length(trainer)) {
   bp <- trainer[[i]]
   Network_reinitialise(net)
 
+    last.timestamp <- proc.time()
+  
     Trainer_train__SWIG_0(bp, seq, steps)
     
     elapsed.time[[i]] <- proc.time()-last.timestamp
@@ -118,6 +120,18 @@ for (i in 1:length(trainer)) {
 
 err.data$time <- 1:steps
 
+runtimes <- sapply(elapsed.time, function(x){round(x[3],2)})
+names(runtimes) <- colnames(err.data[1:length(trainer)])
+
+```
+
+Plot the runtimes:
+```{r}
+ggplot(reshape2::melt(as.matrix(runtimes)),aes(y=value,x=Var1,color=Var1))+
+  geom_bar(stat="identity",fill="white")+xlab("Trainers")+ylab("Time [s]")+
+  geom_text(aes(label=value), vjust=1.6, color="black", size=3.5)+
+  theme_minimal()+ theme(legend.position="none")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 Plot the errors
@@ -131,7 +145,8 @@ ggplot(data=err.data.long,
        aes(x=time,y=value,group=variable,col=variable))+
   geom_point()+
   geom_line()+
-  theme_minimal()
+  theme_minimal()+
+  ylim(0,10)
 ```
 
 

@@ -106,7 +106,18 @@ void ARPropTrainer::change_weight(Trainable* c)
 		cout << "Change: " << change << " sign: " << sign << endl;
 	}*/
 
-	
+	if (!current_error > previous_error) {
+	if (dynamic_cast<Connection*>(c) != NULL) {
+	 Connection* conn = dynamic_cast<Connection*>(c);
+	  if( conn->to->functional_type == Node::LSTM_INPUT_GATE) {
+	    change = 0.5*change;
+	  }
+	  /*if( conn->to->functional_type == Node::LSTM_OUTPUT_GATE) {
+	    change = 0.9*change;
+	  }*/
+	}
+	}
+	 
 
 	
 	//Connection* conn = dynamic_cast<Connection*>(c);
@@ -127,11 +138,11 @@ void ARPropTrainer::change_weight(Trainable* c)
 	// phase
 	if (phase) {
 	  if (c->tag) {
-	    change=0.1*change;
+	    change=0.9*change;
 	  } 
 	} else {
 	  if (!c->tag) {
-	    change=0.1*change;
+	    change=0.9*change;
 	  }
 	}
 	

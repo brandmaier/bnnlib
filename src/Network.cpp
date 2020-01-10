@@ -88,13 +88,15 @@ Network::Network() {
 
 Network::~Network() {
 
-	// remove Ensembles
-	for (unsigned int i=ensembles.size()-1; i > 0; i--)
-	{
-		remove_ensemble( ensembles[i] );
+	// remove Ensembles (from last to first)
+	if (ensembles.size()>0) {
+	  for (unsigned int i=ensembles.size()-1; i > 0; i--)
+	  {
+		  remove_ensemble( ensembles[i] );
+	  }
 	}
 
-	// remove remaining Nodes
+	// remove remaining Nodes that were not part of ensembles
 
 	while (size > 0)
 	{
