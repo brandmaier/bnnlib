@@ -81,6 +81,11 @@ struct Trainer
 	weight_t get_normalized_root_mean_element_error();
 
 	void plot_errors();
+	
+	void set_network(Network* network)
+	{
+	  this->network = network;
+	}
 
 	/**
 	 * cmp. Proben1 definitions by Prechelt
@@ -103,12 +108,6 @@ struct Trainer
 	virtual void train(SequenceSet* sequences, unsigned int iterations);
 	virtual void train(SequenceSet* sequenceset,SequenceSet* testset,  unsigned int iterations);
 	void train(DataSet* dataset,  unsigned int iterations);
-
-//	unsigned int train_until_convergence(SequenceSet* training_set, SequenceSet* validation_set);
-//	unsigned int train_until_convergence(SequenceSet* training_set, SequenceSet* validation_set, unsigned int minimum_steps);
-
-//	void train_sequence_after_each_step(Sequence* sequence);
-//	void train_sequenceset_after_each_step(SequenceSet* sequenceset);
 
 	/*weight_t check_gradient(Sequence* sequence);
 	weight_t check_gradient(Sequence* sequence, weight_t epsilon);

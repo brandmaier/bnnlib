@@ -13,7 +13,7 @@
 struct BackpropTrainer : Trainer
 {
 
-
+        BackpropTrainer();
 	BackpropTrainer(Network* network);
 	~BackpropTrainer() {}
 

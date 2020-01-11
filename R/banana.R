@@ -1,4 +1,30 @@
-#setClass("_p_FeedforwardEnsemble",contain="_p_Ensemble")
+
+# global constants from Node.h
+GENERIC_NODE = 0
+TANH_NODE = 1
+SIGMOID_NODE = 2
+LINEAR_NODE = 3
+ LSTM_NODE = 4
+ PI_NODE = 5
+ BIAS_NODE = 6
+ PRODUCT_NODE = 7
+ THRESHOLD_NODE = 8
+ LN_NODE = 9
+ CONDITIONAL_BIAS_NODE = 10
+ SCALED_TANH_NODE = 11
+ SCALED_SIGMOID_NODE = 12
+ STEEP_SIGMOID_NODE = 13
+ PRODUCTBIASED_NODE = 14
+ SIN_NODE = 15
+ TSIN_NODE = 16
+ UNIFORM_NOISE_NODE = 17
+ GAUSSIAN_NODE = 18
+ ONE_SHOT_BIAS_NODE = 19
+ ALTERNATING_BIAS_NODE = 20
+ GAUSSIAN_NOISE_NODE = 21
+ PSEUDO_OUTPUT_NODE = 22
+ MATCHING_OUTPUT_NODE = 23
+ RELU_NODE = 24
 
 setClass('_p_FeedforwardEnsemble', contains = c('ExternalReference','_p_Ensemble'))
 
@@ -24,7 +50,7 @@ print.banana <- function(x, ...) {
 #' @export
 has.network <- function(x) {
   if (!inherits(x,"banana")) ui_stop("Not a banana object.")
-  if (!is.null(x$network)) return (TRUE);
+  if (!is.null(x$network)) return (TRUE)
 }
 
 #' @export
@@ -45,6 +71,11 @@ has.sequenceset <- function(x) {
 
 #'
 #' pipe command to add elements to a banana object
+#' 
+#' Typical usage is:
+#' 
+#' network <- Network() %>% FeedforwardEnsemble(TANH, 1) %>% FeedforwardEnsemble(TANH, 10) %>% 
+#' FeedforwardEnsemble(TANH, 10) %>% BackpropTrainer() %>% SquaredErrorFunction()
 #'
 #' @export
 #' 
@@ -60,18 +91,34 @@ has.sequenceset <- function(x) {
     y$network <- x
   } else if (inherits(x,"_p_Ensemble")) {
     
-    if (is.null(y$network)) {
-      ui_message("Creating new network")
-      y$network = Network()
+    # if x and y are ensembles:
+    if (inherits(y,"_p_Ensemble")) {
+    
+      Network_add_ensemble(network,y)
+      
+      bnn <- banana()
+      
+        
+    # if x is an ensemble and y a banana
+    } else if (inherits(y,"banana")) {
+      if (is.null(y$network)) {
+        ui_message("Creating new network")
+        y$network = Network()
+      }
+      network = y$network
+    } else {
+      ui_stop("Incompatible types.")
     }
     
+
     
-    last_ensemble = Network_ensembles_get(y$network, Network_get_ensembles_size(y$network))
+    
+    
     # add ensemble
-    Network_add_ensemble__SWIG_0(nn,ens1)
+    Network_add_ensemble(y$network,x)
     
     Network_connect_ensembles__SWIG_0(nn,ens1,ens2, TRUE)
-    
+    y$last_ensemble = x
     
     Network_sort_nodes(nn)
     

@@ -15,6 +15,11 @@
 
 using namespace std;
 
+BackpropTrainer::BackpropTrainer() : Trainer()
+{
+  
+}
+
 BackpropTrainer::BackpropTrainer(Network* network) : Trainer()
 {
 	this->network = network;
