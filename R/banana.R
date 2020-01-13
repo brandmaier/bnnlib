@@ -36,6 +36,8 @@ bnn <- function() {
   x$network <- NULL
   x$sequenceset <- NULL
   x$verbose <- TRUE
+  
+  x$last_ensemble <- NULL
     
   class(x) <- "banana"
   
@@ -43,19 +45,19 @@ bnn <- function() {
 }
 
 print.banana <- function(x, ...) {
-  if (!inherits(x,"banana")) ui_stop("Wrong class type.")
+  if (!inherits(x,"banana")) { ui_stop("Wrong class type.") }
   ui_message("Banana Object (bnnlib)\n")
 }
 
 #' @export
 has.network <- function(x) {
-  if (!inherits(x,"banana")) ui_stop("Not a banana object.")
+  if (!inherits(x,"banana")) { ui_stop("Not a banana object.") }
   if (!is.null(x$network)) return (TRUE)
 }
 
 #' @export
 has.trainer <- function(x) {
-  if (!inherits(x,"banana")) ui_stop("Not a banana object.")
+  if (!inherits(x,"banana")) { ui_stop("Not a banana object.") }
   if (!is.null(x$trainer)) return (TRUE)  
 }
 
@@ -64,10 +66,52 @@ has.trainer <- function(x) {
 #' 
 #' @export
 has.sequenceset <- function(x) {
-  if (!inherits(x,"banana")) stop("Not a banana object.")
+  if (!inherits(x,"banana")) { stop("Not a banana object.") }
   if (!is.null(x$sequenceset)) return (TRUE)
 }
 
+#
+# internal function
+# 
+add_to_banana <- function(target, x) {
+
+  if (!is(target,"banana")) { ui_stop("Incompatible type!") }
+  
+  if (inherits(x,"_p_Network")) target$network <- x
+  else if (inherits(x,"_p_Trainer")) target$trainer <- x
+  else if (inherits(x,"_p_ErrorFunction")) target$errorfunction <- x
+  else if (inherits(x, "data.frame")) {
+    ui_message("Converting data.frame to SequenceSet")
+    x <- toSequence(x)
+    target$sequenceset <- x
+  } else if (inherits(x,"_p_Ensemble")) {
+      
+      network <- target$network
+
+      # add ensemble
+      Network_add_ensemble(network,x)
+      
+      if (!is.null(target$last_ensemble)) {
+        ui_ok("Connecting ensembles")
+        Network_connect_ensembles(network,target$last_ensemble,x, TRUE)
+      } else {
+        Network_input_ensemble_set(network, x)
+      }
+      
+      Network_output_ensemble_set(network, x)
+        
+
+      if (!is.null(target$last_ensemble)) {
+        Network_sort_nodes(nn)
+      }
+      
+      target$last_ensemble = x
+      
+  } else {
+    ui_fail("Cannot add ",class(x), " to banana object. Unknown type.")
+  }
+  return(target)
+}
 
 #'
 #' pipe command to add elements to a banana object
@@ -80,61 +124,33 @@ has.sequenceset <- function(x) {
 #' @export
 #' 
 `%>%` <- function(x,y) {
-  
-  if (inherits(x,"_p_Trainer")) {
-    y$trainer <- x
-  
-  } else if (inherits(x, "data.frame")) {
-    x <- toSequence(x)
-    y$sequenceset <- x
-  } else if (inherits(x, "_p_Network")) {
-    y$network <- x
-  } else if (inherits(x,"_p_Ensemble")) {
-    
-    # if x and y are ensembles:
-    if (inherits(y,"_p_Ensemble")) {
-    
-      Network_add_ensemble(network,y)
-      
-      bnn <- banana()
-      
-        
-    # if x is an ensemble and y a banana
-    } else if (inherits(y,"banana")) {
-      if (is.null(y$network)) {
-        ui_message("Creating new network")
-        y$network = Network()
-      }
-      network = y$network
-    } else {
-      ui_stop("Incompatible types.")
-    }
-    
 
-    
-    
-    
-    # add ensemble
-    Network_add_ensemble(y$network,x)
-    
-    Network_connect_ensembles__SWIG_0(nn,ens1,ens2, TRUE)
-    y$last_ensemble = x
-    
-    Network_sort_nodes(nn)
-    
-    ui_message("Number of nodes: ", Network_get_num_nodes(nn)," Number of trainable weights ",Network_get_num_trainable_weights(nn))
-    
-    if (y$verbose) {
-      
-    } 
+  #
+  # if source is not a banana, convert it to banana object
+  # and call this function
+  #
+  if (!inherits(x,"banana"))
+  {
+    ui_ok("Initializing banana object")
+    target <- bnn() # call banana constructor
+    target <- add_to_banana(target, x)
   } else {
-    
-    ui_fail("Unknown types. Could not combine them.")
-    return(NULL)
-    
-  }
+    target <- x
+  } 
   
-  return(y)
+  #  
+  # proceed assuming x is a banana object
+  # decide actions depending on type of x
+  #
+ 
+    result <- add_to_banana(target,y)
+    ui_message("Number of nodes: ", Network_get_num_nodes(result$network),
+               " Number of trainable weights ",Network_get_num_trainable_weights(result$network))
+    
+  
+  
+  
+  return(result)
   
 }
 

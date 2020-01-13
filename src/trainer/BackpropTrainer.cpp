@@ -17,7 +17,7 @@ using namespace std;
 
 BackpropTrainer::BackpropTrainer() : Trainer()
 {
-  
+  // NOOP
 }
 
 BackpropTrainer::BackpropTrainer(Network* network) : Trainer()
@@ -36,13 +36,6 @@ void BackpropTrainer::change_weight(Trainable* conn)
 
 			weight_t change = momentum*learning_rate*conn->derivative
 					+ (1.0-momentum)*conn->previous_weight_change;
-
-/*	if (isnan(change)) {
-			std::cout << "Change has become NaN!" << momentum*learning_rate << " " <<conn->derivative  << endl;
-			std::cout << "Conn from"<< conn->from->name << " to " << conn->to->name << endl;
-			exit(-1);
-		}
-*/
 
 			conn->weight += change;
 			conn->previous_weight_change = change;
