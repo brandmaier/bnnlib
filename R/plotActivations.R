@@ -19,8 +19,9 @@ if (!is.null(node.names))
   acts.long <- acts.long[acts.long$Var2 %in% node.names,]
 
 library(ggplot2)
-ggplot(acts.long, aes(x=Var1, y=value,group=Var2, col=Var2))+geom_line()
+gplot <- ggplot(acts.long, aes(x=Var1, y=value,group=Var2, col=Var2))+geom_line()
 
+return(gplot)
 }
 
 #' @export

@@ -11,11 +11,13 @@ output:
 knitr::opts_chunk$set(echo = TRUE, cache=FALSE)
 ```
 
+## Introduction
+
 In this document, we will compare the convergence of different training algorithms for a given dataset and network architecture. The data will be simulated from a simple toy problem, in which there are four i.i.d. Gaussian predictors and a single metric outcome. 
 
 ## Load Library
 
-First, we load the shared library.
+First, we load the shared library and some internal functions (which will soon be integrated into the package).
 
 ```{r pressure, echo=TRUE}
 
@@ -23,6 +25,9 @@ First, we load the shared library.
   dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
   source("../bnnlib.R")
   cacheMetaData(1)
+  
+  source("../R/toSequence.R")
+  source("../R/plot.io.R")
 
 ```
 
@@ -47,7 +52,6 @@ input <- rep(0,len)
 output <- rep(0,len)
 
 pos <- sample(1:(len-delay-1),1)
-cat(i,".: Position=",pos,"\n")
 input[pos]<-1
 output[pos+delay]<-1
 
@@ -66,8 +70,7 @@ if (i > num.seq/2) {
 Each of the sequences has a length of `r len` and we created `r num.seq` many sequences. Half of them are in the SequenceSet called `test` and the other half in the SequenceSet called `seq`. This is how the sequences look like:
 
 ```{r}
-source("../R/toSequence.R")
-source("../R/plot.io.R")
+
 library(ggplot2)
 plot.io(SequenceSet_get(seq, 0))
 ```

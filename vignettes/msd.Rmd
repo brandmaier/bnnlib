@@ -1,0 +1,75 @@
+---
+title: "MSD"
+author: "Andreas M. Brandmaier"
+date: "1/14/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
+source("../bnnlib.R")
+cacheMetaData(1)
+
+source("../R/toSequence.R")
+```
+
+```{r}
+
+# create network from Gers02a with LSTM hidden layer (including peepholes)
+# 1 output and 1 input
+network = NetworkFactory_create_gers02a()
+#network = LSTMNetwork(1,2,1)
+```
+
+Generate data
+```{r}
+set.seed(4598234)
+n <- 10
+#interval.lengths <- 1:5
+interval.lengths <- 1:10
+intervals <- sample(interval.lengths, size=n, replace=TRUE)
+input_seq <- c(1,rep(0, sum(intervals)))
+target_seq <- rep(0, sum(intervals)+1)
+input_seq[cumsum(intervals)+1] <- 1
+target_seq[cumsum(intervals)+1] <- intervals
+sequence <- toSequence(data.frame(input_seq, target_seq),1,2)
+sequence_set <- SequenceSet()
+SequenceSet_add_copy_of_sequence(sequence_set, sequence)
+```
+
+## Training
+
+```{r}
+#trainer <- ImprovedRPropTrainer(network)
+trainer <- ARPropTrainer(network)
+
+Trainer_train2(trainer, sequence_set, 200)
+#Trainer_add_abort_criterion(trainer, ConvergenceCriterion(1e-5))
+
+source("../R/plotTrainingerror.R")
+plotTrainingerror(trainer)
+```
+
+## Predictions
+
+```{r}
+library(ggplot2)
+library(gridExtra)
+source("../R/plotPredictions.R")
+source("../R/plotActivations.R")
+plotPredictions(network, sequence)
+```
+
+## Investigate activations
+
+Plot all activations for the entire sequence.
+
+```{r}
+plotActivations(network, sequence) + theme_minimal()
+
+plotActivations(network, sequence,"CEC") + theme_minimal()
+```

@@ -3,13 +3,17 @@ title: "Grammar Learning"
 author: "Andreas M. Brandmaier"
 date: "1/6/2020"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+## Introduction
+
+This is a demonstration of a simple grammar learning tasks.  A formal grammar describes how to form strings from an alphabet that are valid according to the language's syntax. Here, we create a regular grammar (Type 3 in Chomskys hierarchy). Then, we randomly create sentences from that language and train a neural network to predict the next valid letter given a sentence. When the network successfully learns the regular language, it can be used as a generator of that language. In this simple demo, the language's alphabet has only three symbols `A`, `B`, and `C`.
 
 ## Setup
 
@@ -55,6 +59,8 @@ for (i in 2:total.size) {
 
 
 ```
+
+We generate a sentence of length `r total.size`.
 
 # Get a 0-1-Matrix for a given Alphabet and Text.
 
