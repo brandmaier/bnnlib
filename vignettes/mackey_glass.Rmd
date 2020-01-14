@@ -55,11 +55,11 @@ network = LSTMNetwork(1, 10, 1);
 
 SequenceSet_scale_to_minmax(training_set, -1,+1);
 
-trainer = ImprovedRPropTrainer(network);
+#trainer = ImprovedRPropTrainer(network);
+trainer = ARPropTrainer(network)
 		
 	Trainer_learning_rate_set( trainer, 0.0001 );
 
-Trainer_batch_learning_set(trainer, TRUE)
 
 
 #	trainer->abort_criteria.push_back( new ConvergenceCriterion(10e-7) );

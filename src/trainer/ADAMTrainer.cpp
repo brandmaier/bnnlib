@@ -10,7 +10,7 @@
 #include "ADAMTrainer.h"
 
 weight_t ADAMTrainer::beta1 = 0.9;
-weight_t ADAMTrainer::beta2 = 0.99;
+weight_t ADAMTrainer::beta2 = 0.999;
 //weight_t ADAMTrainer::x->gamma = 0.0;
 
 ADAMTrainer::ADAMTrainer(Network* network) : Trainer()
@@ -49,9 +49,10 @@ void ADAMTrainer::change_weight(Trainable* c)
 			
 			// epsilon constant is to safe-guard against explosion when gamma -> 0
 			static const weight_t epsilon = 1e-10;
+			
 
 			// compute change
-			weight_t change = learning_rate * (c->rms+epsilon) / sqrt(c->rms_sq+epsilon) * c->derivative;
+			weight_t change = learning_rate * (c->rms) / (sqrt(c->rms_sq+epsilon)+epsilon) * c->derivative;
 
 	//		std::cout <<  "Change : " << change << " moving average " << c->rms <<" Scaling is" << sqrt(c->rms+epsilon) << endl<<"*"<<endl;
 			//std::cout << " Change : " << change << " und sign " << sign <<

@@ -15,43 +15,49 @@ source("../bnnlib.R")
 cacheMetaData(1)
 
 source("../R/toSequence.R")
+source("../R/banana.R")
 ```
 
 ```{r}
+setRandomSeed(92357)
 
 # create network from Gers02a with LSTM hidden layer (including peepholes)
 # 1 output and 1 input
-network = NetworkFactory_create_gers02a()
-#network = LSTMNetwork(1,2,1)
+#network = NetworkFactory_create_gers02a()
+network = LSTMNetwork(1,1,1, TANH_NODE, LINEAR_NODE)
 ```
 
 Generate data
 ```{r}
 set.seed(4598234)
-n <- 10
-#interval.lengths <- 1:5
-interval.lengths <- 1:10
+n <- 100
+interval.lengths <- 1:5
+#interval.lengths <- 1:10
+sequence_set <- SequenceSet()
+
+for (k in 1:10) {
 intervals <- sample(interval.lengths, size=n, replace=TRUE)
 input_seq <- c(1,rep(0, sum(intervals)))
 target_seq <- rep(0, sum(intervals)+1)
 input_seq[cumsum(intervals)+1] <- 1
 target_seq[cumsum(intervals)+1] <- intervals
 sequence <- toSequence(data.frame(input_seq, target_seq),1,2)
-sequence_set <- SequenceSet()
 SequenceSet_add_copy_of_sequence(sequence_set, sequence)
+}
 ```
 
 ## Training
 
 ```{r}
+#trainer <- ADAMTrainer(network)
 #trainer <- ImprovedRPropTrainer(network)
 trainer <- ARPropTrainer(network)
 
-Trainer_train2(trainer, sequence_set, 200)
-#Trainer_add_abort_criterion(trainer, ConvergenceCriterion(1e-5))
+Trainer_train2(trainer, sequence_set, 500)
+Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(1e-5),10)
 
 source("../R/plotTrainingerror.R")
-plotTrainingerror(trainer)
+plotTrainingerror(trainer) + theme_light()
 ```
 
 ## Predictions
@@ -61,7 +67,7 @@ library(ggplot2)
 library(gridExtra)
 source("../R/plotPredictions.R")
 source("../R/plotActivations.R")
-plotPredictions(network, sequence)
+plotPredictions(network, sequence) + theme_linedraw()
 ```
 
 ## Investigate activations
@@ -69,7 +75,7 @@ plotPredictions(network, sequence)
 Plot all activations for the entire sequence.
 
 ```{r}
-plotActivations(network, sequence) + theme_minimal()
+plotActivations(network, sequence) + theme_linedraw()
 
-plotActivations(network, sequence,"CEC") + theme_minimal()
+plotActivations(network, sequence,"CEC") + theme_linedraw()
 ```

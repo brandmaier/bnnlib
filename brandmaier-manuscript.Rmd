@@ -158,7 +158,13 @@ Error functions are functions that determine the error of the output nodes in a 
 
 ## Plotting facilities
 
-The package has a particular focus on plotting network activations over time.
+The package has a particular focus on plotting network activations over time. In general, networks are regarded as black boxes that *somehow* perform a task by specializing their generic architecture to reproducing a given input-output mapping. In small-scale networks, plotting the activation over time is one way of introspection to a network. Particularly with specialized cell types, such as LSTM cells, we can learn something about the task and how a given network architecture goes about solving it.
+
+`bnn` has some basic plotting facilities for plotting sequences, that is input and target activations over time.
+
+```{r eval=FALSE}
+plotTrainingerror(trainer)
+```
 
 ## Demonstrations
 

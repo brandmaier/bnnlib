@@ -15,5 +15,6 @@ setClass('_p_ImprovedRPropTrainer', contains = c('ExternalReference','_p_Trainer
 
 setClass('_p_RPropTrainer', contains = c('ExternalReference','_p_Trainer'))
 setClass('_p_ARPropTrainer', contains = c('ExternalReference','_p_Trainer'))
+setClass('_p_ADAMTrainer', contains = c('ExternalReference','_p_Trainer'))
 
 setClass('_p_ConvergenceCriterion', contains=c('ExternalReference','_p_Criterion'))

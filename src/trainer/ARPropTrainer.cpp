@@ -49,7 +49,7 @@ ARPropTrainer::ARPropTrainer(Network* network) : Trainer()
 void ARPropTrainer::prepare_step()
 {
   phase = !phase;
-  cout << "Setting Phase to " << phase << endl;
+ // cout << "Setting Phase to " << phase << endl;
   
   return;
 }
@@ -106,7 +106,7 @@ void ARPropTrainer::change_weight(Trainable* c)
 		cout << "Change: " << change << " sign: " << sign << endl;
 	}*/
 
-	if (!current_error > previous_error) {
+	if (!(current_error > previous_error)) {
 	if (dynamic_cast<Connection*>(c) != NULL) {
 	 Connection* conn = dynamic_cast<Connection*>(c);
 	  if( conn->to->functional_type == Node::LSTM_INPUT_GATE) {
@@ -115,6 +115,9 @@ void ARPropTrainer::change_weight(Trainable* c)
 	  /*if( conn->to->functional_type == Node::LSTM_OUTPUT_GATE) {
 	    change = 0.9*change;
 	  }*/
+	  if( conn->to->functional_type == Node::LSTM_FORGET_GATE) {
+	    change = 0.5*change;
+	  }	  
 	}
 	}
 	 
