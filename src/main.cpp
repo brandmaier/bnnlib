@@ -51,7 +51,7 @@
 #include "networks/LSTMNetwork.h"
 #include "callbacks/ReportCallback.h"
 #include "callbacks/ZeroErrorFailReport.h"
-#include "errorfunctions/ManhattanError.h"
+#include "errorfunctions/MinkowskiErrorFunction.h"
 #include "ensembles/SecondOrderEnsemble.h"
 #include "classification/AutoPredictor.h"
 #include <signal.h>

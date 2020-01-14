@@ -1482,10 +1482,21 @@ void Network::add_node(Node* node)
 	this->nodes.push_back(node);
 }
 
+
 void Network::add_ensemble(Ensemble* ensemble)
 {
 	this->add_ensemble(ensemble, true);	
 }
+
+void Network::add_copy_of_ensemble(Ensemble* ensemble)
+{
+  // make a copy
+  Ensemble* copy_of_ensemble = new Ensemble(*ensemble);
+  
+  // call regular add_ensemble()
+  this->add_ensemble(copy_of_ensemble, true);	
+}
+
 /**
  * 
  * add all Nodes from Ensemble to the Network

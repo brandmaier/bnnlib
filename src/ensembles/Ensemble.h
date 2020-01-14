@@ -41,6 +41,7 @@ struct Ensemble
 	
 	Ensemble();
 	Ensemble(std::vector<Node*>* nodes);
+	Ensemble(Ensemble &ensemble); // copy constructor
 	virtual ~Ensemble();
 	
 	void add_node(Node* node);	

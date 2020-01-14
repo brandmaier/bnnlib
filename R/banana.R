@@ -26,7 +26,6 @@ LINEAR_NODE = 3
  MATCHING_OUTPUT_NODE = 23
  RELU_NODE = 24
 
-setClass('_p_FeedforwardEnsemble', contains = c('ExternalReference','_p_Ensemble'))
 
 bnn <- function() {
   
@@ -89,7 +88,7 @@ add_to_banana <- function(target, x) {
       network <- target$network
 
       # add ensemble
-      Network_add_ensemble(network,x)
+      Network_add_copy_of_ensemble(network,x)
       
       if (!is.null(target$last_ensemble)) {
         ui_ok("Connecting ensembles")
@@ -192,3 +191,13 @@ predict.bnn <- function(x, newdata=NULL, index=NULL, ...) {
 }
 
 
+train.bnn <- function(x, epochs=1, ...) {
+  
+  stopifnot(is(x,"banana"))
+  
+  if (isNULL(x$trainer)) {
+    ui_stop("No trainer set!")
+  }
+  
+  Trainer_train(x$trainer, x$sequenceset, epochs)
+}

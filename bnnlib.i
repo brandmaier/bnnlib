@@ -52,7 +52,7 @@ using namespace std;
 #include "src/errorfunctions/ThresholdSquaredErrorFunction.h"
 #include "src/errorfunctions/CrossEntropyErrorFunction.h"
 #include "src/errorfunctions/WinnerTakesAllErrorFunction.h"
-#include "src/errorfunctions/ManhattanError.h"
+#include "src/errorfunctions/MinkowskiErrorFunction.h"
 #include "src/errorfunctions/CombinedErrorFunction.h"
 #include "src/networks/LSTMNetwork.h"
 #include "src/callbacks/ReportCallback.h"
@@ -157,7 +157,7 @@ namespace std {
 %include src/errorfunctions/ThresholdSquaredErrorFunction.h
 %include src/errorfunctions/CrossEntropyErrorFunction.h
 %include src/errorfunctions/WinnerTakesAllErrorFunction.h
-%include src/errorfunctions/ManhattanError.h
+%include src/errorfunctions/MinkowskiErrorFunction.h
 %include src/errorfunctions/CombinedErrorFunction.h
 %include src/errorfunctions/ThresholdSquaredErrorFunction.h
 %include src/trainer/Trainer.h

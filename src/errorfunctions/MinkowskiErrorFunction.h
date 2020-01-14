@@ -10,7 +10,7 @@
 
 #include <cmath>
 
-struct MinkowskiError : ErrorFunction
+struct MinkowskiErrorFuncion : ErrorFunction
 {
 	weight_t get_error_to_output(weight_t target, weight_t output)
 	{

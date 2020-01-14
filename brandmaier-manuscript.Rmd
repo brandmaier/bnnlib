@@ -1,0 +1,188 @@
+---
+title             : "bnn: Recurrent Neural Networks with R"
+shorttitle        : "Title"
+
+author: 
+  - name          : "First Author"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "my@email.com"
+  - name          : "Ernst-August Doelle"
+    affiliation   : "1,2"
+
+affiliation:
+  - id            : "1"
+    institution   : "Wilhelm-Wundt-University"
+  - id            : "2"
+    institution   : "Konstanz Business School"
+
+authornote: |
+  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
+
+  Enter author note here.
+
+abstract: |
+  One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
+  
+  Two to three sentences of **more detailed background**, comprehensible  to scientists in related disciplines.
+  
+  One sentence clearly stating the **general problem** being addressed by  this particular study.
+  
+  One sentence summarizing the main result (with the words "**here we show**" or their equivalent).
+  
+  Two or three sentences explaining what the **main result** reveals in direct comparison to what was thought to be the case previously, or how the  main result adds to previous knowledge.
+  
+  One or two sentences to put the results into a more **general context**.
+  
+  Two or three sentences to provide a **broader perspective**, readily comprehensible to a scientist in any discipline.
+  
+  <!-- https://tinyurl.com/ybremelq -->
+  
+keywords          : "keywords"
+wordcount         : "X"
+
+bibliography      : ["r-references.bib"]
+
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : no
+
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+library(bnn)
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+
+# Introduction
+
+Neural networks are biologically-inspired, general-purpose computational methods that serve various purposes in psychological research. First, neural networks can be used as black-box models for non-linear regression and classification problems. `bnn` is written in C++ to enable fast computation across all platforms. The R package contains wrappers that were created using SWIG and additional manual wrapper design.
+
+Neural networks 
+
+# Methods
+
+First, we install the library from github and attach the package to the current workspace.
+
+```{r eval=FALSE}
+devtools::install_github("brandmaier/bnn")
+library(bnn)
+```
+
+There are seven essential elements in `bnn`: Nodes, ensembles, networks, trainers, sequences, sequences sets, and error functions.
+
+```{r}
+LSTMNetwork()
+```
+
+`bnn` provides a factory class\footnote{Factories are classes that are never instantiated but only serve to create objects.} called `NetworkFactory` that provides methods to generate a variety of standard architectures
+```{r}
+
+```
+
+### Creating customized networks
+
+Customized network architectures can be created by creating and arranging ensembles into a network. Ensembles are sets of nodes (often referred to as layers) even though ensembles can also abstract complex cell types that are created from sets of cells (which in turn could be ensembles). 
+
+```{r}
+input_layer <- FeedforwardEnsemble(TANH_NODE, 2)
+hidden_layer <- FeedforwardEnsemble(TANH_NODE, 10)
+output_layer <- FeedforwardEnsemble(LINEAR_NODE, 1)
+```
+
+The layers can be arranged into a network by using the concatenation operator provided by `bnn`:
+```{r}
+network <- Network() %>% input_layer %>% hidden_layer %>% output_layer
+```
+
+TODO: Washout_time (Network)
+
+## Trainer
+
+In `bnnlib`, various algorithms to fit neural networks are available including backpropagation, stochastic gradient descent, adaptive (ADAM), Resilient backpropagation (RProp), Improved resilient propagation (IRProp), root-mean-squared error propagation (RMSProp). The training algorithms can be instantiated by attaching them to an existing network.
+
+```{r}
+trainer <- BackpropTrainer()
+network %>% trainer
+```
+
+There are SWIG wrapper functions to change the default behavior of the trainers. For those using a learning rate, it can be set via
+
+```{r}
+Trainer_learning_rate_set(0.0001)
+```
+
+For those using momentum, it can be set as
+
+```{r}
+Trainer_momentum_set(0.01)
+```
+
+To switch between batch learning and stochastic gradient descent, one can set the 'batch learning' option. If it is `TRUE`, the gradients for all sequences are computed and then a single weight change is performed. If `FALSE`, the 
+
+```{r}
+Trainer_batch_learning_set(TRUE)
+```
+
+Furthermore, a `Trainer` can have several callbacks. Callbacks are methods that are called after a given number of epochs and perform a specified action, such as saving the network, printing informative output.
+
+Last. a `Trainer` can also have one or more stopping criteria. By default, no stopping criterion is given and training always proceeds until the specified number of epochs is trained. This may result in over-fitting and it is common practice to implement some form of early stopping rule. Stopping rules include the `ConvergenceCriterion` which takes a single number as argument. If the absolute difference of the error function between two epochs is equal or smaller than that number, training is stopped.  
+or testing whether training should be aborted prematurely (for example, because the error on a validation set starts to increase). Here are some examples of how to implement callbacks and stopping rules:
+
+```{r}
+Trainer_add_callback(ProgressDot())
+Trainer_add_abort_criterion(ConvergenceCriterion(0.00001))
+```
+## Error Functions
+
+Error functions are functions that determine the error of the output nodes in a neural network as a divergence function of their activations and the target values. By default, the squared error loss is used, which is appropriate for regression problems with continuous output variables (typically associated with a linear activation function in the output layer). This error function is instantiated using the constructor `SquaredErrorFunction()`. Other error functions are the `MinkowskiErrorFunction()` implementing an absolute error function (also known as Manhattan error function). For classification, the appropriate error functions are `CrossEntropyErrorFunction()` which implements cross-entropy error that is appropriate for 0-1-coded classification tasks and `WinnerTakesAllErrorFunction()` that is appropriate for tasks with one-hot coding where the output layer is representing a discrete probability function.
+
+## Data formatting
+
+`bnnlib` is 
+
+## Plotting facilities
+
+The package has a particular focus on plotting network activations over time.
+
+## Demonstrations
+
+### Frequencies Task
+
+### Grammar Task
+
+### Comparing Training Algorithms
+
+
+# Discussion
+
+Do we really need yet another neural networks library? 
+
+\newpage
+
+# References
+```{r create_r-references}
+r_refs(file = "r-references.bib")
+```
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+<div id = "refs"></div>
+\endgroup

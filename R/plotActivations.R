@@ -1,3 +1,6 @@
+#'
+#'
+#' @export
 plotActivations <- function(net, seq, node.names=NULL) {
   
 num_nodes = Network_get_num_nodes(net)
@@ -20,7 +23,7 @@ ggplot(acts.long, aes(x=Var1, y=value,group=Var2, col=Var2))+geom_line()
 
 }
 
-
+#' @export
 getNodeNames <- function(net)
 {
   num_nodes = Network_get_num_nodes(net)

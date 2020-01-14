@@ -19,6 +19,12 @@
 		}	
 	}	
 	
+	Ensemble::Ensemble(Ensemble &ensemble) {
+	  name = ensemble.name;
+	  
+	  nodes = ensemble.nodes;
+	}
+	
 	Ensemble::~Ensemble() {
 		/*for (unsigned int i = 0; i < nodes.size();i++)
 		{

@@ -223,8 +223,10 @@ struct Network {
 	string get_node_name(unsigned int i);
 
 	void add_ensemble(Ensemble* ensemble);
-	void add_ensemble(Ensemble* ensemble, bool add_all_nodes_to_network);
+	void add_ensemble(Ensemble* ensemble, bool add_all_nodes_tos_network);
 
+	void add_copy_of_ensemble(Ensemble* ensemble);
+	
 	void remove_ensemble(Ensemble* ensemble);	
 	void connect_ensembles(Ensemble* ensemble_from, Ensemble* ensemble_to, bool forward);
 	void connect_ensembles(Ensemble* ensemble_from, Ensemble* ensemble_to, bool forward, weight_t weight);
