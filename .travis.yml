@@ -1,15 +1,14 @@
 language: cpp
-sudo: required
+root: required
 dist: trusty
 compiler:
   - clang
 os:
   - linux
-ruby: 2.2.0
 before_install:
   - echo $LANG
   - echo $LC_ALL
   - sudo apt-get update
-  - sudo apt-get -y install swig
+  - sudo apt-get -y install swig r-base
 script:
   - make
