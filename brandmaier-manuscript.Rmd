@@ -86,6 +86,22 @@ library(bnn)
 
 There are seven essential elements in `bnn`: Nodes, ensembles, networks, trainers, sequences, sequences sets, and error functions.
 
+### Creating networks
+
+Some standard architectures can be created from simple network constructors, such as a regular feedforward network for non-sequential tasks (here with 3 input nodes, 10 hidden nodes, and 4 output nodes):
+
+```{r}
+FeedForwardNetwork(3, 10, 4)
+```
+
+Or, a recurrent neural network with the same layout. The recurrent network, by default, has tanh activations at the hidden layer and linear output activations.
+
+```{r}
+RecurrentNetwork(3, 10, 4)
+```
+
+There are also constructors for more specialized network architectures, such as the LSTM architecture:
+
 ```{r}
 LSTMNetwork()
 ```
@@ -127,10 +143,17 @@ There are SWIG wrapper functions to change the default behavior of the trainers.
 Trainer_learning_rate_set(0.0001)
 ```
 
-For those using momentum, it can be set as
+The traineing algorithms each have their specific parameters, such as momentum in Backpropagation, which can be set as
 
 ```{r}
-Trainer_momentum_set(0.01)
+BackpropTrainer_momentum_set(0.01)
+```
+
+Or, the $\eta_{+}$ and $\eta_{-}$ values in improved resilient propagation:
+
+```{r}
+ImprovedRPropTrainer_eta_plus_set(0.1)
+ImprovedRPropTrainer_eta_minus_set(0.1)
 ```
 
 To switch between batch learning and stochastic gradient descent, one can set the 'batch learning' option. If it is `TRUE`, the gradients for all sequences are computed and then a single weight change is performed. If `FALSE`, the 
@@ -138,6 +161,14 @@ To switch between batch learning and stochastic gradient descent, one can set th
 ```{r}
 Trainer_batch_learning_set(TRUE)
 ```
+
+Last, all training algorithms can be run with a weight decay parameter that is always applied once the gradients are computed. TODO: Possibly wrong implementation?
+
+```{r}
+Trainer_weight_decay_enabled_set(TRUE)
+Trainer_weight_decay_set(0.01)
+```
+
 
 Furthermore, a `Trainer` can have several callbacks. Callbacks are methods that are called after a given number of epochs and perform a specified action, such as saving the network, printing informative output.
 
@@ -148,13 +179,39 @@ or testing whether training should be aborted prematurely (for example, because 
 Trainer_add_callback(ProgressDot())
 Trainer_add_abort_criterion(ConvergenceCriterion(0.00001))
 ```
+
 ## Error Functions
 
-Error functions are functions that determine the error of the output nodes in a neural network as a divergence function of their activations and the target values. By default, the squared error loss is used, which is appropriate for regression problems with continuous output variables (typically associated with a linear activation function in the output layer). This error function is instantiated using the constructor `SquaredErrorFunction()`. Other error functions are the `MinkowskiErrorFunction()` implementing an absolute error function (also known as Manhattan error function). For classification, the appropriate error functions are `CrossEntropyErrorFunction()` which implements cross-entropy error that is appropriate for 0-1-coded classification tasks and `WinnerTakesAllErrorFunction()` that is appropriate for tasks with one-hot coding where the output layer is representing a discrete probability function.
+Error functions are functions that determine the error of the output nodes in a neural network as a divergence function of their activations and the target values. They also provide derivatives of the error necessary for error backpropagation. By default, the squared error loss is used, which is appropriate for regression problems with continuous output variables (typically associated with a linear activation function in the output layer). This error function is instantiated using the constructor `SquaredErrorFunction()`. Other error functions are the `MinkowskiErrorFunction()` implementing an absolute error function (also known as Manhattan error function). For classification, the appropriate error functions are `CrossEntropyErrorFunction()` which implements cross-entropy error that is appropriate for 0-1-coded classification tasks and `WinnerTakesAllErrorFunction()` that is appropriate for tasks with one-hot coding where the output layer is representing a discrete probability function. The `CombinedErrorFunction()` is a meta errorfunction that takes two error functions and combines them by addition.
+
+To evaluate the error of a given Network `network` for a SequenceSet called `seqeunceset`, one may simply call 
+
+```{r}
+Network_evaluate_error(network,sequenceset)
+```
+
+ which evaluates the network's error function on the
+or pass a specified error function to the network
+
+```{r}
+Network_evaluate_error(network,sequenceset, errorfunction)
+```
+
+If sequences are marked with training, validation, and/or test set markers to test the generalization performance within sequences, one can separately evaluate the error estimates on the training and validation parts, either with the network's default error function or with a custom error function:
+
+```{r}
+Network_evaluate_training_error(network,sequenceset)
+Network_evaluate_validation_error(network,sequenceset)
+Network_evaluate_test_error(network,sequenceset)
+
+Network_evaluate_training_error(network,sequenceset, errorfunction)
+Network_evaluate_validation_error(network,sequenceset, errorfunction)
+Network_evaluate_test_error(network,sequenceset, errorfunction)
+```
 
 ## Data formatting
 
-`bnnlib` is 
+`bnnlib` was designed for investigating neural networks for solving sequential task, thus, the most basic data structure is a `Sequence`. A `Sequence` stores a sequence of multivariate inputs and multivariate targets. Multiple sequences can be arranged in a `SequenceSet`, which stores one or more sequences and is the basic unit for estimating parameters in a network.
 
 ## Plotting facilities
 
@@ -172,12 +229,14 @@ plotTrainingerror(trainer)
 
 ### Grammar Task
 
+### Mean Spike Distance Task
+
 ### Comparing Training Algorithms
 
 
 # Discussion
 
-Do we really need yet another neural networks library? 
+Do we really need yet another neural networks library? Sure.
 
 \newpage
 

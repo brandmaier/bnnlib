@@ -3,8 +3,8 @@ title: "Grammar Learning"
 author: "Andreas M. Brandmaier"
 date: "1/6/2020"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -40,7 +40,7 @@ Transitions are:
 - from B to A or C
 - from C to CB (always two Cs then B)
 
-```{r}
+```{r generator}
 total.size <- 4000
 text <- rep("A",total.size)
 for (i in 2:total.size) {
@@ -62,29 +62,17 @@ for (i in 2:total.size) {
 
 We generate a sentence of length `r total.size`.
 
-# Get a 0-1-Matrix for a given Alphabet and Text.
+# Recode sentences
+
+In the following, we recode the generated sequences from the formal language into a one-hot-coding, in which there is one column for each letter and in each row, there is always only one value set to '1' to represent the presence of the corresponding character whereas all other columns have the value '0'.
 
 ```{r}
 # Get a 0-1 Matrix for a given alphabet and text.
-
+source("../R/onehot.R")
 
 myletters <- c("A","B","C")
+tfmatrix = onehot(text, myletters)
 
-# function that looks up whether a letter from the alphabet is in x, gives back True or False 
-where_in_alphabet_ <- function(x, alphabet = myletters) {alphabet %in% x}
-
-# 0-1 Matrix with option to return True-False Matrix when setting numeric = FALSE 
-where_in_alphabet <- function(x, alphabet = letters, numeric = TRUE){
-  out <- t(apply(matrix(x), 1, where_in_alphabet_, alphabet = alphabet))
-  colnames(out) <- alphabet
-  rownames(out) <- x
-  if (numeric) out <- out*1
-  out
-}
-
-tic()
-tfmatrix = where_in_alphabet(text, myletters)
-toc()
 
 head(tfmatrix)
 
@@ -92,8 +80,6 @@ head(tfmatrix)
 
 
 ```{r}
-
-
 
 tic()
 seqset = SequenceSet()
@@ -179,7 +165,7 @@ predict.text()
 
 Initialize Trainer and set learning rate:
 
-```{r}
+```{r trainer}
 trainer = ImprovedRPropTrainer(network);
 Trainer_learning_rate_set( trainer, 0.01 )
 ```
@@ -193,11 +179,8 @@ tic()
 Trainer_train2(trainer, seqset, 500)
 toc()
 
-	values <- .Call('R_swig_toValue',  Trainer_error_train_get(trainer), package="bnnlib") 
-	
-	library(ggplot2)
-	ggplot2::ggplot(data.frame(x=1:length(values),values),aes(x=x,y=values))+geom_point()+
-	  geom_line()+geom_smooth()
+source("../R/plotTrainingerror.R")
+plotTrainingerror(trainer) + theme_light()
 ```
 
 ## Generate new sequences

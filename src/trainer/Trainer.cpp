@@ -18,7 +18,7 @@
 
 Trainer::Trainer() {
 
-		this->total_iterations = 0;
+	
 		this->batch_learning = false;
 		this->weight_decay = 0.0f;
 		this->weight_decay_enabled = false;
@@ -28,14 +28,11 @@ Trainer::Trainer() {
 		this->learning_rate_discount = 1-(0.00001);
 		this->momentum = 1.0;
 
-		this->previous_error = 0;
-		this->current_error = 0;
-
-		this->lowest_error = INFINITY;
-
 		//this->error_function = new SquaredErrorFunction();
 		this->sequenceset = NULL;
 		this->validation_set = NULL;
+
+		initialize();		
 	}
 
 void Trainer::train(SequenceSet* sequenceset,  unsigned int iterations)
@@ -281,12 +278,24 @@ void Trainer::plot_errors()
 
 }
 
+// this is not really a reset but just a
+// preparation before an epoch is started
 void Trainer::reset()
 {
-	previous_error = current_error;
+	previous_error = current_error; //TODO: check this
 	current_error = 0;
+}
 
-	//error_train.clear();
+void Trainer::initialize()
+{
+  
+  this->total_iterations = 0;
+  this->previous_error = 0;
+  this->current_error = 0;
+  
+  this->lowest_error = INFINITY;
+  
+  error_train.clear();
 }
 
 weight_t Trainer::get_total_error() {

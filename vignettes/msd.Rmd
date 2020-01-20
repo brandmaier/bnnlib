@@ -18,6 +18,10 @@ source("../R/toSequence.R")
 source("../R/banana.R")
 ```
 
+# Introduction
+
+This is a demonstration of the mean spike distance task by Gers et al. (2002). The task is about learning a representation of time, which involves counting discrete time steps, reading out the counter and also learning to reset the timer when an external stimulus is present.
+
 ```{r}
 setRandomSeed(92357)
 
@@ -53,8 +57,11 @@ SequenceSet_add_copy_of_sequence(sequence_set, sequence)
 #trainer <- ImprovedRPropTrainer(network)
 trainer <- ARPropTrainer(network)
 
+library(tictoc)
+tic()
+Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(1e-3),10)
 Trainer_train2(trainer, sequence_set, 500)
-Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(1e-5),10)
+toc()
 
 source("../R/plotTrainingerror.R")
 plotTrainingerror(trainer) + theme_light()
@@ -78,4 +85,6 @@ Plot all activations for the entire sequence.
 plotActivations(network, sequence) + theme_linedraw()
 
 plotActivations(network, sequence,"CEC") + theme_linedraw()
+
+plotActivations(network, sequence) + theme_linedraw()+xlim(0,25)
 ```

@@ -28,6 +28,7 @@ First, we load the shared library and some internal functions (which will soon b
   
   source("../R/toSequence.R")
   source("../R/plot.io.R")
+  source("../R/zzz.R")
 
 ```
 
@@ -36,12 +37,13 @@ First, we load the shared library and some internal functions (which will soon b
 Next, we simulate some data in a `data.frame` and convert this to bnn's `Sequence` format. 
 
 ```{r}
-set.seed(34235)
+set.seed(34235) # for R code
+setRandomSeed(335) # for c++ code
 
 
 seq <- SequenceSet()
 test <- SequenceSet()
-delay <- 20
+delay <- 30
 
 num.seq <- 10
 
@@ -89,10 +91,12 @@ net <- LSTMNetwork(1,4,1)
 Let's generate a list of different training algorithms and run them each for 100 steps. Save the results in `err.data`:
 
 ```{r}
-
+bp <- BackpropTrainer(net)
+Trainer_batch_learning_set(bp, FALSE)
 
 trainer <- list( RMSPropTrainer(net), ADAMTrainer(net),
-                 BackpropTrainer(net), BackpropTrainer(net), RPropTrainer(net),
+                 BackpropTrainer(net), bp, 
+                 RPropTrainer(net),
                  ARPropTrainer(net),
                   ImprovedRPropTrainer(net))
 
@@ -106,6 +110,10 @@ elapsed.time <- list()
 
 for (i in 1:length(trainer)) {
   bp <- trainer[[i]]
+  
+  #Trainer_weight_decay_set(bp, 0.05)
+  #Trainer_weight_decay_enabled_set(bp, TRUE)
+
   Network_reinitialise(net)
 
     last.timestamp <- proc.time()

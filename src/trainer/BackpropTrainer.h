@@ -16,6 +16,8 @@ struct BackpropTrainer : Trainer
         BackpropTrainer();
 	BackpropTrainer(Network* network);
 	~BackpropTrainer() {}
+	
+
 
 	void change_weight(Trainable* c);
 

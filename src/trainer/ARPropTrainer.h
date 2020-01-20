@@ -1,5 +1,5 @@
 /*
- * ARPropTrainer.h
+ * ARPropTrainer.h - Asymmetric Resilient Propagation
  *
  *  Created on: Oct 19, 2009
  *      Author: brandmaier
@@ -28,11 +28,15 @@ struct ARPropTrainer : public Trainer
 
 	unsigned int q = 0;
 	
+	weight_t forgetting_discount;
+	weight_t output_discount;
+	weight_t input_discount;
+	
 	bool phase = true;
 
 	virtual string get_name()
 	{
-		return "Andys RProp";
+		return "Asymmetric RProp";
 	}
 	
 	virtual void prepare_step();

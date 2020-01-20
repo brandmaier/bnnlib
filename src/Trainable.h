@@ -12,7 +12,7 @@
 
 struct Trainable
 {
-  static const unsigned int gradients_size = 5;
+ // static const unsigned int gradients_size = 5;
   
 	weight_t derivative;
 	weight_t previous_derivative;
@@ -22,8 +22,8 @@ struct Trainable
 	weight_t rms;
 	weight_t rms_sq;
 	
-	weight_t gradients[gradients_size];
-	unsigned int gradients_pointer;
+//	weight_t gradients[gradients_size];
+//	unsigned int gradients_pointer;
 
 	bool tag;	// bool tag for various purposes
 
@@ -54,9 +54,9 @@ struct Trainable
 		this->rms_sq = 0.0;
 		
 		
-		this->gradients_pointer = 0;
+	/*	this->gradients_pointer = 0;
 		for (unsigned int i=0; i < gradients_size; i++) 
-		  this->gradients[i] = 0.0;
+		  this->gradients[i] = 0.0;*/
 	}
 
 };

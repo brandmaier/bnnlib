@@ -2,7 +2,7 @@
 # complementary SWIG stuff
 #
 
-source("../bnnlib.R")
+#source("../bnnlib.R")
 
 # add missing
 setClass("_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_p_t_t", contains = 'ExternalReference')
@@ -18,3 +18,5 @@ setClass('_p_ARPropTrainer', contains = c('ExternalReference','_p_Trainer'))
 setClass('_p_ADAMTrainer', contains = c('ExternalReference','_p_Trainer'))
 
 setClass('_p_ConvergenceCriterion', contains=c('ExternalReference','_p_Criterion'))
+
+setClass('_p_LSTMNetwork', contains = c('ExternalReference','_p_Network'))

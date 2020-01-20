@@ -22,6 +22,10 @@ ARPropTrainer::~ARPropTrainer() {}
 
 ARPropTrainer::ARPropTrainer(Network* network) : Trainer()
 {
+  forgetting_discount = .5;
+  output_discount = 1;
+  input_discount = .5;
+  
 	this->network = network;
 	this->batch_learning = true;
 
@@ -110,13 +114,13 @@ void ARPropTrainer::change_weight(Trainable* c)
 	if (dynamic_cast<Connection*>(c) != NULL) {
 	 Connection* conn = dynamic_cast<Connection*>(c);
 	  if( conn->to->functional_type == Node::LSTM_INPUT_GATE) {
-	    change = 0.5*change;
+	    change = input_discount*change;
 	  }
-	  /*if( conn->to->functional_type == Node::LSTM_OUTPUT_GATE) {
-	    change = 0.9*change;
-	  }*/
+	  if( conn->to->functional_type == Node::LSTM_OUTPUT_GATE) {
+	    change = output_discount*change;
+	  }
 	  if( conn->to->functional_type == Node::LSTM_FORGET_GATE) {
-	    change = 0.5*change;
+	    change = forgetting_discount*change;
 	  }	  
 	}
 	}

@@ -49,7 +49,6 @@ struct Trainer
 
 	weight_t momentum;
 
-
 	vector<Criterion*> abort_criteria;
 	vector<CallbackHandler*> callbacks;
 	vector<unsigned int> callback_every;
@@ -135,6 +134,8 @@ struct Trainer
 	weight_t get_current_validation_error() {
 		return this->error_validation[this->error_validation.size()-1];
 	}
+	
+	virtual void initialize();
 
 };
 

@@ -19,6 +19,8 @@ First, we load the shared library.
   dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
   source("../bnnlib.R")
   cacheMetaData(1)
+  
+  source("../R/zzz.R")
 
 ```
 
@@ -55,29 +57,26 @@ network = LSTMNetwork(1, 10, 1);
 
 SequenceSet_scale_to_minmax(training_set, -1,+1);
 
-#trainer = ImprovedRPropTrainer(network);
-trainer = ARPropTrainer(network)
+trainer = ImprovedRPropTrainer(network);
+#trainer = ARPropTrainer(network)
 		
 	Trainer_learning_rate_set( trainer, 0.0001 );
+```
 
+Train the network and plot training error
 
+```{r}
 
 #	trainer->abort_criteria.push_back( new ConvergenceCriterion(10e-7) );
 
-#Trainer_add_abort_criterion( ConvergenceCriterion(.00001))
+#Trainer_add_abort_criterion(trainer, ConvergenceCriterion(.0001), 1)
 
 	Trainer_train2(trainer, training_set, 500)
 
 #	GnuplotGenerator_plot_vector__SWIG_0("Training Error", Trainer_error_train_get(trainer))
 
-	values <- .Call('R_swig_toValue',  Trainer_error_train_get(trainer), package="bnnlib") 
-	
-	library(ggplot2)
-	ggplot2::ggplot(data.frame(x=1:length(values),values),aes(x=x,y=values))+geom_point()+
-	  geom_line()+geom_smooth()
-#	GnuplotGenerator_plot_vector__SWIG_0()
-#	network->test_sequence( training_set, true );
-
+source("../R/plotTrainingerror.R")
+plotTrainingerror(trainer)
 ```
 
 Forecasting the time-series
@@ -96,7 +95,6 @@ time_steps <- 400
 context <- 200
 x = AutoPredictor_predict( predictor, sequence, time_steps, context)
 
-#x = Network_activate_and_return_activations(network, sequence)
 ```
 
 ```{r broken}
