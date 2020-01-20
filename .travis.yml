@@ -1,8 +1,7 @@
 language: cpp
-root: required
-dist: trusty
+root: true
 compiler:
-  - clang
+  - gcc
 os:
   - linux
 before_install:
