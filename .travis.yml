@@ -1,0 +1,24 @@
+language: cpp
+root: true
+compiler:
+  - gcc
+  - clang
+os:
+  - linux
+  - osx
+before_install:
+  - echo $LANG
+  - echo $LC_ALL
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update                ; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -y install swig r-base; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update        ; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install swig r; fi
+jobs:
+  allow_failures:
+    - compiler: clang
+script:
+  - make
+notifications:
+  email:
+    on_success: change
+    on_failure: change
