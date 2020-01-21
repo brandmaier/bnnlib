@@ -1,0 +1,5 @@
+*.o
+bnnlib.cpp
+bnnlib.R
+bnnlib.so
+*_cache/
