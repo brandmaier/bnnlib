@@ -1,4 +1,5 @@
 #include "wrapper.h"
+#include <cstdlib> // for srand
 
 std::vector<double> toValue(std::vector<double>* v) {
   return(*v);

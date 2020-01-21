@@ -5,6 +5,7 @@
 #include <vector>
 #include <cmath>
 #include <cassert>
+#include <cstdlib> // for srand
 
 weight_t safeexp(weight_t value)
 {
