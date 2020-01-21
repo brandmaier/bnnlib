@@ -11,3 +11,7 @@ before_install:
   - sudo apt-get -y install swig r-base
 script:
   - make
+notifications:
+  email:
+    on_success: change
+    on_failure: change
