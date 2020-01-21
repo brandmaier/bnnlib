@@ -39,8 +39,10 @@ bnnlib.cpp: bnnlib.i
 test:
 	"$(R_HOME)/bin$(R_ARCH_BIN)/Rscript" lstm.R
 
-readme:
-	Rscript -e 'rmarkdown::render("README.rmd", "md_document")'
+readme: README.md
+
+README.md: README.Rmd
+	Rscript -e 'rmarkdown::render("$<", "md_document")'
 	
 
 # compile with g++ to test c++98
