@@ -1,3 +1,6 @@
+[![Build
+Status](https://travis-ci.com/brandmaier/bnnlib.svg?branch=master)](https://travis-ci.com/brandmaier/bnnlib)
+
 Banana Neural Networks Library (bnnlib)
 =======================================
 

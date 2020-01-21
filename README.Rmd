@@ -9,6 +9,8 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+[![Build Status](https://travis-ci.com/brandmaier/bnnlib.svg?branch=master)](https://travis-ci.com/brandmaier/bnnlib)
+
 # Banana Neural Networks Library (bnnlib)
 
 ![](img/Abstract-Banana.png){width=200px}
