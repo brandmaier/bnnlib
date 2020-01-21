@@ -8,6 +8,7 @@
 #include "CGTrainer.h"
 #include "../Trainable.h"
 #include "LineSearch.h"
+#include <climits>
 
 #undef DEBUG
 
