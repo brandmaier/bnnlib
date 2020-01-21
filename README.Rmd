@@ -9,11 +9,13 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+[![Build Status](https://travis-ci.com/brandmaier/bnnlib.svg?branch=master)](https://travis-ci.com/brandmaier/bnnlib)
+
 # Banana Neural Networks Library (bnnlib)
 
 ![](img/Abstract-Banana.png){width=200px}
 
-`bnnlib`[![Build Status](https://travis-ci.com/brandmaier/bnnlib.svg?branch=master)](https://travis-ci.com/brandmaier/bnnlib) is a library for neural networks covering (deep) recurrent networks with long-short-term-memory (LSTM) cells. The library is written in C++ and offers R-bindings via a SWIG interface. 
+`bnnlib` is a library for neural networks covering (deep) recurrent networks with long-short-term-memory (LSTM) cells. The library is written in C++ and offers R-bindings via a SWIG interface. 
 
 The library is not optimized for speed but for flexibility in developing new architectures. Unlike modern implementation, it does not rely on optimized matrix algebra but simple activation propagation across sets of nodes, which in turn are organized into ensembles. An ensemble represents any collection of nodes, that is, either a complex node type (like a LSTM cell) or a layer of cells.
 
