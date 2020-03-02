@@ -1,13 +1,13 @@
 ---
 title             : "bnn: Recurrent Neural Networks with R"
-shorttitle        : "Title"
+shorttitle        : "Banana Neural Networks"
 
 author: 
-  - name          : "First Author"
+  - name          : "Andreas M. Brandmaier"
     affiliation   : "1"
     corresponding : yes    # Define only one corresponding author
     address       : "Postal address"
-    email         : "my@email.com"
+    email         : "brandmaier@mpib-berlin.mpg.de"
   - name          : "Ernst-August Doelle"
     affiliation   : "1,2"
 
@@ -184,7 +184,7 @@ Trainer_add_abort_criterion(ConvergenceCriterion(0.00001))
 
 Error functions are functions that determine the error of the output nodes in a neural network as a divergence function of their activations and the target values. They also provide derivatives of the error necessary for error backpropagation. By default, the squared error loss is used, which is appropriate for regression problems with continuous output variables (typically associated with a linear activation function in the output layer). This error function is instantiated using the constructor `SquaredErrorFunction()`. Other error functions are the `MinkowskiErrorFunction()` implementing an absolute error function (also known as Manhattan error function). For classification, the appropriate error functions are `CrossEntropyErrorFunction()` which implements cross-entropy error that is appropriate for 0-1-coded classification tasks and `WinnerTakesAllErrorFunction()` that is appropriate for tasks with one-hot coding where the output layer is representing a discrete probability function. The `CombinedErrorFunction()` is a meta errorfunction that takes two error functions and combines them by addition.
 
-To evaluate the error of a given Network `network` for a SequenceSet called `seqeunceset`, one may simply call 
+To evaluate the error of a given Network `network` for a SequenceSet called `sequenceset`, one may simply call 
 
 ```{r}
 Network_evaluate_error(network,sequenceset)

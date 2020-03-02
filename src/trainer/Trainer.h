@@ -44,6 +44,8 @@ struct Trainer
 	bool decorrelation_enabled;
 	vector<Node*> decorrelation_nodes;
 	double decorrelation_alpha;
+	
+	double sparsity_beta;
 
 	unsigned int total_iterations;
 

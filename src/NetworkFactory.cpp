@@ -1161,6 +1161,48 @@ Network* NetworkFactory::createFeedForwardNetwork(unsigned int in_size, unsigned
 }
 
 
+
+Network* NetworkFactory::createSparseAutoencoder(unsigned int in_size, unsigned int hidden_size, double sparsity) {
+  Network* net = new Network();
+  
+  unsigned int num_layers = 1;
+  int hid_type = Node::TANH_NODE;
+  int out_type = Node::LINEAR_NODE;
+  
+  
+  // create Ensembles
+  
+  Ensemble* bias = new FeedforwardEnsemble(Node::BIAS_NODE, 1);	
+  net->add_ensemble(bias);
+  
+  Ensemble* in = new FeedforwardEnsemble(Node::LINEAR_NODE, in_size);		
+  net->add_ensemble(in);
+  //unsigned int total_hid_size = 0;
+
+  Ensemble* hidden = new FeedforwardEnsemble(hid_type, hidden_size);	
+    net->add_ensemble(hidden);
+    //total_hid_size += layer_sizes[i];
+    
+    hidden->set_sparsity(sparsity);
+
+  Ensemble* out = new FeedforwardEnsemble(out_type, in_size);
+  net->add_ensemble(out);
+  
+  
+  // connect ensembles
+  net->connect_ensembles(bias, hidden, true);
+  net->connect_ensembles(in, hidden, true);
+  net->connect_ensembles(hidden, out, true);
+  net->connect_ensembles(bias, out, true);
+
+  
+  net->sort_nodes();
+  
+  return net;  
+  
+}
+
+
 Network* NetworkFactory::createFeedForwardNetwork(unsigned int in_size, int hid_type,unsigned int num_layers, unsigned int layer_sizes[], int out_type, unsigned int out_size)
 {
 	Network* net = new Network();

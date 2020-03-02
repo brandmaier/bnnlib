@@ -15,6 +15,13 @@ struct ZZPropTrainer : Trainer
 	ZZPropTrainer(Network* network);
 	~ZZPropTrainer() {};
 	
+	// R-Prop constants
+	static weight_t eta_minus;
+	static weight_t eta_plus;
+	static weight_t gamma_max;
+	static weight_t gamma_min;
+	
+	
 	void change_weight(Trainable* c);
 	
 	// RMS-Prop moving average

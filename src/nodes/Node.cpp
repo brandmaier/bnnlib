@@ -26,6 +26,8 @@ Node::Node() : Trainable() {
 //	std::stringstream namestream;
 //	namestream << "Tan" << id;
 	name = "unnamed";//namestream.str();
+	
+	sparsity_prior = 0.0;
 
 	//initial_state = 0; //rand_uniform_01()*2-1;
 	//last_initial_state_change = 0;

@@ -69,6 +69,13 @@ struct Ensemble
 		}
 	 }
 	}
+	
+	void set_sparsity(double sparsity) {
+	  for (unsigned int i=0; i < nodes.size(); i++)
+	  {
+	    nodes[i]->sparsity_prior = sparsity;
+	  }
+	}
 };
 
 #endif /*ENSEMBLE_H_*/

@@ -74,6 +74,8 @@ struct Node : Trainable {
 	string name;
 	
 	int functional_type;
+	
+	double sparsity_prior;
 
 	Ensemble* ensemble;
 	
@@ -126,6 +128,14 @@ struct Node : Trainable {
 			if (outgoing_connections[j]->forward) return true;
 		}
 		return false;
+	}
+	
+	bool has_sparsity_prior() {
+	  return (sparsity_prior!=0.0);
+	}
+	
+	double get_sparsity_prior() {
+	  return (sparsity_prior);
 	}
 };
 

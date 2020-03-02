@@ -8,6 +8,8 @@
 #include "Trainer.h"
 #include "../GnuplotGenerator.h"
 #include "CorrelationDerivatives.h"
+#include "../functions.h"
+#include <numeric>
 
 #undef VERBOSE_BACKPROP
 #undef SAFE_MODE
@@ -27,6 +29,7 @@ Trainer::Trainer() {
 		this->learning_rate = 0.0001;
 		this->learning_rate_discount = 1-(0.00001);
 		this->momentum = 1.0;
+		this->sparsity_beta = 0.1;
 
 		//this->error_function = new SquaredErrorFunction();
 		this->sequenceset = NULL;
@@ -455,6 +458,21 @@ void Trainer::backward(std::vector<weight_t>* target) {
 
 
 		}
+		
+		// from
+		// http://ufldl.stanford.edu/tutorial/unsupervised/Autoencoders/
+		// but let each node has its own sparsity prior
+    if (node->has_sparsity_prior()) {
+      if (node->actbuf.size() > 0) {
+       // get mean activation
+       weight_t rho_hat = accumulate(node->actbuf.begin(),
+                                           node->actbuf.end(),
+                                           0.0) / node->actbuf.size();
+       weight_t rho = node->sparsity_prior;
+       if (rho_hat!=0 && rho_hat!=1)
+         delta_sum += this->sparsity_beta*(-rho/rho_hat+(1-rho)/(1-rho_hat));
+      }
+    }
 
 		node->delta[timestep-1] +=	//+=
 				node->get_activation_function_derivative(timestep-1)

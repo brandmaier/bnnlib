@@ -108,6 +108,7 @@ using namespace std;
 #include "src/classification/interfaces/WinnerTakesAllClassificator.h"
 #include "src/classification/interfaces/RecursiveThermometricClassificator.h"
 #include "src/trainer/SARPropTrainer.h"
+#include "src/trainer/ZZPropTrainer.h"
 #include "src/trainer/ARPropTrainer.h"
 #include "src/callbacks/PickBestGeneralizingNetwork.h"
 
@@ -212,5 +213,6 @@ namespace std {
 %include "src/classification/interfaces/RecursiveThermometricClassificator.h"
 %include "src/classification/interfaces/ClassificatorInterface.h"
 %include "src/trainer/SARPropTrainer.h"
+%include "src/trainer/ZZPropTrainer.h"
 %include "src/trainer/ARPropTrainer.h"
 %include "src/callbacks/PickBestGeneralizingNetwork.h"

@@ -1,0 +1,121 @@
+---
+title: "SparseAutoencoder"
+author: "Andreas M. Brandmaier"
+date: "3/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
+source("../bnnlib.R")
+cacheMetaData(1)
+
+
+set.seed(25234)
+
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+LINEAR_NODE = 3
+
+dims = 5
+net_nonsparse <- NetworkFactory_createSparseAutoencoder(dims,10,0);
+net_sparse <- NetworkFactory_createSparseAutoencoder(dims,10,0.01);
+
+#Network_get_num_trainable_weights(net)
+#net <- NetworkFactory_createFeedForwardNetwork(dims,2,dims, LINEAR_NODE)
+
+```
+
+Create some data
+
+```{r}
+N <- 200
+dat <- matrix(nrow=N, ncol=dims)
+for(i in 1:N) {
+  cl1 <- sample(c(0,1),size = 1)
+  if (cl1) {
+    dat[i,] <- c(0,1,1,0,0)
+  } else {
+    dat[i,] <- c(1,0,0,1,1)
+  }
+  dat[i,] <- dat[i,]+ rnorm(5,0,0.2)
+}
+
+dat <- data.frame(dat)
+```
+
+# Trainer
+
+```{r}
+source("../R/toSequence.R")
+seq <- toSequence(dat, 1:5, 1:5)
+Sequence_get_input_size(seq)
+Sequence_get_target_size(seq)
+
+
+sequence_set <- SequenceSet()
+SequenceSet_add_copy_of_sequence(sequence_set, seq)
+
+bp <- ImprovedRPropTrainer(net_sparse)
+bp2 <- ImprovedRPropTrainer(net_nonsparse)
+
+Trainer_sparsity_beta_set(bp, .5)                           
+
+
+Trainer_train__SWIG_0(bp, sequence_set, 500)
+Trainer_train__SWIG_0(bp2, sequence_set, 500)
+
+
+source("../R/plotTrainingerror.R")
+plotTrainingerror(bp)
+plotTrainingerror(bp2)
+```
+
+
+    
+# Coding
+
+```{r}
+source("../R/plotActivations.R")
+#x = getActivations(net, seq)
+
+plotActivations(net_nonsparse, seq,paste0("Tanh",6:15))
+
+#x2 = getActivations(net_sparse, seq)
+
+plotActivations(net_sparse, seq,paste0("Tanh",27:36))
+```
+
+# Example reconstruction
+
+```{r}
+plot.example <- function(index) {
+  Network_activate(net_nonsparse, seq)
+x<- Network_get_output(net_nonsparse, index)
+outp <- .Call('R_swig_toValue', x, package="bnnlib")
+
+Network_activate(net_sparse, seq)
+x<- Network_get_output(net_sparse, index)
+outp2 <- .Call('R_swig_toValue', x, package="bnnlib")
+
+x <- Sequence_get_target(seq, index)
+trgt <- .Call('R_swig_toValue', x, package="bnnlib")
+plot(trgt,col="red",type="l", ylim=c(min(outp,trgt,outp2),max(outp,trgt,outp2)))
+points(outp,col="blue",pch=3)
+points(outp2,col="pink",pch=2)
+}
+
+plot.example(0)
+plot.example(5)
+plot.example(10)
+```

@@ -75,6 +75,8 @@ struct NetworkFactory
 
 	static Network* createCopyRestoreLSTM(unsigned int in_size, unsigned int cells, unsigned int out_size);
 
+	
+	static Network* createSparseAutoencoder(unsigned int in_size, unsigned int hidden_size, double sparsity);
 };
 
 #endif /*NETWORKFACTORY_H_*/
