@@ -16,6 +16,7 @@ struct FeedforwardEnsemble : Ensemble
 	string to_string();
 	static FeedforwardEnsemble* from_string(string from_string);
 	static FeedforwardEnsemble* from_string(string from_string, vector<Node*>* nodes);	
+	
 };
 
 #endif /*FEEDFORWARDENSEMBLE_H_*/

@@ -77,6 +77,8 @@ struct NetworkFactory
 
 	
 	static Network* createSparseAutoencoder(unsigned int in_size, unsigned int hidden_size, double sparsity);
+	static Network* createSparseAutoencoder(unsigned int in_size, unsigned int hidden_size, double sparsity, int hid_type, int out_type);
+	
 };
 
 #endif /*NETWORKFACTORY_H_*/

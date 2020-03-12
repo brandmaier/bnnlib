@@ -1161,13 +1161,18 @@ Network* NetworkFactory::createFeedForwardNetwork(unsigned int in_size, unsigned
 }
 
 
+Network* NetworkFactory::createSparseAutoencoder(unsigned int in_size, unsigned int hidden_size, 
+                                                 double sparsity) {
+  createSparseAutoencoder(in_size, hidden_size, sparsity, Node::TANH_NODE,  Node::LINEAR_NODE);
+}
 
-Network* NetworkFactory::createSparseAutoencoder(unsigned int in_size, unsigned int hidden_size, double sparsity) {
+Network* NetworkFactory::createSparseAutoencoder(unsigned int in_size, unsigned int hidden_size, 
+                                                 double sparsity, int hid_type, int out_type) {
   Network* net = new Network();
   
   unsigned int num_layers = 1;
-  int hid_type = Node::TANH_NODE;
-  int out_type = Node::LINEAR_NODE;
+  //int hid_type = Node::TANH_NODE;
+  //int out_type = Node::LINEAR_NODE;
   
   
   // create Ensembles
@@ -1177,16 +1182,19 @@ Network* NetworkFactory::createSparseAutoencoder(unsigned int in_size, unsigned 
   
   Ensemble* in = new FeedforwardEnsemble(Node::LINEAR_NODE, in_size);		
   net->add_ensemble(in);
+  in->rename("Input");
   //unsigned int total_hid_size = 0;
 
   Ensemble* hidden = new FeedforwardEnsemble(hid_type, hidden_size);	
     net->add_ensemble(hidden);
+    hidden->rename("Hidden");
     //total_hid_size += layer_sizes[i];
     
     hidden->set_sparsity(sparsity);
 
   Ensemble* out = new FeedforwardEnsemble(out_type, in_size);
   net->add_ensemble(out);
+  out->rename("Output");
   
   
   // connect ensembles

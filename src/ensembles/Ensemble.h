@@ -76,6 +76,17 @@ struct Ensemble
 	    nodes[i]->sparsity_prior = sparsity;
 	  }
 	}
+	
+	void rename(string name) {
+	  
+	  for (unsigned int i=0; i < nodes.size(); i++)
+	  {
+	    std::stringstream namestream;
+	    namestream << name << i;
+	    nodes[i]->name = namestream.str();
+	  }
+	  
+	}
 };
 
 #endif /*ENSEMBLE_H_*/

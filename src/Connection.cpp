@@ -36,24 +36,6 @@ void Connection::init(Node* node1, Node* node2, bool forward)
 }
 
 
-
-
-// TODO unfinished
-void Connection::remove()
-{
-	std::vector<Connection*>::iterator out = this->from->outgoing_connections.begin();
-
-	for (unsigned int i=0; i < this->from->outgoing_connections.size(); i++)
-	{
-		if (this->from->outgoing_connections[i] == this) {
-			this->from->outgoing_connections.erase(out);
-			break;	
-		}	
-	}
-	
-	exit(-1);
-}
-
 void Connection::set_identity_and_freeze()
 {
 	freeze_weight = true;

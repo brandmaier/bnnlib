@@ -277,6 +277,39 @@ Connection* Network::connect(Node* node1, Node* node2, bool forward) {
 }
 
 
+void Network::disconnect_and_erase(Node* node_a, Node* node_b)
+{
+  Connection* c = find_connection(node_a, node_b);
+  if (c == NULL) {
+    std::cout << "Warning! Connection did not exist! Cannot remove."<<endl;
+    return;
+  }
+  // remove incoming connection
+  int index=-1;
+  for (unsigned int i=0; i < node_b->incoming_connections.size(); i++)
+  {
+    if (node_b->incoming_connections[i]->from == node_a) index=i;
+  }  
+  if (index!=-1)
+    (*node_b).incoming_connections.erase( 
+        node_b->incoming_connections.begin() +index
+    );
+  
+  // remove outgoing connection
+  index=-1;
+  for (unsigned int i=0; i < node_a->outgoing_connections.size(); i++)
+  {
+    if (node_a->outgoing_connections[i]->to == node_b) index=i;
+  }
+  if (index!=-1)  
+    node_a->outgoing_connections.erase(
+        node_a->outgoing_connections.begin()+index
+    );
+  
+  // delete connection
+  delete c;
+}
+
 Connection* Network::find_connection(Node* node_a, Node* node_b)
 {
 	for (unsigned int i=0; i < node_a->outgoing_connections.size(); i++)
@@ -556,7 +589,7 @@ void Network::_activate(std::vector<weight_t>* input) {
 
 
 
-int Network::pluck_connections(weight_t chance)
+int Network::randomly_remove_connections(weight_t chance)
 {
 	assert((0. < chance) and (chance < 1.));
 
@@ -567,7 +600,8 @@ int Network::pluck_connections(weight_t chance)
 		for (unsigned int j=0; j < nodes[i]->outgoing_connections.size(); j++) {	
 			weight_t r = rand()/(RAND_MAX+1.0);
 			if (r < chance) {
-				nodes[i]->outgoing_connections[j]->remove();
+        //nodes[i]->outgoing_connections[j]->remove();
+        disconnect_and_erase(nodes[i],nodes[i]->outgoing_connections[j]->to);
 				count++;
 			}
 		}
@@ -2282,6 +2316,8 @@ vector<string> Network::get_node_names()
   return(result);
 }
 
+
+
 string Network::get_node_name(unsigned int i)
 {
     return(this->nodes[i]->name);
@@ -2298,6 +2334,18 @@ vector<Node*>* Network::get_nodes_with_name(string name)
 	}
 
 	return result;
+}
+
+Node* Network::get_node_with_name(string name)
+{
+ // vector<Node*>* result = new vector<Node*>();
+  for (unsigned int i=0; i < this->nodes.size(); i++)
+  {
+    if (this->nodes[i]->name==name)
+      return(this->nodes[i]);
+  }
+  
+  return NULL;
 }
 
 

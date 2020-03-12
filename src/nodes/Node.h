@@ -103,7 +103,7 @@ struct Node : Trainable {
 	virtual weight_t get_input_to_activation_derivative(Connection* connection, unsigned int time);
 	virtual weight_t get_activation_function_derivative(unsigned int time);
 
-	virtual const nodetype get_type() = 0;
+	virtual const nodetype get_type() = 0; //{ return(0); };
 
 	void cut_all_links();
 
@@ -137,6 +137,13 @@ struct Node : Trainable {
 	double get_sparsity_prior() {
 	  return (sparsity_prior);
 	}
+	
+	std::vector<weight_t> get_activations() {
+	  return(actbuf);
+	}
+	
+	
+	  
 };
 
 #endif

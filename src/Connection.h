@@ -28,11 +28,8 @@ struct Connection : public Trainable {
 	Connection(Node* node1, Node* node2);
 	Connection(Node* node1, Node* node2, bool forward);
 	
-//	void init() {};
-	
 	void init(Node* node1, Node* node2, bool forward);
-	
-	void remove();
+
 	
 	virtual ~Connection() {};
 	

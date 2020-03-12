@@ -21,6 +21,7 @@ using namespace std;
 #include "src/SequenceSet.h"
 #include "src/functions.h"
 #include "src/NetworkFactory.h"
+#include "src/NodeFactory.h"
 #include "src/GnuplotGenerator.h"
 #include "src/TrainingConfiguration.h"
 #include "src/nodes/Node.h"
@@ -153,6 +154,7 @@ namespace std {
 %include src/Sequence.h
 %include src/SequenceSet.h
 %include src/NetworkFactory.h
+%include src/NodeFactory.h
 %include src/errorfunctions/ErrorFunction.h
 %include src/errorfunctions/SquaredErrorFunction.h
 %include src/errorfunctions/ThresholdSquaredErrorFunction.h

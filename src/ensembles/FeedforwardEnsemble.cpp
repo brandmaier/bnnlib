@@ -9,6 +9,8 @@
 #include "../nodes/SinNode.h"
 #include "../nodes/OneShotBiasNode.h"
 #include "../nodes/GaussianNoiseNode.h"
+#include "../nodes/ReLUNode.h"
+#include "../NodeFactory.h"
 #include <stdlib.h>
 #include <string>
 #include <algorithm>
@@ -35,36 +37,7 @@ FeedforwardEnsemble::FeedforwardEnsemble(int node_type, unsigned int size)
 	
 			for (unsigned int i=0; i < size; i++)
 			{
-				Node* node = NULL;
-				switch(node_type) {
-				case Node::TANH_NODE:
-				 node = new TanhNode();
-				break;
-				case Node::SIGMOID_NODE:
-				 node = new SigmoidNode();
-				break;
-				case Node::LINEAR_NODE:
-				 node = new LinearNode();
-				break;
-				case Node::BIAS_NODE:
-				 node = new BiasNode();
-				break;
-				case Node::TSIN_NODE:
-					node = new TimedSinNode();
-				break;
-				case Node::SIN_NODE:
-					node = new SinNode();
-				break;
-				case Node::ONE_SHOT_BIAS_NODE:
-					node = new OneShotBiasNode();
-				break;
-				case Node::GAUSSIAN_NOISE_NODE:
-					node = new GaussianNoiseNode();
-				break;
-				default:
-				error( "No matching Node type when instantiating Feedforward Ensemble!");;
-				break;
-				}
+				Node* node = NodeFactory::createNode(node_type);
 				this->add_node( node );
 			}
 				

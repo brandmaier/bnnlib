@@ -234,6 +234,16 @@ plotTrainingerror(trainer)
 ### Comparing Training Algorithms
 
 
+### Replicability
+
+To replicate experiments with neural networks, it is imperative to document all steps from loading and preprocessing data to all choices of parameters and algorithms along the way.
+
+```{r}
+set.seed(234)
+randomize_seed(32435)
+```
+
+
 # Discussion
 
 Do we really need yet another neural networks library? Sure.

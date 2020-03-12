@@ -1,0 +1,46 @@
+---
+title: "dynamic.Rmd"
+author: "Andreas M. Brandmaier"
+date: "3/12/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
+source("../bnnlib.R")
+cacheMetaData(1)
+```
+
+## Feedforward Neural Network
+
+Create a feed-forward neural network with 3 inputs, 25 hidden units, and 1 output. The output node is linear.
+
+```{r}
+LINEAR_NODE = 3
+
+net <- NetworkFactory_createFeedForwardNetwork(3,55,1, LINEAR_NODE)
+```
+
+## Randomly remove some connections
+
+Here, we first count the total number of trainable weights and then remove weights with a 5% chance.
+```{r}
+Network_get_num_trainable_weights(net)
+
+no_removed = Network_randomly_remove_connections(net, 0.05)
+cat("Connections removed: ", no_removed,"\n")
+```
+
+Again, let's count the total number of weights and remove some more.
+
+```{r}
+
+Network_get_num_trainable_weights(net)
+
+no_removed = Network_randomly_remove_connections(net, 0.10)
+
+Network_get_num_trainable_weights(net)
+
+```

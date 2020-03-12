@@ -1,0 +1,160 @@
+---
+title: "MSD"
+author: "Andreas M. Brandmaier"
+date: "1/14/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
+source("../bnnlib.R")
+cacheMetaData(1)
+
+source("../R/toSequence.R")
+source("../R/banana.R")
+source("../R/plotTrainingerror.R")
+```
+
+# Introduction
+
+This is a demonstration of the mean spike distance task by Gers et al. (2002). The task is about learning a representation of time, which involves counting discrete time steps, reading out the counter and also learning to reset the timer when an external stimulus is present.
+
+```{r}
+setRandomSeed(92357)
+
+# create network from Gers02a with LSTM hidden layer (including peepholes)
+# 1 output and 1 input
+#network = NetworkFactory_create_gers02a()
+network = LSTMNetwork(1,2,1, TANH_NODE, LINEAR_NODE)
+```
+
+Generate data
+```{r}
+set.seed(4598234)
+n <- 100
+#interval.lengths <- 1:5
+interval.lengths <- 1:10
+sequence_set <- SequenceSet()
+
+for (k in 1:10) {
+intervals <- sample(interval.lengths, size=n, replace=TRUE)
+input_seq <- c(1,rep(0, sum(intervals)))
+target_seq <- rep(0, sum(intervals)+1)
+input_seq[cumsum(intervals)+1] <- 1
+target_seq[cumsum(intervals)+1] <- intervals
+sequence <- toSequence(data.frame(input_seq, target_seq),1,2)
+SequenceSet_add_copy_of_sequence(sequence_set, sequence)
+}
+```
+
+## Training
+
+```{r}
+
+num.reps <- 50
+num.steps <- 800
+
+ar1 = ARPropTrainer(network)
+ARPropTrainer_forgetting_discount_set(ar1, .75)
+ARPropTrainer_input_discount_set(ar1, 1)
+ARPropTrainer_output_discount_set(ar1, 1)
+  
+ar2 = ARPropTrainer(network)
+ARPropTrainer_forgetting_discount_set(ar2, 1)
+ARPropTrainer_input_discount_set(ar2, .75)
+ARPropTrainer_output_discount_set(ar2, 1)
+  
+
+ar3 = ARPropTrainer(network)
+ARPropTrainer_forgetting_discount_set(ar3, 1)
+ARPropTrainer_input_discount_set(ar3, 1)
+ARPropTrainer_output_discount_set(ar3, .75)
+  
+
+ar4 = ARPropTrainer(network)
+ARPropTrainer_forgetting_discount_set(ar4, 1)
+ARPropTrainer_input_discount_set(ar4, .5)
+ARPropTrainer_output_discount_set(ar4, 1)
+
+ar5 = ARPropTrainer(network)
+ARPropTrainer_forgetting_discount_set(ar5, 1)
+ARPropTrainer_input_discount_set(ar5, 1)
+ARPropTrainer_output_discount_set(ar5, .5)
+
+ar6 = ARPropTrainer(network)
+ARPropTrainer_forgetting_discount_set(ar6, .5)
+ARPropTrainer_input_discount_set(ar6, 1)
+ARPropTrainer_output_discount_set(ar6, 1)
+
+trainers <- list( ImprovedRPropTrainer(network), RPropTrainer(network),ar1,ar2,ar3,ar4,ar5,ar6)
+
+
+num.trainers <- length(trainers)
+  
+results <- matrix(nrow=num.steps, ncol=num.reps*num.trainers)
+
+colnames(results) <- paste0("X",1:(num.reps*num.trainers))
+
+col <- 0
+  
+library(tictoc)
+tic()
+
+for (k in 1:length(trainers)) {  
+  
+trainer <- trainers[[k]]
+
+
+
+
+
+for (i in 1:num.reps) {
+
+  col<-col+1
+  
+Network_reinitialise(network)
+Trainer_initialize(trainer)
+
+
+#tic()
+#Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(1e-3),10)
+Trainer_train2(trainer, sequence_set, num.steps)
+#toc()
+
+x <- getTrainingerror(trainer)
+
+results[,col] <- x
+
+colnames(results)[col] <- paste0(Trainer_get_name(trainer), i)
+
+}
+}
+
+toc()
+#source("../R/plotTrainingerror.R")
+#plotTrainingerror(trainer) + theme_light()
+```
+
+Plotting
+
+```{r}
+longdat <- reshape2::melt(results)
+ longdat$repetition <- rep(rep(1:num.reps,each=num.steps),num.trainers)
+ longdat$names <- rep(make.unique(sapply(trainers,Trainer_get_name)),each=(num.reps*num.steps))
+
+ lds<-longdat[,c("value"),drop=FALSE]
+ agglong <- aggregate(lds,
+                      by=list(Names=longdat$names,Step=longdat$Var1),FUN=median)
+ 
+library(ggplot2)
+ggplot2::ggplot(data=longdat, aes(x=Var1,y=value,group=Var2,color=names))+geom_line()+
+  xlab("Time")+ylab("MSE")+ facet_wrap(~names) + theme_minimal()+ylim(0,7000)
+
+ggplot2::ggplot()+ geom_line(data=longdat,aes(x=Var1,y=value,group=Var2),color="gray")+
+  geom_line(data=agglong,aes(x=Step,y=value,group=Names,col=Names))+ theme_minimal()+
+  ylim(0,2000)#+facet_wrap(~Names)
+```

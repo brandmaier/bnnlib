@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
   cacheMetaData(1)
   
 source("../R/toSequence.R")
-source("../R/bnn.R")
+source("../R/banana.R")
 ```
 
 ## Load Images
@@ -69,12 +69,13 @@ dims <- dim*dim
 
 ## Feedforward Neural Network
 
-Create a feed-forward neural network with 3 inputs, 25 hidden units, and 1 output. The output node is linear.
+Create a feed-forward neural network with $84^2$ inputs, 4 hidden units, and $84^2$ output. The output node is linear.
 
 ```{r}
 LINEAR_NODE = 3
-
-net <- NetworkFactory_createFeedForwardNetwork(dims,4,dims, LINEAR_NODE)
+num_hidden = 16
+#net <- NetworkFactory_createFeedForwardNetwork(dims,4,dims, LINEAR_NODE)
+net <- NetworkFactory_createSparseAutoencoder(dims,num_hidden,0.01, TANH_NODE, TANH_NODE)
 ```
 
 
@@ -87,23 +88,63 @@ cat("Using Trainer: ",Trainer_get_name(trainer),"\n")
 
  Network_evaluate_training_error__SWIG_0(net, sequence_set)
  
+ 
+Trainer_sparsity_beta_set(trainer,1000)
+ 
 Sys.time()
 Trainer_train__SWIG_0(trainer, sequence_set, 50)
 Sys.time()
 
 Network_evaluate_training_error__SWIG_0(net, sequence_set)
+
+
+source("../R/plotTrainingerror.R")
+plotTrainingerror(trainer)
  
 ```
 
 Obtain hidden activations
 
-```{r}
-x = getActivations(net, sequence)
+```{r outputpredictedimage}
+sequence = SequenceSet_get(sequence_set,2)
+# convert this back into an image
+#x = getActivations(net, sequence)
+x = getOutputs(net, sequence )
+#x2 = sapply(1:(84*84), function(x){ Sequence_get_input_at(sequence,0,x-1)})
+x2 = getInputs(sequence)
+#getInputs()
+predimg <- matrix(nrow=dim, ncol=dim)
+inpimg <- matrix(nrow=dim, ncol=dim)
+for (i in 1:dim) {
+  predimg[i,] <- x[1:dim+(i-1)*dim]
+  inpimg[i,] <- x2[1:dim+(i-1)*dim]
+}
+par(mfrow=c(2,2))
+image(predimg)
+image(inpimg)
+image(predimg-inpimg)
+image(abs(predimg-inpimg))
 ```
 
 # Plot latent space projections
 
 ```{r}
 source("../R/plotActivations.R")
-plotActivations(net, sequence, node.names = c("Tanh1","Tanh2","Tanh3"))
+#plotActivations(net, sequence, node.names = c("Hidden0","Hidden1","Hidden2","Hidden3"))
+
+pos <- which(sapply(getNodeNames(net) , function(x){startsWith(x,"Hidden")}))
+#pos <- 7630:7670
+result <- matrix(nrow=0,ncol=length(pos))
+for (i in 1:SequenceSet_size(sequence_set)) {
+  sequence <- SequenceSet_get(sequence_set,i-1)
+  x = getActivations(net, sequence)[1,pos]
+  result <- rbind(result, x)
+}
+
+result
+
+coords <- cmdscale(dist(result),2)
+plot(coords,type="n")
+text(x=coords[,1],y=coords[,2], labels=images)
+
 ```

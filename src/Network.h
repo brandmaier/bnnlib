@@ -200,7 +200,7 @@ struct Network {
 
 //	void grow_network_by_ensemble();
 
-	int pluck_connections(weight_t chance);
+	int randomly_remove_connections(weight_t chance);
 
 	weight_t check_gradient(Sequence* sequence);
 	weight_t check_gradient(Sequence* sequence, weight_t epsilon);
@@ -221,6 +221,7 @@ struct Network {
 	vector<Node*>* get_nodes_with_name(string name);
 	vector<string> get_node_names();
 	string get_node_name(unsigned int i);
+	Node* get_node_with_name(string name);
 
 	void add_ensemble(Ensemble* ensemble);
 	void add_ensemble(Ensemble* ensemble, bool add_all_nodes_tos_network);
@@ -230,6 +231,10 @@ struct Network {
 	void remove_ensemble(Ensemble* ensemble);	
 	void connect_ensembles(Ensemble* ensemble_from, Ensemble* ensemble_to, bool forward);
 	void connect_ensembles(Ensemble* ensemble_from, Ensemble* ensemble_to, bool forward, weight_t weight);
+	
+	
+	void disconnect_and_erase(Node* node_a, Node* node_b);
+	  
 	
 	void sort_nodes(vector<Node*>* in, vector<Node*>* out);
 	void sort_nodes();
