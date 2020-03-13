@@ -64,11 +64,6 @@ struct RandomGateNetwork : Network
 
 		size = nodes.size();
 
-	//	sanity_check(true);
-		//cout << "nodes: " << nodes.size() << endl;
-		//if (has_cycle())
-		//	error("Network has cycle!");
-
 
 		for (unsigned int i=2; i < ensembles.size()-1; i++)
 		{

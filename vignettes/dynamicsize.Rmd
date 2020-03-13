@@ -21,7 +21,7 @@ Create a feed-forward neural network with 3 inputs, 25 hidden units, and 1 outpu
 TANH_NODE = 1
 LINEAR_NODE = 3
 
-net <- NetworkFactory_createFeedForwardNetwork(2,4,3, LINEAR_NODE)
+net <- NetworkFactory_createFeedForwardNetwork(2,5,4, LINEAR_NODE)
 ```
 
 ## Randomly remove some connections
@@ -46,7 +46,8 @@ Network_get_num_trainable_weights(net)
 
 ```
 
-Introduce a new node
+Introduce a new node. Note that currently a new node needs to be added to both the ensemble and the network. This will change in future.
+
 
 ```{r}
 # get references to the three layers (0=bias); 
@@ -59,6 +60,7 @@ output_layer <- Network_get_ensemble(net, 3);
 new_node <- NodeFactory_createNode(TANH_NODE)
 Node_name_set(new_node,"New Node")
 Ensemble_add_node(hidden_layer, new_node)
+Network_add_node(net, new_node)
 ```
 
 Plot the network architecture:
@@ -104,6 +106,13 @@ Again, let's count again the number of trainable weights:
 Network_get_num_trainable_weights(net)
 ```
 
+Test how many incoming and outgoing connections the newly created node has:
+```{r}
+Node_get_num_incoming_connections(new_node)
+Node_get_num_outgoing_connections(new_node)
+```
+
+And, finally, create the network diagram again.
 
 ```{r results="asis"}
 dot.lang <- Network_to_dot_graph(net)
