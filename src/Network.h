@@ -133,7 +133,7 @@ struct Network {
 //	void set_initial_states(bool state);
 	void print_offsets();
 
-	void hessian();
+
 	Jacobian* jacobian_numerical(Sequence* seq, double epsilon);
 	Jacobian* jacobian_backprop(Sequence* seq);
 	Jacobian* jacobian_backprop(SequenceSet* sequence_set);
@@ -156,10 +156,7 @@ struct Network {
 
 	weight_t get_percent_correct_binary_decision(SequenceSet* sequenceset, int threshold);
 	
-/*	std::vector<weight_t>* train(SequenceSet* sequences, unsigned int iterations);
-	std::vector<weight_t>* train(SequenceSet* sequenceset,SequenceSet* testset,  unsigned int iterations);
-	std::vector<weight_t>* train(SequenceSet* sequenceset,SequenceSet* testset,  unsigned int iterations, unsigned int callback_after_steps, CallbackHandler* callback_handler);
-*/
+
 	bool has_cycle();
 	bool has_cycle_rec(Node* parent, map<Node*, unsigned int>* nodehash);	
 
@@ -177,10 +174,6 @@ struct Network {
 	vector<Node*>* get_potential_output_nodes();
 	vector<Node*>* get_potential_input_nodes();
 
-/*	std::vector<std::vector<weight_t>*>* auto_predict(vector<weight_t>* in,unsigned int timesteps,  int mapping[], Sequence* sequence, unsigned int seq_offset);
-	std::vector<std::vector<weight_t>*>* auto_predict(vector<weight_t>* in,unsigned int timesteps,  int mapping[]);
-	std::vector<std::vector<weight_t>*>* auto_predict(vector<weight_t>* in,unsigned int timesteps);
-	*/
 	bool sanity_check(bool verbose);
 	
 	weight_t get_sequence_error(Sequence* sequence, bool verbose);
@@ -242,7 +235,6 @@ struct Network {
 	void sort_nodes(vector<Node*>* in, vector<Node*>* out);
 	void sort_nodes();
 	void sort_nodes(Ensemble* in, Ensemble* out);
-//	void sort_nodes_deprecated(vector<Node*>* in, vector<Node*>* out);
 	void _sort_nodes_rec(Node* node, set<Node*>* tagged,  int* id, vector<Node*>* nodes);
 
 	void randomize();
@@ -251,8 +243,6 @@ struct Network {
 	void randomize_initial_states();
 	
 	void normalize();
-
-	//double get_timeseries_generalization_error(Sequence* sequence, unsigned int context_length);
 
 	vector<Ensemble*>* get_ensembles_by_type(unsigned int ensemble_type);
 	

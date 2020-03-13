@@ -1891,7 +1891,7 @@ weight_t Network::check_gradient(Sequence* sequence, weight_t epsilon, bool verb
 	weight_t diff_sum = 0.0;
 	weight_t diff_max = 0.0;
 
-	for (unsigned int i=0; i < size; i++) {
+	for (unsigned int i=0; i < nodes.size(); i++) {
 		for (unsigned int j=0; j < nodes[i]->outgoing_connections.size(); j++) {
 
 
@@ -1968,7 +1968,7 @@ weight_t Network::check_gradient(Sequence* sequence, weight_t epsilon, bool verb
 	//print_vector( get_all_partial_derivatives() );
 
 	count = 0;
-	for (unsigned int i=0; i < size; i++) {
+	for (unsigned int i=0; i < nodes.size(); i++) {
 		for (unsigned int j=0; j < nodes[i]->outgoing_connections.size(); j++) {
 
 		//	std::cout << "prev " << nodes[i]->outgoing_connections[j]->previous_weight_change << endl;
@@ -2737,180 +2737,7 @@ void Network::sort_nodes(vector<Node*>* in, vector<Node*>* out)
 
 }
 
-/**
- * sort nodes in activation order. This should grant an automatically,
- * failure-safe ordering of the nodes
- *
- * - tag all output nodes
- *
- */
-/*void Network::sort_nodes_deprecated(vector<Node*>* in, vector<Node*>* out)
-{
-	//int removed = remove_secluded_nodes();
-	time_t start_sorting = time(NULL);
-//	if (removed > 0)
-//		warning("There were unconnected nodes that have been removed!");
 
-
-
-	//for (//unsi)
-
-	bool verbose = true;
-
-	set<Node*>* tagged = new set<Node*>();
-	int c = nodes.size()-1;
-	int* id = &c;
-
-	// untag all nodes
-	if (verbose) cout << "untag all "<< nodes.size() << " nodes" <<endl;
-	for (unsigned int i=0; i < nodes.size(); i++)
-	{
-		nodes[i]->id = -1;
-	}
-
-	// tag all output nodes
-	if (verbose) cout << "tag all " <<  out->size() << " output nodes" <<endl;
-	for (unsigned int i=0; i < out->size(); i++)
-	{
-		tagged->insert( (*out)[i]);
-		(*out)[i]->id = *id;
-		if (verbose) cout << "ID: " << (*out)[i]->id << " for " << (*out)[i]->name << " ( output tag) " << endl;
-		*id = *id-1;
-	}
-
-	// tag all input nodes
-	for (unsigned int i=0; i < in->size(); i++)
-	{
-		tagged->insert( (*in)[i]);
-		//cout << "input: " << (*in)[i]->name << endl;
-	}
-
-
-
-	// recurse from all nodes that do not have outgoing forward connections
-	vector<Node*> start;
-	for (unsigned int i=0; i < nodes.size(); i++)
-	{
-		if (dynamic_cast<BiasNode*>(nodes[i]) != 0) continue;
-		bool match = true;
-		for (unsigned int j = 0; j < nodes[i]->outgoing_connections.size(); j++)
-		{
-			if (nodes[i]->outgoing_connections[j]->forward) {match=false; break; }
-		}
-
-		if (match) {
-			start.push_back( nodes[i] );
-
-			// tag them if not yet tagged (but they count as hiddens!)
-			if (nodes[i]->id == -1) {
-				tagged->insert( nodes[i]);
-				nodes[i]->id = *id;
-				if (verbose)	cout << "ID: " << (*id) << " for " << nodes[i]->name << " ( output tag, but hidden) " << endl;
-				*id = *id-1;
-			}
-
-		}
-	}
-
-	if (verbose) cout << "start recursion from " << start.size() << " nodes " <<endl;
-
-	for (unsigned int i=0; i < start.size(); i++)
-	{
-		if (verbose) cout << "recursion " << i << "/" << start.size() << endl;
- 		_sort_nodes_rec( start[i], tagged, id, &start );
- 		i++;
-	}
-
-	delete tagged;
-
-	// give ids to nodes that have only incoming backward connections
-	for (unsigned int i=0; i < nodes.size(); i++)
-	{
-		if (nodes[i]->id != -1)
-				continue;
-		if (dynamic_cast<BiasNode*>(nodes[i]) != 0)
-			continue;
-		if (nodes[i]->incoming_connections.size() > 0)
-		{
-			bool ok = true;
-			for (unsigned int j=0; j < nodes[i]->incoming_connections.size();j++)
-			{
-				if (nodes[i]->incoming_connections[j]->forward) { ok=false; break;}
-			}
-			if (!ok) continue;
-
-			nodes[i]->id = *id;
-			*id = *id - 1;
-		}
-		cout << nodes[i]->name << " gets id " << *id << "( only incoming backward connections ) " << endl;
-	}
-
-
-	// give ids to input
-	for (unsigned int i=0; i < in->size(); i++)
-	{
-		//tagged->insert( (*in)[i]);
-		//cout << "input has id " << (*in)[i]->id << endl;
-		(*in)[i]->id = *id;
-		if (verbose) cout << "ID: " << (*in)[i]->id << " for " << (*in)[i]->name << " ( input tag) " << endl;
-		*id = *id-1;
-	}
-
-	if (verbose) cout << "remaining IDs to Bias" << endl;
-
-	// give all remaining ids to Bias unit(s)
-	bias_size = 0;
-	for (unsigned int i=0; i < nodes.size(); i++)
-	{
-		if (dynamic_cast<BiasNode*>(nodes[i]) != 0)  {
-			bias_size++;
-			(nodes)[i]->id=*id;
-			*id = *id-1;
- 		if (verbose)	cout << "Bias is : " << nodes[i]->get_label() << endl;
-		}
-	}
-
-	//cout << "cur-ID: " << *id << " bias size: " << bias_size
-	//		 << " Nodes: "<< nodes.size();
-
-	// do the actual resort
-	if (verbose) cout << "do resort" << endl;
-	std::sort(this->nodes.begin(), this->nodes.end(), compare_nodes_by_id() );
-
-	// determine new sizes and offsets
-	//unsigned int idx = 0;
-
-
-	in_size = in->size();
-	out_size = out->size();
-	hid_size = nodes.size() - bias_size - in_size - out_size;
-
-	bias_offset = 0;
-	in_offset = bias_size+bias_offset;
-	hid_offset = in_offset+in_size;
-	out_offset = hid_offset+hid_size;
-
-	size = bias_size+in_size+hid_size+out_size;
-
-	if (verbose)
-	std::cout << "Bias: "<< bias_offset << "/" << bias_size
-		<< " In: "<<in_offset << "/" << in_size
-		<< " hid:"<< hid_offset << "/"<< hid_size
-		<< " out:"<< out_offset << "/" << out_size << endl;
-
-
-
-	//if (*id != -1){
-	if (*id != -1) {
-	stringstream sstr;
-		sstr << "Error when sorting nodes in network! " << *id << "!=-1 could not be sorted! Make sure that you added all Nodes and Ensembles to the Network! Also, there might be a cycle in your forward-connections! ";
-		error(sstr.str());
-	}
-
-
-	cout << "Sorting took " << (time(NULL)-start_sorting)/60.0 << "min" << endl;
-}
-*/
 
 /**
  * removes all nodes that do not have incoming or outgoing connections
@@ -3128,6 +2955,7 @@ Jacobian* Network::jacobian_numerical(Sequence* seq, double epsilon)
 
 }
 
+/*
 void Network::hessian()
 {
 
@@ -3145,5 +2973,5 @@ void Network::hessian()
 
 
 }
-
+*/
 #endif
