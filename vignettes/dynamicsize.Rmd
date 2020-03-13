@@ -18,22 +18,23 @@ cacheMetaData(1)
 Create a feed-forward neural network with 3 inputs, 25 hidden units, and 1 output. The output node is linear.
 
 ```{r}
+TANH_NODE = 1
 LINEAR_NODE = 3
 
-net <- NetworkFactory_createFeedForwardNetwork(3,55,1, LINEAR_NODE)
+net <- NetworkFactory_createFeedForwardNetwork(2,4,3, LINEAR_NODE)
 ```
 
 ## Randomly remove some connections
 
-Here, we first count the total number of trainable weights and then remove weights with a 5% chance.
+Here, we first count the total number of trainable weights and then remove weights with a 15% chance.
 ```{r}
 Network_get_num_trainable_weights(net)
 
-no_removed = Network_randomly_remove_connections(net, 0.05)
+no_removed = Network_randomly_remove_connections(net, 0.15)
 cat("Connections removed: ", no_removed,"\n")
 ```
 
-Again, let's count the total number of weights and remove some more.
+Again, let's count the total number of weights and remove some more (with 10%).
 
 ```{r}
 
@@ -43,4 +44,69 @@ no_removed = Network_randomly_remove_connections(net, 0.10)
 
 Network_get_num_trainable_weights(net)
 
+```
+
+Introduce a new node
+
+```{r}
+# get references to the three layers (0=bias); 
+# this enumeration is true only for feedforward networks from NetworkFactors
+bias_layer <- Network_get_ensemble(net, 0);
+input_layer <- Network_get_ensemble(net, 1);
+hidden_layer <- Network_get_ensemble(net, 2);
+output_layer <- Network_get_ensemble(net, 3);
+# create new node and add it to the hidden layer
+new_node <- NodeFactory_createNode(TANH_NODE)
+Node_name_set(new_node,"New Node")
+Ensemble_add_node(hidden_layer, new_node)
+```
+
+Plot the network architecture:
+
+
+```{r results="asis"}
+dot.lang <- Network_to_dot_graph(net)
+require("DOT")
+DOT::dot(dot.lang)
+```
+
+```{r}
+# add connections from new node to output layer
+for (i in 1:Ensemble_get_num_nodes(output_layer)) {
+  output_node = Ensemble_get_node(output_layer, i-1);
+ con= Network_connect__SWIG_0(new_node, output_node, TRUE);
+}
+
+Network_connect__SWIG_0(Ensemble_get_node(bias_layer,0), new_node, TRUE)
+```
+
+
+Now, let's count again the number of trainable weights:
+
+```{r}
+Network_get_num_trainable_weights(net)
+```
+
+Now, we add connections from all input layer nodes to the new node.
+
+```{r}
+# add connections from input layer to new node
+for (i in 1:Ensemble_get_num_nodes(input_layer)) {
+  input_node = Ensemble_get_node(input_layer, i-1);
+  Network_connect__SWIG_0(input_node, new_node, TRUE);
+}
+# TODO: also add weight from bias node?
+```
+
+Again, let's count again the number of trainable weights:
+
+```{r}
+Network_get_num_trainable_weights(net)
+```
+
+
+```{r results="asis"}
+dot.lang <- Network_to_dot_graph(net)
+require("DOT")
+DOT::dot(dot.lang)
 ```

@@ -130,6 +130,14 @@ struct Node : Trainable {
 		return false;
 	}
 	
+	unsigned int get_num_outgoing_connections() {
+	  return(outgoing_connections.size());
+	}
+	
+	unsigned int get_num_incoming_connections() {
+	  return(incoming_connections.size());
+	}
+	
 	bool has_sparsity_prior() {
 	  return (sparsity_prior!=0.0);
 	}

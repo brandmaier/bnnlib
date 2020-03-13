@@ -45,6 +45,10 @@ struct Ensemble
 	virtual ~Ensemble();
 	
 	void add_node(Node* node);	
+	
+	Node* get_node(unsigned int i) {
+	  return(this->nodes[i]);
+	}
 	bool contains_node(Node* node);
 	
 	static Ensemble* create_fullrecurrent_ensemble(unsigned int size);
@@ -87,6 +91,8 @@ struct Ensemble
 	  }
 	  
 	}
+	
+	
 };
 
 #endif /*ENSEMBLE_H_*/

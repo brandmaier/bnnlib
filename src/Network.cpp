@@ -258,7 +258,10 @@ Connection* Network::connect(Node* node1, Node* node2, bool forward, weight_t va
  **/
 Connection* Network::connect(Node* node1, Node* node2, bool forward) {
 	
-	assert(node1!=NULL && node2!=NULL);
+  //assert(node1!=NULL && node2!=NULL);
+	if (node1==NULL || node2==NULL) {
+	  return(NULL);
+	}
 	
 	if ((node1 == node2) && (forward))
 	{
@@ -1784,7 +1787,7 @@ string Network::to_dot_graph()
    std::basic_stringstream<char> out;
 		
 	// ratio=auto;rankdir=TB;
-	out << "digraph G { mclimit=1000;\n";
+	out << "digraph G { mclimit=1000;\nrankdir=lr;\n";
 
 	//out << "graph[splines=true overlap=false];\n";
 

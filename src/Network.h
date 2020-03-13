@@ -206,6 +206,9 @@ struct Network {
 	weight_t check_gradient(Sequence* sequence, weight_t epsilon);
 	weight_t check_gradient(Sequence* sequence, weight_t epsilon, bool verbose);
 
+	Ensemble* get_ensemble(unsigned int i) {
+	  return(this->ensembles[i]);
+	}
 	
 	weight_t calculate_SSE(std::vector<std::vector<weight_t>*>* a, std::vector<std::vector<weight_t>*>* b);
 
