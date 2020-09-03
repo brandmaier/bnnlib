@@ -73,7 +73,7 @@ Create a feed-forward neural network with $84^2$ inputs, 4 hidden units, and $84
 
 ```{r}
 LINEAR_NODE = 3
-num_hidden = 16
+num_hidden = 64
 #net <- NetworkFactory_createFeedForwardNetwork(dims,4,dims, LINEAR_NODE)
 net <- NetworkFactory_createSparseAutoencoder(dims,num_hidden,0.01, TANH_NODE, TANH_NODE)
 ```

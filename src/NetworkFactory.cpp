@@ -13,6 +13,7 @@
 #include "ensembles/KeepEnsemble.h"
 #include "ensembles/LSTMPlusEnsemble.h"
 #include "ensembles/FeedforwardEnsemble.h"
+#include "ensembles/StochasticFeedforwardEnsemble.h"
 #include "ensembles/WinnerTakesAllEnsemble.h"
 #include "ensembles/RecurrentEnsemble.h"
 #include "ensembles/LSTMCopyRestore.h"
@@ -1163,14 +1164,14 @@ Network* NetworkFactory::createFeedForwardNetwork(unsigned int in_size, unsigned
 
 Network* NetworkFactory::createSparseAutoencoder(unsigned int in_size, unsigned int hidden_size, 
                                                  double sparsity) {
-  createSparseAutoencoder(in_size, hidden_size, sparsity, Node::TANH_NODE,  Node::LINEAR_NODE);
+ return createSparseAutoencoder(in_size, hidden_size, sparsity, Node::TANH_NODE,  Node::LINEAR_NODE);
 }
 
 Network* NetworkFactory::createSparseAutoencoder(unsigned int in_size, unsigned int hidden_size, 
                                                  double sparsity, int hid_type, int out_type) {
   Network* net = new Network();
   
-  unsigned int num_layers = 1;
+//  unsigned int num_layers = 1;
   //int hid_type = Node::TANH_NODE;
   //int out_type = Node::LINEAR_NODE;
   
@@ -1210,6 +1211,61 @@ Network* NetworkFactory::createSparseAutoencoder(unsigned int in_size, unsigned 
   
 }
 
+
+Network* NetworkFactory::createStochasticFeedForwardNetwork(unsigned int in_size, 
+            int hid_size, unsigned int out_size, int out_type,
+            weight_t gain, weight_t bias, weight_t stochastic_range)
+{
+  Network* net = new Network();
+  
+  unsigned int num_layers = 1;
+  
+  // create Ensembles
+  
+  Ensemble* bias_e = new FeedforwardEnsemble(Node::BIAS_NODE, 1);	
+  net->add_ensemble(bias_e);
+  
+  Ensemble* in = new FeedforwardEnsemble(Node::LINEAR_NODE, in_size);		
+  net->add_ensemble(in);
+  Ensemble* hidden[num_layers];
+  unsigned int total_hid_size = 0;
+  for (unsigned int i=0; i < num_layers; i++)
+  {
+    hidden[i] = new StochasticFeedforwardEnsemble(hid_size, //layer_sizes[i],
+                                                  gain, bias, stochastic_range);	
+    net->add_ensemble(hidden[i]);
+    total_hid_size += hid_size; //layer_sizes[i];
+  } 
+  Ensemble* out = new FeedforwardEnsemble(out_type, out_size);
+  net->add_ensemble(out);
+  
+  
+  // connect ensembles
+  net->connect_ensembles(bias_e, hidden[0], true);
+  net->connect_ensembles(in, hidden[0], true);
+  for (unsigned int i=0; i < num_layers-1; i++)
+  {
+    net->connect_ensembles(hidden[i], hidden[i+1], true);
+    net->connect_ensembles(bias_e, hidden[i+1], true);
+  }	
+  net->connect_ensembles(hidden[num_layers-1], out, true);
+  net->connect_ensembles(bias_e, out, true);
+  
+  /*net->bias_size = 1;
+   net->bias_offset = 0;
+   net->in_offset = 1;
+   net->in_size = in_size;
+   net->hid_offset = net->in_offset+net->in_size;
+   net->hid_size = total_hid_size;
+   net->out_offset = net->hid_offset+net->hid_size;
+   net->out_size = out_size;
+   net->size = 1+net->in_size+net->hid_size+net->out_size;
+   */
+  
+  net->sort_nodes();
+  
+  return net;
+}
 
 Network* NetworkFactory::createFeedForwardNetwork(unsigned int in_size, int hid_type,unsigned int num_layers, unsigned int layer_sizes[], int out_type, unsigned int out_size)
 {

@@ -30,6 +30,7 @@ using namespace std;
 #include "src/callbacks/BiasWeightWatcher.h"
 #include "src/callbacks/WeightWatcher.h"
 #include "src/trainer/Trainer.h"
+#include "src/trainer/CascadeCorrelationTrainer.h"
 #include "src/trainer/BackpropTrainer.h"
 #include "src/trainer/RPropTrainer.h"
 #include "src/trainer/RMSPropTrainer.h"
@@ -65,6 +66,7 @@ using namespace std;
 #include "src/nodes/LinearNode.h"
 #include "src/nodes/SigmoidNode.h"
 #include "src/nodes/ReLUNode.h"
+#include "src/nodes/StochasticSigmoidNode.h"
 #include "src/GnuplotGenerator.h"
 #include "src/criteria/Criterion.h"
 #include "src/criteria/GeneralizationLoss.h"
@@ -83,6 +85,7 @@ using namespace std;
 #include "src/ensembles/SingleCellEnsemble.h"
 #include "src/ensembles/ConditionalBiasEnsemble.h"
 #include "src/ensembles/SecondOrderEnsemble.h"
+#include "src/ensembles/StochasticFeedforwardEnsemble.h"
 #include "src/callbacks/ReportCallback.h"
 #include "src/AutoAssociationSequence.h"
 #include "src/HarmonicGateNetwork.h"
@@ -148,6 +151,7 @@ namespace std {
 %include src/nodes/LinearNode.h
 %include src/nodes/SigmoidNode.h
 %include src/nodes/ReLUNode.h
+%include "src/nodes/StochasticSigmoidNode.h"
 %include src/Connection.h
 %include src/Network.h
 %include src/networks/LSTMNetwork.h
@@ -169,6 +173,7 @@ namespace std {
 %include src/trainer/RPropTrainer.h
 %include src/trainer/RMSPropTrainer.h
 %include src/trainer/ADAMTrainer.h
+%include src/trainer/CascadeCorrelationTrainer.h
 %include "src/trainer/ImprovedRPropTrainer.h"
 %include "src/trainer/QuickpropTrainer.h"
 %include "src/criteria/Criterion.h"
@@ -187,6 +192,7 @@ namespace std {
 %include src/ensembles/SecondOrderEnsemble.h
 %include "src/ensembles/LSTMForgetEnsemble.h"
 %include "src/ensembles/ConditionalBiasEnsemble.h"
+%include "src/ensembles/StochasticFeedforwardEnsemble.h"
 %include src/callbacks/CallbackHandler.h
 %include "src/callbacks/ReportCallback.h"
 %include src/callbacks/ZeroErrorFailReport.h

@@ -8,7 +8,7 @@
 #include "CascadeCorrelationTrainer.h"
 
 
-CascadeCorrelationTrainer::CascadeCorrelationTrainer(Network* network) {
+CascadeCorrelationTrainer::CascadeCorrelationTrainer(Network* network) : Trainer() {
 	this->network = network;
 
 }
@@ -27,7 +27,7 @@ CascadeCorrelationTrainer::~CascadeCorrelationTrainer() {
  *
  *
  */
-void CascadeCorrelationTrainer::step(SequenceSet* sequences)
+void CascadeCorrelationTrainer::step(SequenceSet* sequences,	unsigned int steps = 100)
 {
 	// berechne deltas
 	weight_t deltas[network->timestep][network->out_size];
@@ -53,6 +53,8 @@ void CascadeCorrelationTrainer::step(SequenceSet* sequences)
 	{
 		Network::connect(network->nodes[i], candidate, true);
 	}
+	
+	// verbinde CandidateUnit mit OutputUnit
 
 	// sortiere Netzwerk
 	network->sort_nodes();
@@ -60,7 +62,7 @@ void CascadeCorrelationTrainer::step(SequenceSet* sequences)
 	// trainiere die neuen Kanten
 	ImprovedRPropTrainer trainer(network);
 
-	unsigned int steps = 0;
+
 	for (unsigned int step=0; step < steps; step++)
 	{
 		// berechne Gradient für alle neuen Verbindungen

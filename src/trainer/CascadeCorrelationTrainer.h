@@ -14,12 +14,21 @@
 #include "../nodes/TanhNode.h"
 #include "ImprovedRPropTrainer.h"
 
-class CascadeCorrelationTrainer : Trainer {
-public:
+struct CascadeCorrelationTrainer : public Trainer {
+
 	CascadeCorrelationTrainer(Network* network);
 	virtual ~CascadeCorrelationTrainer();
+	
+	void change_weight(Trainable* c) {
+	  
+	};
 
-	void step(SequenceSet* sequences);
+	void step(SequenceSet* sequences, unsigned int steps);
+	
+	virtual string get_name()
+	{
+	  return "CascadeCorrelation";
+	}
 };
 
 #endif /* CASCADECORRELATIONTRAINER_H_ */

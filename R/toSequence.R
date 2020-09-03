@@ -30,7 +30,7 @@ toSequence <- function(x, input, target, sequence=NULL, ...)
     return(seq)
     
   } else {
-    stop("Not supported")
+    stop("Not supported. Trya data.frame!")
   }
   
 }

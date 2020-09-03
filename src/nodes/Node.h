@@ -53,6 +53,7 @@ struct Node : Trainable {
 	static const nodetype PSEUDO_OUTPUT_NODE = 22;
 	static const nodetype MATCHING_OUTPUT_NODE = 23;
 	static const nodetype RELU_NODE = 24;
+	static const nodetype STOCHASTIC_SIGMOID_NODE = 25;
 
 	static const int GENERIC = 0;
 	static const int INPUT = 1;
