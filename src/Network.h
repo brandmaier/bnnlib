@@ -40,12 +40,6 @@ struct Network {
 
 	static const bool FORWARD = true;
 	static const bool BACKWARD = false;
-//	static const int BACKPROP = 0;
-//	static const int RPROP = 1;
-	
-//	map<int, Node*> node_map;
-	
-//	int training_method;
 
 	//unsigned int seed;
 	Ensemble* input_ensemble;
@@ -125,6 +119,7 @@ struct Network {
 
 	void export_to_dot_graph(string filename);
 	string to_dot_graph();
+	string to_dot_graph(bool splines, double ranksep);
 	
 	void reinitialise();
 
@@ -223,6 +218,9 @@ struct Network {
 	void add_ensemble(Ensemble* ensemble, bool add_all_nodes_tos_network);
 
 	void add_copy_of_ensemble(Ensemble* ensemble);
+	
+//	void add_copy_of_ensemble_as_output(Ensemble* ensemble);
+	
 	
 	void remove_ensemble(Ensemble* ensemble);	
 	void connect_ensembles(Ensemble* ensemble_from, Ensemble* ensemble_to, bool forward);

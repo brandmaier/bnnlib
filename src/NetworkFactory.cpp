@@ -1213,13 +1213,12 @@ Network* NetworkFactory::createSparseAutoencoder(unsigned int in_size, unsigned 
 
 
 Network* NetworkFactory::createStochasticFeedForwardNetwork(unsigned int in_size, 
-            int hid_size, unsigned int out_size, int out_type,
+            unsigned int num_layers, int hid_size, unsigned int out_size, int out_type,
             weight_t gain, weight_t bias, weight_t stochastic_range)
 {
   Network* net = new Network();
   
-  unsigned int num_layers = 1;
-  
+
   // create Ensembles
   
   Ensemble* bias_e = new FeedforwardEnsemble(Node::BIAS_NODE, 1);	
@@ -1240,13 +1239,13 @@ Network* NetworkFactory::createStochasticFeedForwardNetwork(unsigned int in_size
   net->add_ensemble(out);
   
   
-  // connect ensembles
-  net->connect_ensembles(bias_e, hidden[0], true);
+  // connect ensembles ( no bias terms )
+//  net->connect_ensembles(bias_e, hidden[0], true);
   net->connect_ensembles(in, hidden[0], true);
   for (unsigned int i=0; i < num_layers-1; i++)
   {
     net->connect_ensembles(hidden[i], hidden[i+1], true);
-    net->connect_ensembles(bias_e, hidden[i+1], true);
+  //  net->connect_ensembles(bias_e, hidden[i+1], true);
   }	
   net->connect_ensembles(hidden[num_layers-1], out, true);
   net->connect_ensembles(bias_e, out, true);

@@ -1432,7 +1432,7 @@ double Network::evaluate_error(SequenceSet* set, ErrorFunction* error_function)
 
 
 /**
- * not yet tested
+ * TODO: not yet tested
  */
 void Network::add_wta_output_ensemble(Ensemble* in_ensemble, Ensemble* output_ensemble)
 {
@@ -1777,8 +1777,12 @@ void Network::export_to_dot_graph(string filename)
     error("Problem in Dot Graph generation");
 }
 
-
 string Network::to_dot_graph()
+{
+  return(this->to_dot_graph(false, 0.5));
+}
+
+string Network::to_dot_graph(bool splines, double ranksep)
 {
 	assert(size > 0);
 	
@@ -1787,7 +1791,14 @@ string Network::to_dot_graph()
    std::basic_stringstream<char> out;
 		
 	// ratio=auto;rankdir=TB;
-	out << "digraph G { mclimit=1000;\nrankdir=lr;\n";
+	string extra;
+	if (!splines) {
+	  extra = "splines=line;";
+	} else {
+	  extra = "";
+	}
+	
+	out << "digraph G { mclimit=1000;\nrankdir=lr;ranksep="<< ranksep <<";"<<extra<<"\n";
 
 	//out << "graph[splines=true overlap=false];\n";
 

@@ -37,7 +37,7 @@ struct NetworkFactory
 	static Network* createFeedForwardNetwork(unsigned int in_size, unsigned int hid_size, unsigned int out_size, int out_type);
 	static Network* createFeedForwardWTANetwork(unsigned int in_size, unsigned int layers, unsigned int layer_sizes[], unsigned int out_size);
 
-	static Network* createStochasticFeedForwardNetwork(unsigned int in_size, 
+	static Network* createStochasticFeedForwardNetwork(unsigned int in_size, unsigned int num_layers,
                                                              int hid_size, unsigned int out_size, int out_type,
                                                              weight_t gain, weight_t bias, weight_t stochastic_range);
 	

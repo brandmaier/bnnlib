@@ -1,6 +1,10 @@
 #include "StochasticSigmoidNode.h"
 #include <iostream>
 
+/*
+ * This is a sigmoid node with stochastic gain following the computational model
+ * of Li, Lindenberger, & Frensch (2000) in Neurocomputing 32-33, p879--890
+ */
 	
 StochasticSigmoidNode::StochasticSigmoidNode()
 	{
@@ -45,6 +49,7 @@ void StochasticSigmoidNode::activate(unsigned int timestep) {
     double added_gain = distr(this->generator);
    // cout << "Added gain " << added_gain << "; ";
     current_gain += added_gain;
+    current_gain = max(0.0, current_gain); // clip negative values
   } 
   
   actbuf[timestep] = 1.0/(1.0+safeexp(-current_gain*inbuf[timestep]+bias));
