@@ -15,102 +15,126 @@ knitr::opts_chunk$set(echo = TRUE)
 dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
 source("../bnnlib.R")
 cacheMetaData(1)
-```
 
-## Feedforward Neural Network
-
-Create a feed-forward neural network with 3 inputs, 25 hidden units, and 1 output. The output node is linear.
-
-```{r}
-LINEAR_NODE = 3
-
-gain = 1
-bias = 0
-stochastic_range=0
-
-in_size = 3
-
-net <- NetworkFactory_createStochasticFeedForwardNetwork(in_size,25,1, LINEAR_NODE,
-                                                         gain, bias, stochastic_range)
-```
-
-Load the marketing dataset from the datarium package.
-
-
-```{r}
-data("marketing", package = "datarium")
-head(marketing, 4)
-
-```
-
-Convert data to Sequence format
-```{r}
-sequence_set <- SequenceSet()
-
+source("../R/plotActivations.R")
 source("../R/toSequence.R")
-seq <- toSequence(marketing, 1:3, 4)
-SequenceSet_add_copy_of_sequence(sequence_set,seq)
-
-cat("Sequences created: ",SequenceSet_size(sequence_set),"\n")
-cat("Input size",SequenceSet_input_size_get(sequence_set),"\n")
-cat("Target size",SequenceSet_target_size_get(sequence_set),"\n")
-
 ```
 
-Initialize training algorithm
+## Stochastic Gain
+
+In the computational model of ageing by Li et al., sigmoid cells with stochastic gain implement ageing networks. As networks grow older, the stochastic gain is decreased. The young network has an average gain of .8 and the old network an average gain of .3. 
 
 ```{r}
-bp <- ImprovedRPropTrainer(net)
 
-cat("Using Trainer: ",Trainer_get_name(bp),"\n")
+gain = .8 # young gain = .8; old gain = .3
+bias = +1
+stochastic_range = .2
+input_signal = 4
+num.trials = 1000
+
+# specify the network topology
+num_hid = 5 # number of hidden units
+in_size = 1 # number of input units
+out_size = 1 # number of output units
+num_layers = 1 # number of hidden layers (do not count input and output layer)
+LINEAR_NODE = 3 # activation type for output layer (3=linear)
 ```
 
-Start training
+Let's create the network and systematically vary the connection strength from the input to the hidden layer nodes.
 
 ```{r}
-iterations <- 100
-steps.per.iteration <- 1
-err <- rep(NA, iterations+1)
-err[1] <- Network_evaluate_training_error__SWIG_0(net, sequence_set)
-for (i in 1:iterations) {
-  Trainer_train__SWIG_0(bp, sequence_set, steps.per.iteration)
-  err[i+1] <- Network_evaluate_training_error__SWIG_0(net, sequence_set)
+# create the network using the factory method from bnnlib
+net <- NetworkFactory_createStochasticFeedForwardNetwork(
+  in_size, num_layers, num_hid,out_size, LINEAR_NODE,
+  gain, bias, stochastic_range)
+
+# manipulate connection
+nodenames <- getNodeNames(net)
+input_node <- Network_get_node_with_name(net, nodenames[2])
+nc = Node_get_num_outgoing_connections(input_node)
+weights <- rep(NA, nc)
+for (i in 1:nc) {
+  conn = Node_get_outgoing_connection(input_node, i-1)
+  w <- (i/nc) 
+  weights[i] <- w
+  cat("Set weight to ",w,"\n")
+  Trainable_weight_set(conn, w );
 }
 ```
 
-With ggplot2, we can plot the training set error over iterations:
+Next, we create a training data with fixed input that will be used to assess the stochasticity given a fixed input over multiple trials.
 
-```{r warning=FALSE, message=FALSE}
-require(ggplot2)
-ggplot(data=data.frame(step=1:(iterations+1),err),aes(x=step,y=err))+
-  geom_point()+ geom_line()+
-  geom_smooth()+
-  theme_minimal()
+```{r}
+# create a dataset with constant input
+x <- data.frame(matrix(input_signal,nrow=num.trials,ncol=2))
+seq=toSequence(x,1,2)
+
+get.activation.long <- function(net, seq) {
+  # activate the network with the inputs and
+  # filter only the hidden unit activations
+  act<-data.frame(getActivations(net, seq))
+  colnames(act) <- getNodeNames(net)
+  filter <- startsWith(getNodeNames(net),"Stochastic")
+  act <- act[,filter]
+  # convert activation data from wide format to long format
+  act <- cbind(act, ID=1:nrow(act))
+  longdat <- tidyr::gather(act,"key","value", 1:(ncol(act)-1) )
+  # return result
+  return(longdat)
+}
+
+# get activation
+data.young <- get.activation.long(net, seq)
 ```
 
-Inspect output:
+Now, we manipulate the gain parameter for all hidden layer units from 0.8 (young) to 0.3 (old).
+
+```{r}
+# now reset the gain parameter for one node
+nodename <- unique(data.young$key)
+for (name in nodename) {
+  cat("Setting ",name, ":")
+  node = Network_get_node_with_name(net,name)
+  x = StochasticSigmoidNode_gain_get(node)
+  cat (" gain was at ",x,"\n")
+  StochasticSigmoidNode_gain_set(node, 0.3)
+}
+
+```
+
+Let's collect all activations again.
 
 ```{r}
 
-outputs <- getOutputs(net, seq)
-targets <- getTargets(seq)
-ggplot(data=data.frame(outputs=outputs, targets=targets), aes(y=outputs,x=targets))+
-  geom_point()+
-  theme_minimal()+
-  xlab("Targets")+ylab("Predictions")+
-  geom_smooth()+
-  ggtitle("Sales")
+# get activation
+data.old <- get.activation.long(net, seq)
+
+# merge activations
+data.all <- cbind( rbind(data.young, data.old), Agegroup=rep(c("Young","Old"),each=nrow(data.old) ) )
+data.all$key <- factor(data.all$key,levels = rev(unique(data.all$key)),labels=paste0("W=",weights))
 
 ```
-Next, we examine the difference in outputs when we run the same set of stimuli through the network. The stochasticity of the gain functions should yields slightly different results.
+
+Now, let's plot the histograms of network activation with color representing the age groups.
+
 ```{r}
-#e = Network_get_ensemble(net, 1)
-#StochasticFeedforwardEnsemble_set_stochastic_range(e, 0)
+library(ggplot2)
+gp <- ggplot(data=data.all, aes(x=value,group=Agegroup,fill=Agegroup))+
+  #geom_density()+
+  geom_histogram()+
+  facet_wrap(~key)+
+  scale_fill_manual(values=c("#c8c8dc","#f0d246"))+
+  ggthemes::theme_clean()+
+  xlab("Activation")+ ylab("Frequency")
 
+plot(gp)
+```
 
-outputs2 <- getOutputs(net, seq)
+Finally, let's have a look at the network topology.
 
-plot(outputs[,1], outputs2[,1])
-#act <- getActivations()
-
+```{r}
+ dot.lang <- Network_to_dot_graph(net)
+ require("DOT")
+ DOT::dot(dot.lang)
+```
 ```

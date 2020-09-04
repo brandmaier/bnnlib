@@ -46,7 +46,7 @@ plotPredictions <- function(network, seq1) {
   
   
   
-  pl <- grid.arrange(arrangeGrob(p1 + theme(legend.position="none"),
+  pl <- gridExtra::grid.arrange(gridExtra::arrangeGrob(p1 + theme(legend.position="none"),
                                  p2 + theme(legend.position="none"), p3,
                                  nrow=3),
                      mylegend, nrow=2,heights=c(10, 1))
