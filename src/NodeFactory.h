@@ -11,6 +11,7 @@
 #include "nodes/ReLUNode.h"
 #include "nodes/OneShotBiasNode.h"
 #include "nodes/GaussianNoiseNode.h"
+#include "nodes/StochasticSigmoidNode.h"
 
 struct NodeFactory
 {
@@ -47,8 +48,11 @@ struct NodeFactory
 	  case Node::RELU_NODE:
 	    node = new ReLUNode();
 	    break;
+	  case Node::STOCHASTIC_SIGMOID_NODE:
+	    node = new StochasticSigmoidNode();
+	    break;
 	  default:
-	    error( "No matching Node type when instantiating Feedforward Ensemble!");;
+	    error( "No matching Node type in Node Factory class!");;
 	  break;
 	  
 	
