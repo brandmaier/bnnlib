@@ -141,7 +141,21 @@ time for a selected sequence:
 
 ![](img/gnuplot-example1.png)
 
-Testing the Network
--------------------
+Examples
+--------
 
-TODO
+Here is a list of complete, reproducible scripts that illustrate how the
+library can be used:
+
+-   A simple feedforward network to predict the impact of three
+    advertising medias (youtube, facebook and newspaper) on sales (three
+    predictors, one outcome):
+    ![feedforward.html](examples/feedforward.html)
+
+-   Predicting the Mackey-Glass time-series using a
+    Long-Short-Term-Memory (LSTM) network
+    ![mackey\_glass.html](examples/mackey_glass.html)
+
+-   Using a recurrent neural network with winner-takes-all output layer
+    to predict the frequency (one out of three) of an observed signal
+    ![frequencies.html](examples/frequencies.html)

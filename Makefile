@@ -3,7 +3,7 @@ PKGVERS := $(shell sed -n "s/Version: *\([^ ]*\)/\1/p" DESCRIPTION)
 PKGSRC  := $(shell basename `pwd`)
 
 all: r
-.PHONY: all clean
+.PHONY: all clean examples
 
 CPP_FILES = $(shell find src/ -type f -name '*.cpp')
 O_FILES = $(shell find src/ -type f -name '*.o')
@@ -68,4 +68,7 @@ vignettes/frequencies:
 	R -e "rmarkdown::render('vignettes/frequencies.Rmd',output_file='frequencies.pdf')"
 		
 	
-
+examples: 
+	Rscript -e 'rmarkdown::render("vignettes/feedforward.Rmd", "html_document", output_dir="examples/")'
+	Rscript -e 'rmarkdown::render("vignettes/mackey_glass.Rmd", "html_document", output_dir="examples/")'
+	Rscript -e 'rmarkdown::render("vignettes/frequencies.Rmd", "html_document", output_dir="examples/")'

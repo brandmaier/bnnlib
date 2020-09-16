@@ -2,11 +2,9 @@
 title: "FeedforwardNetwork"
 author: "Andreas M. Brandmaier"
 date: "12/11/2019"
-output: pdf_document
-#vignette: >
-#  %\VignetteIndexEntry{Vignette Title}
-#  %\VignetteEngine{knitr::rmarkdown}
-#  \usepackage[utf8]{inputenc}
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
