@@ -150,12 +150,12 @@ library can be used:
 -   A simple feedforward network to predict the impact of three
     advertising medias (youtube, facebook and newspaper) on sales (three
     predictors, one outcome):
-    ![feedforward.html](examples/feedforward.html)
+    ![feedforward.html](https://htmlpreview.github.io/?https://github.com/brandmaier/bnnlib/blob/master/examples/feedforward.html)
 
 -   Predicting the Mackey-Glass time-series using a
     Long-Short-Term-Memory (LSTM) network
-    ![mackey\_glass.html](examples/mackey_glass.html)
+    ![mackey\_glass.html](https://htmlpreview.github.io/?https://github.com/brandmaier/bnnlib/blob/master/examples/mackey_glass.html)
 
 -   Using a recurrent neural network with winner-takes-all output layer
     to predict the frequency (one out of three) of an observed signal
-    ![frequencies.html](examples/frequencies.html)
+    ![frequencies.html](https://htmlpreview.github.io/?https://github.com/brandmaier/bnnlib/blob/master/examples/frequencies.html)
