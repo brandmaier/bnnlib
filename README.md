@@ -159,3 +159,10 @@ library can be used:
 -   Using a recurrent neural network with winner-takes-all output layer
     to predict the frequency (one out of three) of an observed signal
     ![frequencies.html](https://htmlpreview.github.io/?https://github.com/brandmaier/bnnlib/blob/master/examples/frequencies.html)
+
+-   Learning an internal representation of time elapsed using LSTM
+    networks
+    ![msd.html](https://github.com/brandmaier/bnnlib/blob/master/examples/msd.html)
+
+-   Comparing various training algorithms for neural networks
+    ![trainer.html](examples/trainer.html)

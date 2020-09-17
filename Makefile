@@ -72,3 +72,4 @@ examples:
 	Rscript -e 'rmarkdown::render("vignettes/feedforward.Rmd", "html_document", output_dir="examples/")'
 	Rscript -e 'rmarkdown::render("vignettes/mackey_glass.Rmd", "html_document", output_dir="examples/")'
 	Rscript -e 'rmarkdown::render("vignettes/frequencies.Rmd", "html_document", output_dir="examples/")'
+	Rscript -e 'rmarkdown::render("vignettes/trainer.Rmd", "md_document", output_dir="examples/")'
