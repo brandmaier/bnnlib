@@ -69,7 +69,20 @@ vignettes/frequencies:
 		
 	
 examples: 
-	Rscript -e 'rmarkdown::render("vignettes/feedforward.Rmd", "html_document", output_dir="examples/")'
-	Rscript -e 'rmarkdown::render("vignettes/mackey_glass.Rmd", "html_document", output_dir="examples/")'
-	Rscript -e 'rmarkdown::render("vignettes/frequencies.Rmd", "html_document", output_dir="examples/")'
-	Rscript -e 'rmarkdown::render("vignettes/trainer.Rmd", "md_document", output_dir="examples/")'
+	rm -rf examples
+	mkdir examples
+	Rscript -e 'rmarkdown::render("vignettes/feedforward.Rmd", "md_document")'
+	Rscript -e 'rmarkdown::render("vignettes/mackey_glass.Rmd", "md_document")'
+	Rscript -e 'rmarkdown::render("vignettes/frequencies.Rmd", "md_document")'
+	Rscript -e 'rmarkdown::render("vignettes/trainer.Rmd", "md_document")'
+	Rscript -e 'rmarkdown::render("vignettes/msd.Rmd", "md_document")'
+	mv vignettes/trainer.md examples/
+	mv vignettes/trainer_files examples/
+	mv vignettes/frequencies.md examples/
+	mv vignettes/frequencies_files examples/
+	mv vignettes/mackey_glass.md examples/
+	mv vignettes/mackey_glass_files examples/
+	mv vignettes/feedforward.md examples/
+	mv vignettes/feedforward_files examples/
+	mv vignettes/msd.md examples/
+	mv vignettes/msd_files examples/

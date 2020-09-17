@@ -3,19 +3,18 @@ title: "Comparing Different Training Algorithms"
 author: "Andreas M. Brandmaier"
 date: "12/12/2019"
 output:
-  pdf_document: default
-  html_document: default
+  md_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In this document, we will compare the convergence of different training algorithms for a given dataset and network architecture. The data will be simulated from a simple toy problem, in which there are four i.i.d. Gaussian predictors and a single metric outcome. 
+In this document, we will compare the convergence of different training algorithms for a given dataset and network architecture. The data will be simulated from a simple toy problem, in which there are four i.i.d. Gaussian predictors and a single continuous outcome. 
 
 ## Load Library
 
-First, we load the shared library.
+First, we load `bnnlib`'s shared library.
 
 ```{r pressure, echo=TRUE}
 
@@ -28,15 +27,19 @@ First, we load the shared library.
 
 ## Generate Data
 
-Next, we simulate some data in a data.frame and convert this to bnn's Sequence format:
+Next, we simulate some data in a `data.frame` and convert this to bnn's Sequence format:
+
+```{r}
+
+N <- 100 # number of rows
+M <- 5 # number of columns
+simdata <- data.frame(matrix(data=rnorm(N*M),nrow = N))
+simdata[,M] <- simdata[,1]+simdata[,2]-ifelse(simdata[,3]>0,2,0)
+```
 
 ```{r}
 source("../R/toSequence.R")
 set <- SequenceSet()
-N <- 100
-M <- 5
-simdata <- data.frame(matrix(data=rnorm(N*M),nrow = N))
-simdata[,M] <- simdata[,1]+simdata[,2]-ifelse(simdata[,3]>0,2,0)
 seq <- toSequence(simdata,1:4,5)
 SequenceSet_add_copy_of_sequence(set, seq)
 ```
@@ -92,7 +95,7 @@ for (i in 1:length(trainer)) {
 err.data$trainer<-factor(err.data$trainer)
 ```
 
-Plot the errors
+Plot the errors of the different training algorithms on top of each other.
 
 ```{r}
 library(ggplot2)

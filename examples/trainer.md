@@ -1,12 +1,12 @@
 In this document, we will compare the convergence of different training
 algorithms for a given dataset and network architecture. The data will
 be simulated from a simple toy problem, in which there are four i.i.d.
-Gaussian predictors and a single metric outcome.
+Gaussian predictors and a single continuous outcome.
 
 Load Library
 ------------
 
-First, we load the shared library.
+First, we load `bnnlib`’s shared library.
 
       dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
       source("../bnnlib.R")
@@ -15,15 +15,16 @@ First, we load the shared library.
 Generate Data
 -------------
 
-Next, we simulate some data in a data.frame and convert this to bnn’s
+Next, we simulate some data in a `data.frame` and convert this to bnn’s
 Sequence format:
+
+    N <- 100 # number of rows
+    M <- 5 # number of columns
+    simdata <- data.frame(matrix(data=rnorm(N*M),nrow = N))
+    simdata[,M] <- simdata[,1]+simdata[,2]-ifelse(simdata[,3]>0,2,0)
 
     source("../R/toSequence.R")
     set <- SequenceSet()
-    N <- 100
-    M <- 5
-    simdata <- data.frame(matrix(data=rnorm(N*M),nrow = N))
-    simdata[,M] <- simdata[,1]+simdata[,2]-ifelse(simdata[,3]>0,2,0)
     seq <- toSequence(simdata,1:4,5)
     SequenceSet_add_copy_of_sequence(set, seq)
 
@@ -85,7 +86,8 @@ for 100 steps. Save the results in `err.data`:
 
     err.data$trainer<-factor(err.data$trainer)
 
-Plot the errors
+Plot the errors of the different training algorithms on top of each
+other.
 
     library(ggplot2)
 
@@ -95,4 +97,4 @@ Plot the errors
       geom_line()+
       theme_minimal()
 
-![](/Users/brandmaier/Documents/Packages/bnnlib/examples/trainer_files/figure-markdown_strict/unnamed-chunk-5-1.png)
+![](trainer_files/figure-markdown_strict/unnamed-chunk-6-1.png)

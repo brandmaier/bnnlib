@@ -139,13 +139,14 @@ GnuplotGenerator_plot_activations(net, seq1, node_vec)
 
 Here is a list of complete, reproducible scripts that illustrate how the library can be used:
 
-- A simple feedforward network to predict the impact of three advertising medias (youtube, facebook and newspaper) on sales (three predictors, one outcome): ![feedforward.html](https://htmlpreview.github.io/?https://github.com/brandmaier/bnnlib/blob/master/examples/feedforward.html)
+- A simple feedforward network to predict the impact of three advertising medias (youtube, facebook and newspaper) on sales (three predictors, one outcome): [feedforward.html](examples/feedforward.md)
 
-- Predicting the Mackey-Glass time-series using a Long-Short-Term-Memory (LSTM) network ![mackey_glass.html](https://htmlpreview.github.io/?https://github.com/brandmaier/bnnlib/blob/master/examples/mackey_glass.html)
+- Predicting the Mackey-Glass time-series using a Long-Short-Term-Memory (LSTM) network [mackey_glass.html](examples/mackey_glass.md)
 
-- Using a recurrent neural network with winner-takes-all output layer to predict the frequency (one out of three) of an observed signal ![frequencies.html](https://htmlpreview.github.io/?https://github.com/brandmaier/bnnlib/blob/master/examples/frequencies.html)
+- Using a recurrent neural network with winner-takes-all output layer to predict the frequency (one out of three) of an observed signal [frequencies.md](examples/frequencies.md)
 
-- Learning an internal representation of time elapsed using LSTM networks ![msd.html](https://github.com/brandmaier/bnnlib/blob/master/examples/msd.html)
+- Learning an internal representation of time elapsed using LSTM networks
+  ![msd.html](examples/msd.md)
 
 - Comparing various training algorithms for neural networks
-  ![trainer.html](examples/trainer.html)
+  [trainer.md](/examples/trainer.md)

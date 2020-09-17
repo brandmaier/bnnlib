@@ -150,19 +150,18 @@ library can be used:
 -   A simple feedforward network to predict the impact of three
     advertising medias (youtube, facebook and newspaper) on sales (three
     predictors, one outcome):
-    ![feedforward.html](https://htmlpreview.github.io/?https://github.com/brandmaier/bnnlib/blob/master/examples/feedforward.html)
+    [feedforward.html](examples/feedforward.md)
 
 -   Predicting the Mackey-Glass time-series using a
     Long-Short-Term-Memory (LSTM) network
-    ![mackey\_glass.html](https://htmlpreview.github.io/?https://github.com/brandmaier/bnnlib/blob/master/examples/mackey_glass.html)
+    [mackey\_glass.html](examples/mackey_glass.md)
 
 -   Using a recurrent neural network with winner-takes-all output layer
     to predict the frequency (one out of three) of an observed signal
-    ![frequencies.html](https://htmlpreview.github.io/?https://github.com/brandmaier/bnnlib/blob/master/examples/frequencies.html)
+    [frequencies.md](examples/frequencies.md)
 
 -   Learning an internal representation of time elapsed using LSTM
-    networks
-    ![msd.html](https://github.com/brandmaier/bnnlib/blob/master/examples/msd.html)
+    networks ![msd.html](examples/msd.md)
 
 -   Comparing various training algorithms for neural networks
-    ![trainer.html](examples/trainer.html)
+    [trainer.md](/examples/trainer.md)
