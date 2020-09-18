@@ -94,3 +94,23 @@ getActivations <- function(network, sequence) {
   }
   return(datfr)
 }
+
+#' Conversion to SequenceSet format
+#'
+#' Converts a data.frame to a \code{SequenceSet}.
+#'
+#' @param x a \code{"data.frame"}
+#' @param input column id(s) of input parameters
+#' @param target column id(s) of target parameters
+#'
+#' @return SequenceSet
+#'
+#'
+#' @export
+toSequenceSet <- function(x, input, target)
+{
+  set <- SequenceSet()
+  seq <- toSequence(x, input ,target)
+  SequenceSet_add_copy_of_sequence(set, seq)
+  return(set)
+}

@@ -35,10 +35,13 @@ source("../R/toSequence.R")
 ## Generate Data
 
 Generate data from a simple state machine.
-Transitions are:
+Valid transitions are:
+
 - from A to B
 - from B to A or C
 - from C to CB (always two Cs then B)
+
+This means there can never be a transition from A to C or from C to A. Also, an A can never be followed by another A and a B can never be followed by another B.
 
 ```{r generator}
 total.size <- 4000
@@ -60,7 +63,11 @@ for (i in 2:total.size) {
 
 ```
 
-We generate a sentence of length `r total.size`.
+We generate a sentence of length `r total.size`. Here is the beginning of the sequence
+
+```{r}
+cat(text[1:10])
+```
 
 # Recode sentences
 
@@ -157,7 +164,7 @@ paste0(generate_text2(t(vals), alphabet=myletters),collapse = "")
 ```
 
 
-Since the network only has random initial weights, the text will be random:
+Since the network only has random initial weights, the text will be random (or often, constant):
 
 ```{r}
 predict.text()
@@ -170,7 +177,7 @@ trainer = ImprovedRPropTrainer(network);
 Trainer_learning_rate_set( trainer, 0.01 )
 ```
 
-Train the network
+Train the network and take time.
 
 ```{r training}
 Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(0.001),1 )
@@ -178,6 +185,12 @@ Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(0.001),1 )
 tic()
 Trainer_train2(trainer, seqset, 500)
 toc()
+
+```
+
+Plot the training error.
+
+```{r}
 
 source("../R/plotTrainingerror.R")
 plotTrainingerror(trainer) + theme_light()
@@ -189,13 +202,36 @@ plotTrainingerror(trainer) + theme_light()
 chop <- function(txt) { sapply(seq(1,nchar(txt),30),function(x){ substr(txt,x,x+30)})}
 ```
 
-Generating new text from the network using probability mapping:
+Generating new text from the network using probabilistic mapping (that is, the next value is randomly chosen according to the distribution represented in the output layer):
 
 ```{r}
 chop(predict.text(1))
 ```
 
-Generating new text from network using MAP mapping:
+Generating new text from network using MAP mapping (we always choose the symbol that has the largest likelihood):
+
 ```{r}
 chop(predict.text(1,FALSE))
 ```
+
+## Inspect Predictions more closely
+
+First, we get all outputs from the network.
+
+```{r}
+source("../R/toSequence.R")
+outputs <- getOutputs(network, seq)
+```
+
+Let's see what the network predicts after having seen the first input from the sequence `r print(text[1])`.
+
+```{r}
+barplot(outputs[1,], names.arg = myletters)
+```
+
+and next after having seen `r print(text[2])`.
+
+```{r}
+barplot(outputs[2,], names.arg = myletters)
+```
+
