@@ -13,6 +13,8 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -y install swig r-base; fi
 #  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update        ; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install swig r; fi
+install:
+  - if test -n "$CPP11"; then CONFIGOPTS+=(--enable-cpp11-testing --without-maximum-compile-warnings "CXXFLAGS=-std=c++11 -Wall -Wextra" "CFLAGS=-std=c11 -Wall -Wextra") && export CSTD=c11 && export CPPSTD=c++11; fi
 jobs:
   allow_failures:
     - compiler: clang
