@@ -16,6 +16,6 @@ Encoding: UTF-8
 LazyLoad: yes
 Version: 0.7.0
 Date: 2019-12-05
-RoxygenNote: 7.0.0
+RoxygenNote: 7.1.0
 SystemRequirements: C++11
 VignetteBuilder: knitr

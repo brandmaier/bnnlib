@@ -1,3 +1,7 @@
+#' Plot of inputs and targets
+#' @param seq A \code{Sequence}
+#' 
+#' @export
 plot.io <- function(seq) {
   input <- getInputs(seq)
   target <- getTargets(seq)

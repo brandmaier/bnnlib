@@ -1,4 +1,4 @@
-#'
+#'Plot the activations across nodes for a given sequence
 #'
 #' @export
 plotActivations <- function(net, seq, node.names=NULL) {

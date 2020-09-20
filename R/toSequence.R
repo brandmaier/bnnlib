@@ -37,6 +37,13 @@ toSequence <- function(x, input, target, sequence=NULL, ...)
 
 setClass("_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_p_t_t", contains = 'ExternalReference')
 
+#' get targets of a given sequence
+#' 
+#' @param x A \code{Sequence}.
+#' 
+#' @return A matrix of targets
+#' 
+#' @export
 getTargets <- function(x, ...) {
   if (inherits(x,"_p_Sequence"))
     seq <- x
@@ -51,6 +58,9 @@ getTargets <- function(x, ...) {
   return(df)
 }
 
+#' Get the inputs from a \code{Sequence}
+#'
+#' @export
 getInputs <- function(x, ...) {
   if (inherits(x,"_p_Sequence"))
     seq <- x
@@ -65,7 +75,12 @@ getInputs <- function(x, ...) {
   return(df)
 }
 
-
+#' Get activations of all output nodes for a given \code{sequence}
+#' 
+#' @param network A network
+#' @param x A \code{Sequence}
+#' 
+#' @export
 getOutputs <- function(network, x, index=NULL, ...) {
   
   if (inherits(x,"_p_Sequence"))
@@ -83,6 +98,14 @@ getOutputs <- function(network, x, index=NULL, ...) {
   return(df)
 }
 
+#' Obtain activations of all nodes
+#' 
+#' Retrieves activations of all nodes for a given \code{Sequence}.
+#' 
+#' @param network A network
+#' @param sequence A sequence
+#' 
+#' @export
 getActivations <- function(network, sequence) {
   x <- Network_activate_and_return_activations(network, sequence)
   num_nodes <- Network_get_num_nodes(network);

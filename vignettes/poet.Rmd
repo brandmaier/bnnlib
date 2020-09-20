@@ -32,10 +32,11 @@ source("../R/toSequence.R")
 ## Generate Data
 
 ```{r}
-gutenberg_works(title == "The Time Machine")
-hgwellstm <- gutenberg_download(35)
+library(qlcMatrix)
+data(bibles)
+fulltext <- paste0(bibles$eng,collapse = " ")
 
-text = strsplit(tolower(paste0(hgwellstm$text,collapse="")),"")[[1]]
+text = strsplit(tolower(paste0(fulltext,collapse="")),"")[[1]]
 
 ```
 
@@ -171,14 +172,18 @@ Trainer_learning_rate_set( trainer, 0.01 )
 Train the network
 
 ```{r training}
-Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(0.1),1 )
+#Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(0.1),1 )
 
 tic()
 Trainer_train2(trainer, seqset, 10)
 toc()
 
-Network_save("/Users/brandmaier/Desktop/saved.nn")
+#Network_save("/Users/brandmaier/Desktop/saved.nn")
+```
 
+Plot the traininer error
+
+```{r}
 	values <- .Call('R_swig_toValue',  Trainer_error_train_get(trainer), package="bnnlib") 
 	
 	library(ggplot2)

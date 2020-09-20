@@ -1,4 +1,5 @@
-#'
+#' @param network A network
+#' @param seq1 A sequence
 #'
 #' @export
 plotPredictions <- function(network, seq1) {
