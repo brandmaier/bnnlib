@@ -22,4 +22,4 @@ notifications:
   email:
     on_success: change
     on_failure: change
-env:	PP11=1
+env:	CPP11=1
