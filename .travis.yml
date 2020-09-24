@@ -23,7 +23,7 @@ jobs:
     - compiler: clang
 script:
   - $CXX --version     
-  - make
+  - R CMD install .
 notifications:
   email:
     on_success: change
