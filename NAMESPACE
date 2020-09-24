@@ -21,3 +21,4 @@ export(toSequenceSet)
 useDynLib(bnnlib)
 
 
+export(NetworkFactory_createFeedForwardNetwork)

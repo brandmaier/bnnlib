@@ -11,6 +11,7 @@ O_FILES = $(shell find src/ -type f -name '*.o')
 
 rd:
 	Rscript -e 'roxygen2::roxygenise(".")'
+	cat NAMESPACE.extra >> NAMESPACE
 
 build:
 	cd ..;\
