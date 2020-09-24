@@ -9,7 +9,7 @@ os:
 before_install:
   - echo $LANG
   - echo $LC_ALL
-  - CXXFLAGS="$CXXFLAGS -std=gnu++11";
+  - export CXXFLAGS="$CXXFLAGS -std=gnu++11";
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update                ; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -y install swig r-base; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" -a "$CXX" == "g++" ]; then sudo apt-get install -qq g++-4.8; fi
