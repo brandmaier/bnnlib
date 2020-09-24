@@ -22,8 +22,7 @@ jobs:
   allow_failures:
     - compiler: clang
 script:
-  - $CXX --version     
-  - R CMD install .
+  - make
 notifications:
   email:
     on_success: change
