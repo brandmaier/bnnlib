@@ -18,3 +18,6 @@ export(plotPredictions)
 export(plotTrainingerror)
 export(toSequence)
 export(toSequenceSet)
+useDynLib(bnnlib)
+
+

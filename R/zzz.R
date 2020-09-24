@@ -20,3 +20,11 @@ setClass('_p_ADAMTrainer', contains = c('ExternalReference','_p_Trainer'))
 setClass('_p_ConvergenceCriterion', contains=c('ExternalReference','_p_Criterion'))
 
 setClass('_p_LSTMNetwork', contains = c('ExternalReference','_p_Network'))
+
+
+# clean up:
+# unload dynamic library once package is unloaded
+#
+.onUnload <- function (libpath) {
+  library.dynam.unload("bnn", libpath)
+}

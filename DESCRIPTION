@@ -1,4 +1,4 @@
-Package: bnn
+Package: bnnlib
 Type: Package
 Title: Banana Neural Networks (bnn)
 Author: Andreas M. Brandmaier <andy@brandmaier.de>
@@ -19,3 +19,4 @@ Date: 2019-12-05
 RoxygenNote: 7.1.0
 SystemRequirements: C++11
 VignetteBuilder: knitr
+NeedsCompilation: yes

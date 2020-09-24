@@ -9,6 +9,19 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(knitr)
+hook_output = knit_hooks$get('output')
+knit_hooks$set(output = function(x, options) {
+  # this hook is used only when the linewidth option is not NULL
+  if (!is.null(n <- options$linewidth)) {
+    x = knitr:::split_lines(x)
+    # any lines wider than n should be wrapped
+    if (any(nchar(x) > n)) x = strwrap(x, width = n)
+    x = paste(x, collapse = '\n')
+  }
+  hook_output(x, options)
+})
 ```
 
 ## Setup
@@ -28,8 +41,13 @@ library(gutenbergr)
 source("../R/toSequence.R")
 ```
 
+# Poet
 
-## Generate Data
+The goal of this exercise is to create a recurrent neural network that can learn structure in text. We will then use this network to generate a novel text sequence.
+
+## Obtain Training Data
+
+As training data, we use the English translation of the Bible as provided from the `qlcMatrix` package. 
 
 ```{r}
 library(qlcMatrix)
@@ -38,15 +56,18 @@ fulltext <- paste0(bibles$eng,collapse = " ")
 
 text = strsplit(tolower(paste0(fulltext,collapse="")),"")[[1]]
 
+text <- text[1:80000] # take the first 80k letters
+
 ```
 
 # Get a 0-1-Matrix for a given Alphabet and Text.
 
+Next, we transform the text into a 0-1 matrix (one-hot coding), so that we can feed the text into a neural network, in which each input node corresponds to a single letter.
+
 ```{r}
 # Get a 0-1 Matrix for a given alphabet and text.
 
-
-myletters <- c(letters, " ")
+myletters <- c(letters, " ") # use English letters plus space
 
 # function that looks up whether a letter from the alphabet is in x, gives back True or False 
 where_in_alphabet_ <- function(x, alphabet = myletters) {alphabet %in% x}
@@ -95,18 +116,13 @@ for (i in 1:(min(nrow(tfmatrix)-1,80000))  ) {
  toc()
 ```
 
+The following code creates a standard recurrent neural network with a winner-takes-all output layer. This layer enforces all outputs nodes to have activations larger or equal to zero while the sum of the activations equals 1. Thus, the output layer can be taken to represent a discrete probability distribution over letters.
 
 ```{r network}
-
-
-
 TANH_NODE = 1
 
-#hid_size = 40
-#network = LSTMNetwork(ln,hid_size,ln)
-
 network = NetworkFactory_createRecurrentWTANetwork(in_size=ln, hid_type=TANH_NODE, num_layers=1,
-                                    layer_sizes=c(180),  out_size=ln);
+                                    layer_sizes=c(30,30),  out_size=ln);
 
 Network_error_function_set(network, WinnerTakesAllErrorFunction())
 ```
@@ -117,7 +133,7 @@ A function to generate text from the network:
 
 ```{r autopred}
 
-predict.text <- function(context=50, probabilistic=TRUE) {
+predict.text <- function(context=50, probabilistic=TRUE, time_steps = 400) {
 
 sequence = SequenceSet_get(seqset,0)
 
@@ -131,7 +147,7 @@ if (!probabilistic) {
   predictor = AutoPredictor__SWIG_2(network, ProbabilisticWinnerTakesAllTransferFunction() )
 }
 
-time_steps <- 400
+
 x = AutoPredictor_predict( predictor, sequence, time_steps, context)
 vals <- sapply(1:time_steps, FUN = function(index){getRow(x, index-1)})
 #char.ids <- apply(vals,2, which.max)
@@ -157,28 +173,24 @@ paste0(generate_text2(t(vals), alphabet=myletters),collapse = "")
 
 Since the network only has random initial weights, the text will be random:
 
-```{r}
+```{r linewidth=60}
 predict.text()
 ```
 
-Initialize Trainer and set learning rate:
+Initialize the improved resilient propagation trainer.
 
 ```{r}
 trainer = ImprovedRPropTrainer(network);
-#trainer = ADAMTrainer(network)
-Trainer_learning_rate_set( trainer, 0.01 )
 ```
 
-Train the network
+Train the network. This takes about 7 seconds with 40 hidden units and about 2 minutes for 140 hidden units per training iteration on an average computer of the year 2019.
 
 ```{r training}
-#Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(0.1),1 )
 
 tic()
-Trainer_train2(trainer, seqset, 10)
+Trainer_train2(trainer, seqset, 100)
 toc()
 
-#Network_save("/Users/brandmaier/Desktop/saved.nn")
 ```
 
 Plot the traininer error
@@ -197,9 +209,23 @@ Plot the traininer error
 chop <- function(txt) { sapply(seq(1,nchar(txt),30),function(x){ substr(txt,x,x+30)})}
 ```
 
-Generating new text from the network:
+Generating new text from the network using probabilistic and MAP prediction:
 
-
-```{r}
-predict.text(50)
+```{r predtext, linewidth=60}
+print(predict.text(50,probabilistic = FALSE))
 ```
+
+Now, let's use some probabilistic prediction that avoids getting stuck in highly likely loops.
+
+```{r predtext2, linewidth=60}
+print(predict.text(50,probabilistic = TRUE))
+```
+
+## Inspect network predictions
+
+```{r inspection}
+sequence = SequenceSet_get(seqset,0)
+outputs = getOutputs(network, sequence)
+barplot(outputs[1,],names.arg = myletters)
+barplot(outputs[50,],names.arg = myletters)
+````

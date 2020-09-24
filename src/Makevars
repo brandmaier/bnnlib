@@ -1,0 +1,2 @@
+SOURCES = $(wildcard *.cpp callbacks/*.cpp classification/*.cpp ensembles/*.cpp errorfunctions/*.cpp misc/*.cpp networks/*.cpp nodes/*.cpp trainer/*.cpp)
+OBJECTS = $(SOURCES:.cpp=.o)
