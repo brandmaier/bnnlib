@@ -1,2 +1,3 @@
+CXXFLAGS=-g -Wall -std=gnu++11
 SOURCES = $(wildcard ../bnnlib.cpp *.cpp callbacks/*.cpp classification/*.cpp ensembles/*.cpp errorfunctions/*.cpp misc/*.cpp networks/*.cpp nodes/*.cpp trainer/*.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
