@@ -1,1 +1,1 @@
-CFLAGS=-g -O0 -Wall -pedantic
+CFLAGS=-g -O0 -Wall -std=c++11
