@@ -26,7 +26,7 @@ LINEAR_NODE = 3
  MATCHING_OUTPUT_NODE = 23
  RELU_NODE = 24
 
-
+#' @export
 bnn <- function() {
   
   # create object as empty list
@@ -42,6 +42,11 @@ bnn <- function() {
   
   return(x)
 }
+
+setClass("banana", slots=list(trainer="NULL", network="NULL"))
+setMethod("getNumNodes","banana", function(object) {
+  Network_get_num_nodes(object$network)  
+})
 
 print.banana <- function(x, ...) {
   if (!inherits(x,"banana")) { ui_stop("Wrong class type.") }
@@ -201,3 +206,5 @@ train.bnn <- function(x, epochs=1, ...) {
   
   Trainer_train(x$trainer, x$sequenceset, epochs)
 }
+
+
