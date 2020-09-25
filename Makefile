@@ -2,7 +2,7 @@ PKGNAME := $(shell sed -n "s/Package: *\([^ ]*\)/\1/p" DESCRIPTION)
 PKGVERS := $(shell sed -n "s/Version: *\([^ ]*\)/\1/p" DESCRIPTION)
 PKGSRC  := $(shell basename `pwd`)
 
-CXXFLAGS = $(CXXFLAGS) -std=c++11
+CXXFLAGS = -std=c++11
 CXX_STD = CXX11
 
 all: r
