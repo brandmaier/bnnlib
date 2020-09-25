@@ -43,10 +43,11 @@ bnn <- function() {
   return(x)
 }
 
-setClass("banana", slots=list(trainer="NULL", network="NULL"))
-setMethod("getNumNodes","banana", function(object) {
-  Network_get_num_nodes(object$network)  
-})
+#setClass("banana", slots=list(trainer="NULL", network="NULL"))
+#setMethod("getNumNodes","banana", function(object) {
+#  if (is.null(object$network)) {stop("Banana has no network.")}
+#  Network_get_num_nodes(object$network)  
+#})
 
 print.banana <- function(x, ...) {
   if (!inherits(x,"banana")) { ui_stop("Wrong class type.") }
