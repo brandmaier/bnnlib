@@ -52,6 +52,6 @@ plotPredictions <- function(network, seq1) {
                                  nrow=3),
                      mylegend, nrow=2,heights=c(10, 1))
   
-  return(pl)
-  invisible()
+#  return(pl)
+  invisible(pl)
 }

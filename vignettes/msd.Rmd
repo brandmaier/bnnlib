@@ -1,5 +1,5 @@
 ---
-title: "MSD"
+title: "Mean Spike Distance"
 author: "Andreas M. Brandmaier"
 date: "1/14/2020"
 output:
@@ -9,24 +9,24 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
-dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
-source("../bnnlib.R")
-cacheMetaData(1)
-
-source("../R/toSequence.R")
-source("../R/banana.R")
 ```
 
 # Introduction
 
 This is a demonstration of the mean spike distance task by Gers et al. (2002). The task is about learning a representation of time, which involves counting discrete time steps, reading out the counter and also learning to reset the timer when an external stimulus is present.
 
-```{r}
-setRandomSeed(92357)
+First, we load the library and some plotting libraries and set a random seed for all bnnlib internals.
 
-# create network from Gers02a with LSTM hidden layer (including peepholes)
-# 1 output and 1 input
+```{r}
+library(bnnlib)
+library(ggplot2)
+library(gridExtra)
+library(tictoc)
+setRandomSeed(92357)
+```
+
+We create the network from Gers02a with LSTM hidden layer (including peepholes) with 1 output and 1 input.
+```{r}
 #network = NetworkFactory_create_gers02a()
 network = LSTMNetwork(1,1,1, TANH_NODE, LINEAR_NODE)
 ```
@@ -54,27 +54,24 @@ SequenceSet_add_copy_of_sequence(sequence_set, sequence)
 
 ```{r}
 #trainer <- ADAMTrainer(network)
-#trainer <- ImprovedRPropTrainer(network)
-trainer <- ARPropTrainer(network)
+trainer <- ImprovedRPropTrainer(network)
+#trainer <- ARPropTrainer(network)
 
-library(tictoc)
+
 tic()
 Trainer_add_abort_criterion__SWIG_0(trainer, ConvergenceCriterion(1e-3),10)
 Trainer_train2(trainer, sequence_set, 500)
 toc()
 
-source("../R/plotTrainingerror.R")
+
 plotTrainingerror(trainer) + theme_light()
 ```
 
 ## Predictions
 
+Plot the network predictions zoomed in to the first 25 steps of the sequence.
 ```{r}
-library(ggplot2)
-library(gridExtra)
-source("../R/plotPredictions.R")
-source("../R/plotActivations.R")
-plotPredictions(network, sequence) + theme_linedraw()
+plotPredictions(network, sequence) + theme_light()
 ```
 
 ## Investigate activations
@@ -82,9 +79,9 @@ plotPredictions(network, sequence) + theme_linedraw()
 Plot all activations for the entire sequence.
 
 ```{r}
-plotActivations(network, sequence) + theme_linedraw()
+plotActivations(network, sequence) + theme_light() +   coord_cartesian(xlim=c(0,25))
 
-plotActivations(network, sequence,"CEC") + theme_linedraw()
+plotActivations(network, sequence,"CEC") + theme_light() +   coord_cartesian(xlim=c(0,25))
 
-plotActivations(network, sequence) + theme_linedraw()+xlim(0,25)
+plotActivations(network, sequence) + theme_light() +   coord_cartesian(xlim=c(0,25))
 ```

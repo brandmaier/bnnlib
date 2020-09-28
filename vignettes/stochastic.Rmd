@@ -9,13 +9,10 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
 
-dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
-source("../bnnlib.R")
-cacheMetaData(1)
-
-source("../R/plotActivations.R")
-source("../R/toSequence.R")
+```{r}
+library(bnnlib)
 ```
 
 ## Stochastic Gain

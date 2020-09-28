@@ -20,16 +20,8 @@ In this document, we will compare the convergence of different training algorith
 First, we load the shared library and some internal functions (which will soon be integrated into the package).
 
 ```{r pressure, echo=TRUE}
-
-
-  dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
-  source("../bnnlib.R")
-  cacheMetaData(1)
-  
-  source("../R/toSequence.R")
-  source("../R/plot.io.R")
-  source("../R/zzz.R")
-
+library(bnnlib)
+library(ggplot2)
 ```
 
 ## Generate Data
@@ -73,7 +65,6 @@ Each of the sequences has a length of `r len` and we created `r num.seq` many se
 
 ```{r}
 
-library(ggplot2)
 plot.io(SequenceSet_get(seq, 0))
 ```
 

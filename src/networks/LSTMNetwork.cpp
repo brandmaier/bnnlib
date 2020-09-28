@@ -41,7 +41,7 @@ void LSTMNetwork::init(unsigned int in_size, unsigned int lstm_size, unsigned in
 
 	bias_size = 1;
 
-	bool bias_to_lstm_input = false;
+	bool bias_to_lstm_input = true;
 	bool peepholes = true;
 	Ensemble* bias = new FeedforwardEnsemble(Node::BIAS_NODE, 1);
 	input_ensemble = new FeedforwardEnsemble(Node::LINEAR_NODE,in_size);

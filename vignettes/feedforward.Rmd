@@ -7,38 +7,36 @@ output:
     df_print: paged
 ---
 
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
-dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
-source("../bnnlib.R")
-cacheMetaData(1)
 ```
 
 ## Feedforward Neural Network
 
+Load the library first
+```{r message=FALSE}
+library(bnnlib)
+```
 Create a feed-forward neural network with 3 inputs, 25 hidden units, and 1 output. The output node is linear.
 
 ```{r}
-LINEAR_NODE = 3
-
-net <- NetworkFactory_createFeedForwardNetwork(3,25,1, LINEAR_NODE)
+net <- NetworkFactory_createFeedForwardNetwork(3,25,1, 
+                              bnnlib::LINEAR_NODE)
 ```
 
-Load the marketing dataset from the datarium package.
-
+Load the marketing dataset from the `datarium` package.
 
 ```{r}
 data("marketing", package = "datarium")
 head(marketing, 4)
-
 ```
 
-Convert data to Sequence format
+Convert data to Sequence format:
+
 ```{r}
 sequence_set <- SequenceSet()
-
-source("../R/toSequence.R")
 seq <- toSequence(marketing, 1:3, 4)
 SequenceSet_add_copy_of_sequence(sequence_set,seq)
 
@@ -50,7 +48,7 @@ cat("Target size",SequenceSet_target_size_get(sequence_set),"\n")
 
 Initialize training algorithm
 
-```{r}
+```{r message=FALSE}
 bp <- ImprovedRPropTrainer(net)
 
 cat("Using Trainer: ",Trainer_get_name(bp),"\n")
