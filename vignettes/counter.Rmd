@@ -12,17 +12,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Setup
 
-First, we load the shared library.
+First, we load the package.
 
 ```{r load, echo=TRUE}
-
-
-  dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
-  source("../bnnlib.R")
-  cacheMetaData(1)
-
-  source("../R/toSequence.R")
-  
+library(bnnlib)
 ```
 
 ## Generate Data

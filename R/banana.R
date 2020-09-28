@@ -159,6 +159,7 @@ add_to_banana <- function(target, x) {
   
 }
 
+#' @export
 train <- function(x, steps=1) {
   
   if (!has.trainer(x)) {
@@ -196,7 +197,7 @@ predict.bnn <- function(x, newdata=NULL, index=NULL, ...) {
   
 }
 
-
+#' @export
 train.bnn <- function(x, epochs=1, ...) {
   
   stopifnot(is(x,"banana"))

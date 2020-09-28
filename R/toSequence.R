@@ -35,28 +35,7 @@ toSequence <- function(x, input, target, sequence=NULL, ...)
   
 }
 
-setClass("_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_p_t_t", contains = 'ExternalReference')
-
-#' get targets of a given sequence
-#' 
-#' @param x A \code{Sequence}.
-#' 
-#' @return A matrix of targets
-#' 
-#' @export
-getTargets <- function(x, ...) {
-  if (inherits(x,"_p_Sequence"))
-    seq <- x
-  else
-    stop("Unknown format!")
-  
-  slen <- Sequence_size(seq)
-  df <- matrix(NA, nrow=slen, ncol=Sequence_get_target_size(seq))
-  for (i in 1:slen) {
-    df[i,] <-  .Call('R_swig_toValue',   Sequence_get_target(seq, i-1), package="bnnlib")
-  }
-  return(df)
-}
+#setClass("_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_p_t_t", contains = 'ExternalReference')
 
 #' Get the inputs from a \code{Sequence}
 #'
@@ -71,29 +50,6 @@ getInputs <- function(x, ...) {
   df <- matrix(NA, nrow=slen, ncol=Sequence_get_input_size(seq))
   for (i in 1:slen) {
     df[i,] <-  .Call('R_swig_toValue',   Sequence_get_input(seq, i-1), package="bnnlib")
-  }
-  return(df)
-}
-
-#' Get activations of all output nodes for a given \code{sequence}
-#' 
-#' @param network A network
-#' @param x A \code{Sequence}
-#' 
-#' @export
-getOutputs <- function(network, x, index=NULL, ...) {
-  
-  if (inherits(x,"_p_Sequence"))
-    seq <- x
-  else
-    stop("Unknown format")
-  #seq1<-SequenceSet_get(testset,0)
-  slen <- Sequence_size(seq)
-  Network_activate(network, seq)
-  data = Network_get_outputs_until(network, slen)
-  df <- matrix(NA, nrow=slen, ncol=Sequence_get_target_size(seq))
-  for (i in 1:slen) {
-    df[i, ] = getRow(data, i-1)
   }
   return(df)
 }

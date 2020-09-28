@@ -20,5 +20,5 @@ export(toSequence)
 export(toSequenceSet)
 useDynLib(bnnlib)
 
-
+exportPattern("*")
 export(NetworkFactory_createFeedForwardNetwork)
