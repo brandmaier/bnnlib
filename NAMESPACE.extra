@@ -1,0 +1,2 @@
+export(NetworkFactory_createFeedForwardNetwork)
+exportPattern("*")
