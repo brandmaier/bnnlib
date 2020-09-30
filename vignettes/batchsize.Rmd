@@ -1,9 +1,8 @@
 ---
-title: "Comparing Different Training Algorithms"
+title: "batchsize"
 author: "Andreas M. Brandmaier"
-date: "12/12/2019"
-output:
-  html_document: default
+date: "9/30/2020"
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -26,10 +25,12 @@ library(tidyverse)
 Next, we simulate some data in a `data.frame` and convert this to bnn's Sequence format:
 
 ```{r}
+set.seed(1234)
+bnnlib::setRandomSeed(1234)
 N <- 100 # number of rows
 M <- 5 # number of columns
 simdata <- data.frame(matrix(data=rnorm(N*M),nrow = N))
-simdata[,M] <- simdata[,1]+simdata[,2]-ifelse(simdata[,3]>0,2,0)
+simdata[,M] <- simdata[,1]**2+simdata[,2]-ifelse(simdata[,3]>0,1,0)
 ```
 
 ```{r}
@@ -58,25 +59,41 @@ net <- NetworkFactory_createFeedForwardNetwork(M-1,10,1,bnnlib::LINEAR_NODE)
 Let's generate a list of different training algorithms and run them each for 200 steps. Save the results in `err.data` for later plotting. The different training algorithms are
 
 
-- Backpropagation (BP)
-- Resilient Propagation (RProp)
-- Improved Resilient Propagation (IRPROP)
-- Simulated Annealing + RProp (SARPROP)
+```{r message=FALSE}
 
-```{r}
-sarp <- SARPropTrainer(net)
-SARPropTrainer_temperature_set(sarp, .9)
+bp1 <- BackpropTrainer(net)
+bp2 <- BackpropTrainer(net)
+bp3 <- BackpropTrainer(net)
+bp4 <- BackpropTrainer(net)
 
+Trainer_name_set(bp1, "Batch")
+Trainer_name_set(bp2, "Mini Batch (5)")
+Trainer_name_set(bp3, "Stochastic")
+Trainer_name_set(bp4, "Batch+Momentum")
 
-epochs <- 200
+Trainer_batch_learning_set(bp1, TRUE)
+Trainer_batch_learning_set(bp2, TRUE)
+Trainer_mini_batch_size_set(bp2, 5)
+Trainer_batch_learning_set(bp3, FALSE)
+Trainer_batch_learning_set(bp4, TRUE)
 
-trainer <- list( BackpropTrainer(net), ImprovedRPropTrainer(net),
-ARPropTrainer(net) ,  RPropTrainer(net), sarp)
+lr<-.001
+Trainer_learning_rate_set(bp1,lr)
+Trainer_learning_rate_set(bp2,lr)
+Trainer_learning_rate_set(bp3,lr)
+Trainer_learning_rate_set(bp4,lr)
+
+Trainer_momentum_set(bp4,0.9)
+#Trainer_learning_rate_discount_set(bp1, 0.99)
+
+epochs <- 300
+
+trainer <- list( bp1, bp2, bp4, bp3)
 
 result <- sapply(trainer, function(x){ Network_reinitialise(net); Trainer_train2(x, set, epochs); 
   getTrainingerror(x) } )
 
-trainer_names <- sapply(trainer, Trainer_get_name)
+trainer_names <- sapply(trainer, Trainer_name_get)
 
 result <- data.frame(t(result), trainer=trainer_names)
 names(result)[1:epochs]<-formatC(1:epochs,width=3,flag="0")
@@ -86,7 +103,7 @@ Plot the errors of the different training algorithms on top of each other.
 
 ```{r}
 
-pivot_longer(result,cols =  1:200,names_to = "step",values_to="error") %>%
+pivot_longer(result,cols =  1:epochs,names_to = "step",values_to="error") %>%
 ggplot(aes(x=step,y=error,group=trainer,col=trainer))+
   geom_point()+
   geom_line()+
@@ -95,4 +112,12 @@ ggplot(aes(x=step,y=error,group=trainer,col=trainer))+
   ylab("Error")+
   scale_y_log10()+
   ggtitle("Training Error (log scale)")
+```
+
+## Get Predictions
+
+```{r}
+outputs <- getOutputs(net, seq) 
+targets <- getTargets(seq)
+plot(outputs, targets)
 ```

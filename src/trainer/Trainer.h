@@ -46,6 +46,8 @@ struct Trainer
 	double decorrelation_alpha;
 	
 	double sparsity_beta;
+	
+	unsigned int mini_batch_size = 0;
 
 	unsigned int total_iterations;
 
@@ -86,6 +88,10 @@ struct Trainer
 	void set_network(Network* network)
 	{
 	  this->network = network;
+	}
+	
+	void set_mini_batch_size(unsigned int size) {
+	  this->mini_batch_size = size;
 	}
 
 	/**

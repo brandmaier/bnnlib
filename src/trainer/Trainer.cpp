@@ -165,13 +165,34 @@ void Trainer::train_sequenceset(SequenceSet* sequences)
 
 	if (batch_learning)
 	{
-		network->reset();
-		for (unsigned int i=0; i < sequences->size(); i++)
-		{
-			network->reset(true);
-			this->_train_sequence( (*sequences)[i], false );
-		}
-		this->change_weights();
+	  if (this->mini_batch_size == 0) {
+  		network->reset();
+  		for (unsigned int i=0; i < sequences->size(); i++)
+  		{
+  			network->reset(true);
+  			this->_train_sequence( (*sequences)[i], false );
+  		}
+  		this->change_weights();
+	  } else {
+	    
+	   
+	    for (unsigned int i=0; i < sequences->size(); i++)
+	    {
+	      if (i % this->mini_batch_size == 0) {
+	        network->reset();
+	      } else {
+	        network->reset(true);
+	      }
+	      this->_train_sequence( (*sequences)[i], false );
+	      
+	      if ((i % this->mini_batch_size == this->mini_batch_size-1)
+	        || (i==sequences->size()-1)) {
+	        this->change_weights();	  
+	      }
+	    }
+	      
+	    
+	  }
 
 	} else {
 

@@ -87,7 +87,7 @@ trainer <- ImprovedRPropTrainer(net)
  Network_evaluate_training_error__SWIG_0(net, sequence_set)
  
  
-Trainer_sparsity_beta_set(trainer,10)
+Trainer_sparsity_beta_set(trainer,0)
  
 Sys.time()
 Trainer_train__SWIG_0(trainer, sequence_set, 25)
@@ -161,9 +161,12 @@ if (sum(dist(result))!=0) {
 
 e1 <- Network_get_ensemble(net, 0) # bias
 e2 <- Network_get_ensemble(net, 1) # input layer
+e3 <- Network_get_ensemble(net, 2) # hidden layer
+e4 <- Network_get_ensemble(net, 3) # output layer
 
-weights <- getOutgoingWeights(e1,e2)
+weights <- getOutgoingWeights(e1,e4)
+hist(weights)
 
-war <- simplify2array(weights)
-hist(war)
+weights <- getOutgoingWeights(e3,e4)
+hist(weights)
 ```
