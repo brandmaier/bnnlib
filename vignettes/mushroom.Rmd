@@ -16,13 +16,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Example from the Proben1 dataset.
 
-```{r pressure, echo=FALSE}
-
-
-  dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
-  source("../bnnlib.R")
-  cacheMetaData(1)
-
+```{r pressure, echo=FALSE, message=FALSE}
+library(bnnlib)
 ```
 
 Download the mushroom dataset in Proben1 file format directly from github:
@@ -33,28 +28,27 @@ download.file("https://raw.githubusercontent.com/jeffheaton/proben1/master/mushr
 dataset <- SequenceSet_load_from_proben_file(temp)
 ```
 
+Create a network with 125 inputs and 2 outputs. Create a training algorithms for this network.
 
 ```{r}
-SIGMOID_NODE = 2
-network <-NetworkFactory_createFeedForwardNetwork(125, 20, 2, SIGMOID_NODE)
+network <-NetworkFactory_createFeedForwardNetwork(125, 20, 2, bnnlib::SIGMOID_NODE)
 Network_reinitialise(network)
-cg <- CGTrainer(network)
+#cg <- CGTrainer(network)
+cg <- ImprovedRPropTrainer(network)
 ```
 
 Train the network for some steps
 
 ```{r}
 Trainer_add_abort_criterion__SWIG_0( cg, ConvergenceCriterion(), 5 )
-Trainer_train__SWIG_1(cg, DataSet_get_training_set(dataset), DataSet_get_validation_set(dataset), 5)
+Trainer_train__SWIG_1(cg, DataSet_get_training_set(dataset), DataSet_get_validation_set(dataset), 20)
 ```
 
-Evaluate network performance using a winner-takes-all classification strategy.
+Evaluate network performance using a winner-takes-all classification strategy. This is the total number of wrong classifications:
 
 ```{r}
 error_function = WinnerTakesAllErrorFunction();
-
 Network_evaluate_error__SWIG_1(network, DataSet_get_test_set(dataset), error_function)
-
 ```
 
 Inspect network predictions

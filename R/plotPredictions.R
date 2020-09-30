@@ -1,4 +1,6 @@
-#' @param network A network
+#'  Plot predictions
+#' 
+#'  @param network A network
 #' @param seq1 A sequence
 #'
 #' @export

@@ -9,21 +9,17 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
 
-
-  dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
-  source("../bnnlib.R")
-  cacheMetaData(1)
-  
-source("../R/toSequence.R")
-source("../R/banana.R")
+```{r}
+library(bnnlib)
+library(png)
+library(raster)
 ```
 
 ## Load Images
 
 ```{r cars}
-library(png)
-library(raster)
 
 images <- c("bottle1.png","bottle2.png","bottle3.png","fish1.png","fish2.png","fish3.png")
 
@@ -69,46 +65,50 @@ dims <- dim*dim
 
 ## Feedforward Neural Network
 
-Create a feed-forward neural network with $84^2$ inputs, 4 hidden units, and $84^2$ output. The output node is linear.
+Create a feed-forward neural network with $84^2$ inputs, 4 hidden units, and $84^2$ output. 
 
 ```{r}
-LINEAR_NODE = 3
-num_hidden = 64
-#net <- NetworkFactory_createFeedForwardNetwork(dims,4,dims, LINEAR_NODE)
-net <- NetworkFactory_createSparseAutoencoder(dims,num_hidden,0.01, TANH_NODE, TANH_NODE)
+num_hidden = 16
+sparsity = 0.1
+net <- NetworkFactory_createSparseAutoencoder(dims,
+                                              num_hidden,
+                                              sparsity, 
+                                              bnnlib::TANH_NODE, 
+                                              bnnlib::SIGMOID_NODE)
 ```
 
 
-Initialize training algorithm
+Initialize training algorithm. The sparsity $\beta$ value specifies the relative weight of the
+sparsity beta in comparison to the loss function. The larger the beta, the more important sparsity is over the in-sample error.
 
 ```{r}
 trainer <- ImprovedRPropTrainer(net)
 
-cat("Using Trainer: ",Trainer_get_name(trainer),"\n")
-
  Network_evaluate_training_error__SWIG_0(net, sequence_set)
  
  
-Trainer_sparsity_beta_set(trainer,1000)
+Trainer_sparsity_beta_set(trainer,10)
  
 Sys.time()
-Trainer_train__SWIG_0(trainer, sequence_set, 50)
+Trainer_train__SWIG_0(trainer, sequence_set, 25)
 Sys.time()
+```
 
+Inspect the training error over epochs:
+
+```{r}
 Network_evaluate_training_error__SWIG_0(net, sequence_set)
 
 
-source("../R/plotTrainingerror.R")
-plotTrainingerror(trainer)
+plot(plotTrainingerror(trainer)+scale_y_log10())
  
 ```
 
-Obtain hidden activations
+Obtain hidden unit activations for a given sequence:
 
 ```{r outputpredictedimage}
-sequence = SequenceSet_get(sequence_set,2)
-# convert this back into an image
-#x = getActivations(net, sequence)
+
+plotPreds <- function(sequence) {
 x = getOutputs(net, sequence )
 #x2 = sapply(1:(84*84), function(x){ Sequence_get_input_at(sequence,0,x-1)})
 x2 = getInputs(sequence)
@@ -119,18 +119,23 @@ for (i in 1:dim) {
   predimg[i,] <- x[1:dim+(i-1)*dim]
   inpimg[i,] <- x2[1:dim+(i-1)*dim]
 }
+
 par(mfrow=c(2,2))
-image(predimg)
-image(inpimg)
-image(predimg-inpimg)
-image(abs(predimg-inpimg))
+image(inpimg, main="Input")
+image(predimg, main="Prediction")
+image(predimg-inpimg, main="Difference")
+image(abs(predimg-inpimg),main="Absolute Difference")
+}
+
+plotPreds( SequenceSet_get(sequence_set, 1) )
+plotPreds( SequenceSet_get(sequence_set, 2) )
+plotPreds( SequenceSet_get(sequence_set, 3) )
+
 ```
 
 # Plot latent space projections
 
 ```{r}
-source("../R/plotActivations.R")
-#plotActivations(net, sequence, node.names = c("Hidden0","Hidden1","Hidden2","Hidden3"))
 
 pos <- which(sapply(getNodeNames(net) , function(x){startsWith(x,"Hidden")}))
 #pos <- 7630:7670
@@ -143,8 +148,22 @@ for (i in 1:SequenceSet_size(sequence_set)) {
 
 result
 
-coords <- cmdscale(dist(result),2)
-plot(coords,type="n")
-text(x=coords[,1],y=coords[,2], labels=images)
+if (sum(dist(result))!=0) {
+ coords <- cmdscale(dist(result),2)
+ plot(coords,type="n")
+ text(x=coords[,1],y=coords[,2], labels=images)
+}
+```
 
+# Inspect network weights
+
+```{r}
+
+e1 <- Network_get_ensemble(net, 0) # bias
+e2 <- Network_get_ensemble(net, 1) # input layer
+
+weights <- getOutgoingWeights(e1,e2)
+
+war <- simplify2array(weights)
+hist(war)
 ```

@@ -8,5 +8,5 @@
 #' @docType package
 #' @author Andreas M Brandmaier
 #' @name bnnlib
-#' @useDynLib bnn
+#' @useDynLib bnnlib
 NULL

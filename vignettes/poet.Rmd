@@ -29,16 +29,11 @@ knit_hooks$set(output = function(x, options) {
 First, we load the shared library, some packages, and extra R code.
 
 ```{r fireup, echo=TRUE}
-
-dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
-source("../bnnlib.R")
-cacheMetaData(1)
-
+library(bnnlib)
 library(gridExtra)
 library(tictoc)
 library(gutenbergr)
 
-source("../R/toSequence.R")
 ```
 
 # Poet
@@ -119,9 +114,8 @@ for (i in 1:(min(nrow(tfmatrix)-1,80000))  ) {
 The following code creates a standard recurrent neural network with a winner-takes-all output layer. This layer enforces all outputs nodes to have activations larger or equal to zero while the sum of the activations equals 1. Thus, the output layer can be taken to represent a discrete probability distribution over letters.
 
 ```{r network}
-TANH_NODE = 1
-
-network = NetworkFactory_createRecurrentWTANetwork(in_size=ln, hid_type=TANH_NODE, num_layers=1,
+network = NetworkFactory_createRecurrentWTANetwork(in_size=ln, hid_type=bnnlib::TANH_NODE, 
+                                                   num_layers=1,
                                     layer_sizes=c(30,30),  out_size=ln);
 
 Network_error_function_set(network, WinnerTakesAllErrorFunction())
@@ -138,7 +132,6 @@ predict.text <- function(context=50, probabilistic=TRUE, time_steps = 400) {
 sequence = SequenceSet_get(seqset,0)
 
 
- setClass("_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_p_t_t", contains = 'ExternalReference')
 
 
 if (!probabilistic) {
@@ -150,11 +143,9 @@ if (!probabilistic) {
 
 x = AutoPredictor_predict( predictor, sequence, time_steps, context)
 vals <- sapply(1:time_steps, FUN = function(index){getRow(x, index-1)})
-#char.ids <- apply(vals,2, which.max)
 
 
 generate_text2 <- function(tfmatrix, alphabet = letters) {
-  # browser()
   outputvector <- vector(mode = "character", length = nrow(tfmatrix))
   for (i in seq_len(NROW(tfmatrix))) {
     replace <- alphabet[which.max(tfmatrix[i, ])]
@@ -167,7 +158,6 @@ generate_text2 <- function(tfmatrix, alphabet = letters) {
 paste0(generate_text2(t(vals), alphabet=myletters),collapse = "")
 
 }
-#x = Network_activate_and_return_activations(network, sequence)
 ```
 
 
@@ -195,8 +185,8 @@ toc()
 
 Plot the traininer error
 
-```{r}
-	values <- .Call('R_swig_toValue',  Trainer_error_train_get(trainer), package="bnnlib") 
+```{r message=FALSE}
+	values <- getTrainingError(trainer)
 	
 	library(ggplot2)
 	ggplot2::ggplot(data.frame(x=1:length(values),values),aes(x=x,y=values))+geom_point()+

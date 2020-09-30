@@ -2,8 +2,6 @@
 # complementary SWIG stuff
 #
 
-#source("../bnnlib.R")
-
 # add missing
 setClass("_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_p_t_t", contains = 'ExternalReference')
 
