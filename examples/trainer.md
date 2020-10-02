@@ -8,9 +8,8 @@ Load Library
 
 First, we load `bnnlib`’s shared library.
 
-      dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
-      source("../bnnlib.R")
-      cacheMetaData(1)
+    library(bnnlib)
+    library(tidyverse)
 
 Generate Data
 -------------
@@ -23,7 +22,6 @@ Sequence format:
     simdata <- data.frame(matrix(data=rnorm(N*M),nrow = N))
     simdata[,M] <- simdata[,1]+simdata[,2]-ifelse(simdata[,3]>0,2,0)
 
-    source("../R/toSequence.R")
     set <- SequenceSet()
     seq <- toSequence(simdata,1:4,5)
     SequenceSet_add_copy_of_sequence(set, seq)
@@ -46,55 +44,53 @@ Create Network
 Now, we create a feed-forward network with a single hidden layer of 10
 neurons.
 
-    LINEAR_NODE = 3 #this is a bnnlib constant
-
-    net <- NetworkFactory_createFeedForwardNetwork(M-1,10,1,LINEAR_NODE)
+    net <- NetworkFactory_createFeedForwardNetwork(M-1,10,1,bnnlib::LINEAR_NODE)
 
 Trainer
 -------
 
 Let’s generate a list of different training algorithms and run them each
-for 100 steps. Save the results in `err.data`:
+for 200 steps. Save the results in `err.data` for later plotting. The
+different training algorithms are
+
+-   Backpropagation (BP)
+-   Resilient Propagation (RProp)
+-   Improved Resilient Propagation (IRPROP)
+-   Simulated Annealing + RProp (SARPROP)
+
+<!-- -->
 
     sarp <- SARPropTrainer(net)
     SARPropTrainer_temperature_set(sarp, .9)
 
     ## NULL
 
-    trainer <- list(CGTrainer(net), BackpropTrainer(net), ImprovedRPropTrainer(net),
-    ARPropTrainer(net) ,  RPropTrainer(net), sarp)
+    cg <- CGTrainer(net)
+    epochs <- 200
 
+    trainer <- list( BackpropTrainer(net), ImprovedRPropTrainer(net),
+    ARPropTrainer(net) ,  RPropTrainer(net), sarp, cg)
 
-    steps <- 100
-    err.data <- matrix(data=NA,nrow=length(trainer)*steps,ncol=3)
-    err.data <- data.frame(err.data)
-    names(err.data) <- c("error","trainer","step")
-    k <- 1
+    result <- sapply(trainer, function(x){ Network_reinitialise(net); Trainer_initialize(x); Trainer_train2(x, set, epochs); 
+      getTrainingerror(x) } )
 
-    for (i in 1:length(trainer)) {
-      tt <- trainer[[i]]
-      Network_reinitialise(net)
+    trainer_names <- sapply(trainer, Trainer_get_name)
 
-      for (j in 1:steps) {
-        Trainer_train__SWIG_0(tt, set, 1)
-        err.data[k,1] <- Network_evaluate_training_error__SWIG_0(net, set)
-        err.data[k,2] <- Trainer_get_name(tt)
-        err.data[k,3] <- j
-        k<-k+1
-      }
-    }
-
-    err.data$trainer<-factor(err.data$trainer)
+    result <- data.frame(t(result), trainer=trainer_names)
+    names(result)[1:epochs]<-formatC(1:epochs,width=3,flag="0")
 
 Plot the errors of the different training algorithms on top of each
 other.
 
-    library(ggplot2)
-
-    ggplot(data=err.data, 
-           aes(x=step,y=error,group=trainer,col=trainer))+
+    pivot_longer(result,cols =  1:200,names_to = "step",values_to="error") %>%
+      mutate(time=parse_number(step)) %>% 
+    ggplot(aes(x=time,y=error,group=trainer,col=trainer))+
       geom_point()+
       geom_line()+
-      theme_minimal()
+      theme_minimal()+
+      xlab("Step")+
+      ylab("Error")+
+      scale_y_log10()+
+      ggtitle("Training Error (log scale)")
 
 ![](trainer_files/figure-markdown_strict/unnamed-chunk-6-1.png)

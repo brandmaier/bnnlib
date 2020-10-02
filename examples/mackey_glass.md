@@ -3,11 +3,11 @@ Setup
 
 First, we load the shared library.
 
-      dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
-      source("../bnnlib.R")
-      cacheMetaData(1)
-      
-      source("../R/zzz.R")
+    library(bnnlib)
+
+    ## Loading required package: ggplot2
+
+    ## Loading required package: gridExtra
 
 This is the Mackey-Glass time series:
 

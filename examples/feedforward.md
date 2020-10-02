@@ -1,14 +1,17 @@
 Feedforward Neural Network
 --------------------------
 
+Load the library first
+
+    library(bnnlib)
+
 Create a feed-forward neural network with 3 inputs, 25 hidden units, and
 1 output. The output node is linear.
 
-    LINEAR_NODE = 3
+    net <- NetworkFactory_createFeedForwardNetwork(3,25,1, 
+                                  bnnlib::LINEAR_NODE)
 
-    net <- NetworkFactory_createFeedForwardNetwork(3,25,1, LINEAR_NODE)
-
-Load the marketing dataset from the datarium package.
+Load the marketing dataset from the `datarium` package.
 
     data("marketing", package = "datarium")
     head(marketing, 4)
@@ -19,11 +22,9 @@ Load the marketing dataset from the datarium package.
     ## 3   20.64    55.08     83.16 11.16
     ## 4  181.80    49.56     70.20 22.20
 
-Convert data to Sequence format
+Convert data to Sequence format:
 
     sequence_set <- SequenceSet()
-
-    source("../R/toSequence.R")
     seq <- toSequence(marketing, 1:3, 4)
     SequenceSet_add_copy_of_sequence(sequence_set,seq)
 
@@ -68,7 +69,7 @@ With ggplot2, we can plot the training set error over iterations:
       geom_smooth()+
       theme_minimal()
 
-![](feedforward_files/figure-markdown_strict/unnamed-chunk-6-1.png)
+![](feedforward_files/figure-markdown_strict/unnamed-chunk-7-1.png)
 
 Inspect output:
 
@@ -83,4 +84,4 @@ Inspect output:
 
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
-![](feedforward_files/figure-markdown_strict/unnamed-chunk-7-1.png)
+![](feedforward_files/figure-markdown_strict/unnamed-chunk-8-1.png)

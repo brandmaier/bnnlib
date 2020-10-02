@@ -3,26 +3,13 @@ Setup
 
 First, we load the shared library, some packages, and extra R code.
 
-    dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
-    source("../bnnlib.R")
-    cacheMetaData(1)
+    library(bnnlib)
+
+    ## Loading required package: ggplot2
+
+    ## Loading required package: gridExtra
 
     library(gridExtra)
-
-    sapply(list.files("../R/",full.names = TRUE), source)
-
-    ##         ../R//banana.R ../R//facts.R ../R//onehot.R ../R//plot.io.R
-    ## value   ?              ?             ?              ?              
-    ## visible FALSE          FALSE         FALSE          FALSE          
-    ##         ../R//plotActivations.R ../R//plotPredictions.R
-    ## value   ?                       ?                      
-    ## visible FALSE                   FALSE                  
-    ##         ../R//plotTrainingerror.R ../R//print.R ../R//toSequence.R ../R//ui.R
-    ## value   ?                         ?             ?                  ?         
-    ## visible FALSE                     FALSE         FALSE              FALSE     
-    ##         ../R//zzz.R
-    ## value   ?          
-    ## visible FALSE
 
 Generate Frequency Data
 -----------------------
@@ -110,14 +97,13 @@ possible to quickly stabilize to the correct prediction.
     in_size <- 1
     out_size <- length(freqs)
 
-
-    TANH_NODE = 1
-
     #hid_size = 20
     #network = LSTMNetwork(in_size,hid_size,out_size)
 
-    network = NetworkFactory_createRecurrentWTANetwork(in_size=in_size, hid_type=TANH_NODE, num_layers=2,
-                                        layer_sizes=c(8,8),  out_size=out_size);
+    network = NetworkFactory_createRecurrentWTANetwork(in_size=in_size, 
+                                        hid_type=bnnlib::TANH_NODE, num_layers=2,
+                                        layer_sizes=c(8,8),  
+                                        out_size=out_size);
 
 Initialize Trainer and set learning rate:
 
@@ -126,13 +112,12 @@ Initialize Trainer and set learning rate:
 
     ## NULL
 
-Train the network
+Train the network for 500 epochs.
 
     Trainer_train2(trainer, seqset, 500)
 
     ## NULL
 
-    setClass('_p_ImprovedRPropTrainer', contains = c('ExternalReference','_p_Trainer'))
     Trainer_add_abort_criterion(trainer, ConvergenceCriterion(0.01),10 )
 
     ## NULL
@@ -144,7 +129,10 @@ Plot the training error.
     library(ggplot2)
         values <- .Call('R_swig_toValue',  x, package="bnnlib") 
         ggplot(data.frame(x=1:length(values),values),aes(x=x,y=values))+geom_line()+
-          theme_minimal()+ggtitle("Trainingset Error")
+          theme_minimal()+ggtitle("Trainingset Error (with log(y) scale)")+
+          xlab("Epochs")+
+          ylab("Error")+
+          scale_y_log10()
 
 ![](frequencies_files/figure-markdown_strict/plottraining-1.png)
 
@@ -160,19 +148,9 @@ sequence information and store in matrices.
 
 ![](frequencies_files/figure-markdown_strict/unnamed-chunk-2-1.png)
 
-    ## TableGrob (2 x 1) "arrange": 2 grobs
-    ##   z     cells    name              grob
-    ## 1 1 (1-1,1-1) arrange   gtable[arrange]
-    ## 2 2 (2-2,1-1) arrange gtable[guide-box]
-
 Same on test set
 
     seq1 <- SequenceSet_get(testset, 0)
     plotPredictions(network, seq1)
 
 ![](frequencies_files/figure-markdown_strict/test-1.png)
-
-    ## TableGrob (2 x 1) "arrange": 2 grobs
-    ##   z     cells    name              grob
-    ## 1 1 (1-1,1-1) arrange   gtable[arrange]
-    ## 2 2 (2-2,1-1) arrange gtable[guide-box]
