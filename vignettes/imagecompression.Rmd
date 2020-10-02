@@ -32,9 +32,9 @@ sw<-function(pic)
 	return(as.matrix(temp))
 }
 
-downsample<-function(pic)
+downsample<-function(pic, skip=16)
 {
-  pic[seq(1,1000,12),seq(1,1000,12)]
+  pic[seq(1,1000,skip),seq(1,1000,skip)]
 }
 
 
@@ -48,9 +48,9 @@ for (fname in images) {
   data.row <- as.vector(img)
   data.row <- data.frame(t(data.row)) # 1x 7056
 
-ln <- length(img)
+dims <- length(img)
 
-sequence <- toSequence(data.row, 1:ln, 1:ln)
+sequence <- toSequence(data.row, 1:dims, 1:dims)
 
 SequenceSet_add_copy_of_sequence(sequence_set, sequence)
 }
@@ -59,8 +59,7 @@ SequenceSet_add_copy_of_sequence(sequence_set, sequence)
 ## Create auto-associator
 
 ```{r pressure, echo=FALSE}
-dim <- 84
-dims <- dim*dim
+dim <- sqrt(dims)
 ```
 
 ## Feedforward Neural Network
@@ -68,12 +67,12 @@ dims <- dim*dim
 Create a feed-forward neural network with $84^2$ inputs, 4 hidden units, and $84^2$ output. 
 
 ```{r}
-num_hidden = 16
-sparsity = 0.1
-net <- NetworkFactory_createSparseAutoencoder(dims,
-                                              num_hidden,
+num_bottleneck = 10
+sparsity = 0.5
+net <- NetworkFactory_createTwoLayerSparseAutoencoder(dims,
+                                              dim, num_bottleneck,
                                               sparsity, 
-                                              bnnlib::TANH_NODE, 
+                                              bnnlib::RELU_NODE, 
                                               bnnlib::SIGMOID_NODE)
 ```
 
@@ -82,7 +81,12 @@ Initialize training algorithm. The sparsity $\beta$ value specifies the relative
 sparsity beta in comparison to the loss function. The larger the beta, the more important sparsity is over the in-sample error.
 
 ```{r}
-trainer <- ImprovedRPropTrainer(net)
+#trainer <- ImprovedRPropTrainer(net)
+#trainer <- ADAMTrainer(net)
+trainer <- BackpropTrainer(net)
+#Trainer_set_mini_batch_size(trainer, 2)
+Trainer_batch_learning_set(trainer, FALSE)
+Trainer_learning_rate_set(trainer, 0.01)
 
  Network_evaluate_training_error__SWIG_0(net, sequence_set)
  
@@ -90,7 +94,7 @@ trainer <- ImprovedRPropTrainer(net)
 Trainer_sparsity_beta_set(trainer,0)
  
 Sys.time()
-Trainer_train__SWIG_0(trainer, sequence_set, 25)
+Trainer_train__SWIG_0(trainer, sequence_set, 50)
 Sys.time()
 ```
 

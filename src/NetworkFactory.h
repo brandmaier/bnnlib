@@ -61,6 +61,9 @@ struct NetworkFactory
 			unsigned int gate_size, unsigned int out_size, double connectivity,
 			unsigned int num_backward_connections);
 
+	static Network* createTwoLayerSparseAutoencoder(unsigned int in_size, unsigned int hidden_size1, unsigned int hidden_size2, 
+                                                          double sparsity, int hid_type, int out_type);
+	  
 
 	static Network* create_gers02a();
 

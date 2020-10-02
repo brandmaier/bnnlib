@@ -1212,6 +1212,65 @@ Network* NetworkFactory::createSparseAutoencoder(unsigned int in_size, unsigned 
 }
 
 
+Network* NetworkFactory::createTwoLayerSparseAutoencoder(unsigned int in_size, unsigned int hidden_size1, unsigned int hidden_size2, 
+                                                 double sparsity, int hid_type, int out_type) {
+  Network* net = new Network();
+  
+  //  unsigned int num_layers = 1;
+  //int hid_type = Node::TANH_NODE;
+  //int out_type = Node::LINEAR_NODE;
+  
+  
+  // create Ensembles
+  
+  Ensemble* bias = new FeedforwardEnsemble(Node::BIAS_NODE, 1);	
+  net->add_ensemble(bias);
+  
+  Ensemble* in = new FeedforwardEnsemble(Node::LINEAR_NODE, in_size);		
+  net->add_ensemble(in);
+  in->rename("Input");
+  //unsigned int total_hid_size = 0;
+  
+  Ensemble* bottleneck = new FeedforwardEnsemble(hid_type, hidden_size2);	
+  net->add_ensemble(bottleneck);
+  bottleneck->rename("bottleneck");
+  bottleneck->set_sparsity(sparsity);
+  
+  Ensemble* hidden1 = new FeedforwardEnsemble(hid_type, hidden_size1);	
+  net->add_ensemble(hidden1);
+  hidden1->rename("Hidden1");
+  hidden1->set_sparsity(sparsity);
+  
+  Ensemble* hidden2 = new FeedforwardEnsemble(hid_type, hidden_size1);	
+  net->add_ensemble(hidden2);
+  hidden2->rename("Hidden2");
+  hidden2->set_sparsity(sparsity);
+  
+  Ensemble* out = new FeedforwardEnsemble(out_type, in_size);
+  net->add_ensemble(out);
+  out->rename("Output");
+  
+  
+  // connect ensembles
+  net->connect_ensembles(bias, hidden1, true);
+  net->connect_ensembles(bias, hidden2, true);
+  net->connect_ensembles(bias, bottleneck, true);
+  net->connect_ensembles(bias, out, true);
+  
+  net->connect_ensembles(in, hidden1, true);
+  net->connect_ensembles(hidden1, bottleneck, true);
+  net->connect_ensembles(bottleneck, hidden2, true);
+  net->connect_ensembles(hidden2, out, true);
+
+  
+  
+  net->sort_nodes();
+  
+  return net;  
+  
+}
+
+
 Network* NetworkFactory::createStochasticFeedForwardNetwork(unsigned int in_size, 
             unsigned int num_layers, int hid_size, unsigned int out_size, int out_type,
             weight_t gain, weight_t bias, weight_t stochastic_range)
@@ -1274,9 +1333,11 @@ Network* NetworkFactory::createFeedForwardNetwork(unsigned int in_size, int hid_
 	
 	Ensemble* bias = new FeedforwardEnsemble(Node::BIAS_NODE, 1);	
 	net->add_ensemble(bias);
+	bias->rename("Bias");
 	
 	Ensemble* in = new FeedforwardEnsemble(Node::LINEAR_NODE, in_size);		
 	net->add_ensemble(in);
+	in->rename("Input");
 	Ensemble* hidden[num_layers];
 	unsigned int total_hid_size = 0;
 	for (unsigned int i=0; i < num_layers; i++)
@@ -1287,7 +1348,7 @@ Network* NetworkFactory::createFeedForwardNetwork(unsigned int in_size, int hid_
 	} 
 	Ensemble* out = new FeedforwardEnsemble(out_type, out_size);
 	net->add_ensemble(out);
-	
+	out->rename("Output");
 	
 	// connect ensembles
 	net->connect_ensembles(bias, hidden[0], true);
@@ -1332,9 +1393,11 @@ Network* NetworkFactory::createRecurrentNetwork(unsigned int in_size, int hid_ty
 	
 	Ensemble* bias = new FeedforwardEnsemble(Node::BIAS_NODE, 1);	
 	net->add_ensemble(bias);
+	bias->rename("Bias");
 	
 	Ensemble* in = new FeedforwardEnsemble(Node::LINEAR_NODE, in_size);		
 	net->add_ensemble(in);
+	in->rename("Input");
 	Ensemble* hidden[num_layers];
 	unsigned int total_hid_size = 0;
 	for (unsigned int i=0; i < num_layers; i++)
@@ -1345,7 +1408,7 @@ Network* NetworkFactory::createRecurrentNetwork(unsigned int in_size, int hid_ty
 	} 
 	Ensemble* out = new FeedforwardEnsemble(out_type, out_size);
 	net->add_ensemble(out);
-	
+	out->rename("Output");
 	
 	// connect ensembles
 

@@ -34,7 +34,7 @@ struct Trainer
 	SequenceSet* sequenceset;
 	SequenceSet* validation_set;
 	weight_t learning_rate, learning_rate_discount;
-	bool batch_learning;
+	bool batch_learning = false;
 	weight_t current_error;
 	weight_t previous_error;
 

@@ -10,13 +10,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
-source("../bnnlib.R")
-cacheMetaData(1)
-
-source("../R/toSequence.R")
-source("../R/banana.R")
-source("../R/plotTrainingerror.R")
+library(bnnlib)
 ```
 
 # Introduction

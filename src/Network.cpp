@@ -1074,7 +1074,9 @@ weight_t Network::test_sequence(SequenceSet* sequences)
  */
 void Network::reinitialise()
 {
+  // reset all buffers (inputs, activations) and reset all gradients
 	reset();
+  // randomize all weights
 	randomize();
 
 	for (unsigned int i=0;i < size;i++)
@@ -1086,14 +1088,8 @@ void Network::reinitialise()
 			nodes[i]->outgoing_connections[j]->previous_weight_change = 0;
 		}
 
-		if (use_initial_states) {
-		 nodes[i]->weight = rand_uniform_01()*0.2-0.1;
-		} else {
-		 nodes[i]->weight = 0;
-		}
 	}
 
-	//for (unsigned int i=0; i < size)
 
 }
 
@@ -2319,6 +2315,16 @@ void Network::load(string filename)
 	
 }
 
+Ensemble* Network::get_ensemble_by_name(string name) {
+  for (unsigned int i=0; i < this->ensembles.size(); i++)
+  {
+    if (this->ensembles[i]->name.compare(name)) {
+      return(this->ensembles[i]);
+    }
+  }
+  return(NULL);
+}
+
 
 vector<string> Network::get_node_names() 
 {
@@ -2343,7 +2349,7 @@ vector<Node*>* Network::get_nodes_with_name(string name)
 	vector<Node*>* result = new vector<Node*>();
 	for (unsigned int i=0; i < this->nodes.size(); i++)
 	{
-		if (this->nodes[i]->name==name)
+		if (this->nodes[i]->name.compare(name))
 			result->push_back(nodes[i]);
 	}
 

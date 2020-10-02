@@ -8,9 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
-source("../bnnlib.R")
-cacheMetaData(1)
+library(bnnlib)
 ```
 
 ## Feedforward Neural Network

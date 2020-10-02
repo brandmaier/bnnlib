@@ -381,7 +381,7 @@ void CGTrainer::train(SequenceSet* sequence_set,SequenceSet* validation_set, uns
 		lowest_error = min(mse, lowest_error);
 
 
-		 error_train.push_back(best_error);
+   // error_train.push_back(best_error);
 
 		 for (unsigned int j=0; j < callbacks.size(); j++)
 		 {

@@ -260,6 +260,7 @@ struct Network {
 	void add_node(Node* node);
 	void remove_node(Node* node);
 	
+	Ensemble* get_ensemble_by_name(string name);
 
 };
 

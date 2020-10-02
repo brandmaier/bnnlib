@@ -67,13 +67,13 @@ Let's generate a list of different training algorithms and run them each for 200
 sarp <- SARPropTrainer(net)
 SARPropTrainer_temperature_set(sarp, .9)
 
-
+cg <- CGTrainer(net)
 epochs <- 200
 
 trainer <- list( BackpropTrainer(net), ImprovedRPropTrainer(net),
-ARPropTrainer(net) ,  RPropTrainer(net), sarp)
+ARPropTrainer(net) ,  RPropTrainer(net), sarp, cg)
 
-result <- sapply(trainer, function(x){ Network_reinitialise(net); Trainer_train2(x, set, epochs); 
+result <- sapply(trainer, function(x){ Network_reinitialise(net); Trainer_initialize(x); Trainer_train2(x, set, epochs); 
   getTrainingerror(x) } )
 
 trainer_names <- sapply(trainer, Trainer_get_name)
@@ -87,7 +87,8 @@ Plot the errors of the different training algorithms on top of each other.
 ```{r}
 
 pivot_longer(result,cols =  1:200,names_to = "step",values_to="error") %>%
-ggplot(aes(x=step,y=error,group=trainer,col=trainer))+
+  mutate(time=parse_number(step)) %>% 
+ggplot(aes(x=time,y=error,group=trainer,col=trainer))+
   geom_point()+
   geom_line()+
   theme_minimal()+
