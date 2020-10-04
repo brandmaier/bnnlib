@@ -24,7 +24,7 @@ ADAMTrainer::ADAMTrainer(Network* network) : Trainer()
 	  (this->network->nodes[i])->rms_sq = 0.0;
 	}
 	
-//	this->learning_rate = 0.01;
+	this->learning_rate = 0.001; // from Tensorflow
 }
 
 void ADAMTrainer::change_weight(Trainable* c)
@@ -48,11 +48,11 @@ void ADAMTrainer::change_weight(Trainable* c)
 			  (1-beta1) * (c->derivative);
 			
 			// epsilon constant is to safe-guard against explosion when gamma -> 0
-			static const weight_t epsilon = 1e-10;
+			static const weight_t epsilon = 1e-8;
 			
 
 			// compute change
-			weight_t change = learning_rate * (c->rms) / (sqrt(c->rms_sq+epsilon)+epsilon) * c->derivative;
+			weight_t change = learning_rate * (c->rms) / (sqrt(c->rms_sq)+epsilon);
 
 	//		std::cout <<  "Change : " << change << " moving average " << c->rms <<" Scaling is" << sqrt(c->rms+epsilon) << endl<<"*"<<endl;
 			//std::cout << " Change : " << change << " und sign " << sign <<

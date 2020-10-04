@@ -68,13 +68,21 @@ sarp <- SARPropTrainer(net)
 SARPropTrainer_temperature_set(sarp, .9)
 
 cg <- CGTrainer(net)
+
+rms <- RMSPropTrainer(net)
+Trainer_batch_learning_set(rms, TRUE)
+
 epochs <- 200
 
 trainer <- list( BackpropTrainer(net), ImprovedRPropTrainer(net),
-ARPropTrainer(net) ,  RPropTrainer(net), sarp, cg)
+ARPropTrainer(net) ,  RPropTrainer(net), sarp, cg, rms, ADAMTrainer(net))
 
-result <- sapply(trainer, function(x){ Network_reinitialise(net); Trainer_initialize(x); Trainer_train2(x, set, epochs); 
-  getTrainingerror(x) } )
+result <- sapply(trainer, function(x){ 
+  Network_reinitialise(net); 
+  Trainer_initialize(x); 
+  Trainer_train2(x, set, epochs); 
+  getTrainingerror(x) } 
+  )
 
 trainer_names <- sapply(trainer, Trainer_get_name)
 
@@ -86,7 +94,7 @@ Plot the errors of the different training algorithms on top of each other.
 
 ```{r}
 
-pivot_longer(result,cols =  1:200,names_to = "step",values_to="error") %>%
+pivot_longer(result,cols =  all_of(1:epochs),names_to = "step",values_to="error") %>%
   mutate(time=parse_number(step)) %>% 
 ggplot(aes(x=time,y=error,group=trainer,col=trainer))+
   geom_point()+

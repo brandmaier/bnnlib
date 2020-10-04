@@ -92,7 +92,7 @@ trainer <- list( RMSPropTrainer(net), ADAMTrainer(net),
                   ImprovedRPropTrainer(net),
                  ZZPropTrainer(net))
 
-steps <- 280
+steps <- 480
 err.data <- matrix(data=NA,nrow=steps,ncol=length(trainer))
 err.data <- data.frame(err.data)
 names(err.data) <- c("error")
