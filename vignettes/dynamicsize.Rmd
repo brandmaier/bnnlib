@@ -16,10 +16,7 @@ library(bnnlib)
 Create a feed-forward neural network with 3 inputs, 25 hidden units, and 1 output. The output node is linear.
 
 ```{r}
-TANH_NODE = 1
-LINEAR_NODE = 3
-
-net <- NetworkFactory_createFeedForwardNetwork(2,5,4, LINEAR_NODE)
+net <- NetworkFactory_createFeedForwardNetwork(2,5,4, bnnlib::LINEAR_NODE)
 ```
 
 ## Randomly remove some connections

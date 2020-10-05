@@ -116,13 +116,8 @@ struct Trainer
 	virtual void train(SequenceSet* sequenceset,SequenceSet* testset,  unsigned int iterations);
 	void train(DataSet* dataset,  unsigned int iterations);
 
-	/*weight_t check_gradient(Sequence* sequence);
-	weight_t check_gradient(Sequence* sequence, weight_t epsilon);
-	weight_t check_gradient(Sequence* sequence, weight_t epsilon, bool verbose);
-*/
-
 	virtual void backward(std::vector<weight_t>* target);
-	//virtual void backward_zero();
+
 
 	virtual void reset();
 

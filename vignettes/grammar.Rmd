@@ -19,16 +19,9 @@ This is a demonstration of a simple grammar learning tasks.  A formal grammar de
 
 First, we load the shared library, some packages, and extra R code.
 
-```{r fireup, echo=TRUE}
-
-dyn.load(paste("../bnnlib", .Platform$dynlib.ext, sep=""))
-source("../bnnlib.R")
-cacheMetaData(1)
-
-library(gridExtra)
+```{r fireup, echo=TRUE, message=FALSE}
+library(bnnlib)
 library(tictoc)
-
-source("../R/toSequence.R")
 ```
 
 
@@ -44,6 +37,7 @@ Valid transitions are:
 This means there can never be a transition from A to C or from C to A. Also, an A can never be followed by another A and a B can never be followed by another B.
 
 ```{r generator}
+set.seed(3245)
 total.size <- 4000
 text <- rep("A",total.size)
 for (i in 2:total.size) {
@@ -60,7 +54,9 @@ for (i in 2:total.size) {
   }
 }
 
-
+# compute the number of "B"s and divide by two to
+# obtain lowest possible error
+lowest.mean.error <- sum(text=="B")/2
 ```
 
 We generate a sentence of length `r total.size`. Here is the beginning of the sequence
@@ -75,7 +71,6 @@ In the following, we recode the generated sequences from the formal language int
 
 ```{r}
 # Get a 0-1 Matrix for a given alphabet and text.
-source("../R/onehot.R")
 
 myletters <- c("A","B","C")
 tfmatrix = onehot(text, myletters)
@@ -108,15 +103,12 @@ for (i in 1:(min(nrow(tfmatrix)-1,40000))  ) {
 
 ```{r network}
 
-
-
-TANH_NODE = 1
-
 #hid_size = 4
 #network = LSTMNetwork(ln,hid_size,ln)
 
-network = NetworkFactory_createRecurrentWTANetwork(in_size=ln, hid_type=TANH_NODE, num_layers=2,
-                                    layer_sizes=c(5,5),  out_size=ln);
+network = NetworkFactory_createRecurrentWTANetwork(in_size=ln, hid_type=bnnlib::TANH_NODE, 
+                                                   num_layers=2,
+                                    layer_sizes=c(10,5),  out_size=ln);
 
 ```
 
@@ -130,10 +122,6 @@ predict.text <- function(context=20, probabilistic=TRUE) {
 
 sequence = SequenceSet_get(seqset,0)
 
-
- setClass("_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_p_t_t", contains = 'ExternalReference')
-
-
 if (!probabilistic) {
   predictor = AutoPredictor__SWIG_2(network, WinnerTakesAllTransferFunction() )
 } else {
@@ -143,11 +131,9 @@ if (!probabilistic) {
 time_steps <- 400
 x = AutoPredictor_predict( predictor, sequence, time_steps, context)
 vals <- sapply(1:time_steps, FUN = function(index){getRow(x, index-1)})
-#char.ids <- apply(vals,2, which.max)
 
 
 generate_text2 <- function(tfmatrix, alphabet = letters) {
-  # browser()
   outputvector <- vector(mode = "character", length = nrow(tfmatrix))
   for (i in seq_len(NROW(tfmatrix))) {
     replace <- alphabet[which.max(tfmatrix[i, ])]
@@ -160,7 +146,6 @@ generate_text2 <- function(tfmatrix, alphabet = letters) {
 paste0(generate_text2(t(vals), alphabet=myletters),collapse = "")
 
 }
-#x = Network_activate_and_return_activations(network, sequence)
 ```
 
 
@@ -175,6 +160,8 @@ Initialize Trainer and set learning rate:
 ```{r trainer}
 trainer = ImprovedRPropTrainer(network);
 Trainer_learning_rate_set( trainer, 0.01 )
+trainer = ADAMTrainer(network);
+
 ```
 
 Train the network and take time.
@@ -193,7 +180,8 @@ Plot the training error.
 ```{r}
 
 source("../R/plotTrainingerror.R")
-plotTrainingerror(trainer) + theme_light()
+plotTrainingerror(trainer) + theme_light() +
+  geom_hline(yintercept=lowest.mean.error,lty=2)
 ```
 
 ## Generate new sequences
@@ -219,19 +207,30 @@ chop(predict.text(1,FALSE))
 First, we get all outputs from the network.
 
 ```{r}
-source("../R/toSequence.R")
 outputs <- getOutputs(network, seq)
 ```
 
-Let's see what the network predicts after having seen the first input from the sequence `r print(text[1])`.
+Let's see what the network predicts after having seen the first input from the sequence `r text[1]`.
 
 ```{r}
 barplot(outputs[1,], names.arg = myletters)
 ```
 
-and next after having seen `r print(text[2])`.
+and next after having seen `r (text[2])`.
 
 ```{r}
 barplot(outputs[2,], names.arg = myletters)
 ```
+
+and next after having seen `r (text[3])`.
+
+```{r}
+barplot(outputs[3,], names.arg = myletters)
+```
+
+Inspect predictions and input. The rows show the true letter and the columns show the predicted letter.
+```{r}
+predicted.text <- c("A","B","C")[apply(getOutputs(network, seq),1, which.max)]
+table(text[-1],predicted.text)
+````
 
