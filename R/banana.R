@@ -107,7 +107,7 @@ add_to_banana <- function(target, x) {
         
 
       if (!is.null(target$last_ensemble)) {
-        Network_sort_nodes(nn)
+        Network_sort_nodes(network)
       }
       
       target$last_ensemble = x

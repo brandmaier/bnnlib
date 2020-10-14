@@ -146,7 +146,7 @@ Here is a list of complete, reproducible scripts that illustrate how the library
 - Using a recurrent neural network with winner-takes-all output layer to predict the frequency (one out of three) of an observed signal [frequencies.md](examples/frequencies.md)
 
 - Learning an internal representation of time elapsed using LSTM networks
-  ![msd.html](examples/msd.md)
+  [msd.html](examples/msd.md)
 
 - Comparing various training algorithms for neural networks
   [trainer.md](/examples/trainer.md)

@@ -414,14 +414,10 @@ vector<vector<weight_t>*>* Network::activate_and_return_activations(Sequence* se
 		vector<weight_t>* temp = new vector<weight_t>();
 		for (unsigned int i=0; i < sequence->size(); i++)
 		{
-			//std::cout << j << "/" << size << ":" << nodes[j]->actbuf[0] << endl;
 			temp->push_back( nodes[j]->actbuf[i] );
-
 		}
 		activations->push_back( temp );
 	}
-	
-	std::cout << activations->size() << endl;
 	
 	return activations;
 }
