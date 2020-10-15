@@ -82,6 +82,7 @@ examples:
 	Rscript -e 'rmarkdown::render("vignettes/frequencies.Rmd", "md_document")'
 	Rscript -e 'rmarkdown::render("vignettes/trainer.Rmd", "md_document")'
 	Rscript -e 'rmarkdown::render("vignettes/msd.Rmd", "md_document")'
+	Rscript -e 'rmarkdown::render("vignettes/mnist.Rmd", "md_document")'
 	mv vignettes/trainer.md examples/
 	mv vignettes/trainer_files examples/
 	mv vignettes/frequencies.md examples/
@@ -92,3 +93,5 @@ examples:
 	mv vignettes/feedforward_files examples/
 	mv vignettes/msd.md examples/
 	mv vignettes/msd_files examples/
+	mv vignettes/mnist.md examples/
+	mv vignettes/mnist_files examples/
