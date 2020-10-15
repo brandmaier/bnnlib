@@ -77,7 +77,6 @@ ln <-Sequence_size(seq1)
 ```
 
 ```{r}
-source("../R/toSequence.R")
 x <- getOutputs(network, seq1)
 x
 ```

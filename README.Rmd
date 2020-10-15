@@ -36,9 +36,7 @@ To make use of the full functionality of the library, the system should also pro
 # Getting Started
 
 ```{r}
-dyn.load(paste("bnnlib", .Platform$dynlib.ext, sep=""))
-source("bnnlib.R")
-cacheMetaData(1)
+library(bnnlib)
 ```
 
 # Usage
@@ -112,13 +110,12 @@ ggplot(data=data.frame(step=1:iterations,err),aes(x=step,y=err))+
 
 ## Export Network
 
-`bnnlib` supports export of network diagrams. THis requires external libraries to render Graphviz files, e.g., the DOT package in R.
+`bnnlib` supports export of network diagrams. This requires external libraries to render Graphviz files, e.g., the DOT package in R.
 
-```{r message=FALSE, echo=TRUE, include=FALSE, message=FALSE, warning=FALSE}
-library(DOT)
-Network_export_to_dot_graph(net,"testfile.ps")
-lines <- paste0(readLines("testfile.dot"),sep="",collapse="")
-DOT::dot(lines,file="img/testfile.svg")
+```{r dotgraph, message=FALSE, echo=TRUE, include=FALSE, message=FALSE, warning=FALSE}
+library("DOT")
+dot.lang <- Network_to_dot_graph(net)
+DOT::dot(dot.lang)
 ```
 
 ![](img/testfile.svg)
@@ -141,12 +138,15 @@ Here is a list of complete, reproducible scripts that illustrate how the library
 
 - A simple feedforward network to predict the impact of three advertising medias (youtube, facebook and newspaper) on sales (three predictors, one outcome): [feedforward.html](examples/feedforward.md)
 
-- Predicting the Mackey-Glass time-series using a Long-Short-Term-Memory (LSTM) network [mackey_glass.html](examples/mackey_glass.md)
+- Predicting the Mackey-Glass time-series using a Long-Short-Term-Memory (LSTM) network [mackey_glass.md](examples/mackey_glass.md)
 
 - Using a recurrent neural network with winner-takes-all output layer to predict the frequency (one out of three) of an observed signal [frequencies.md](examples/frequencies.md)
 
 - Learning an internal representation of time elapsed using LSTM networks
-  [msd.html](examples/msd.md)
+  [msd.md](examples/msd.md)
 
 - Comparing various training algorithms for neural networks
   [trainer.md](/examples/trainer.md)
+  
+- Learning a compressed representation of the MNIST data
+  [mnist.md](/examples/mnist.md)
