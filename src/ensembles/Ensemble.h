@@ -93,6 +93,42 @@ struct Ensemble
 	  
 	}
 	
+	std::vector<double>* get_weights(Ensemble* ensemble) {
+	  
+	  std::vector<double>* weights = new std::vector<double>();
+	  
+	  for (unsigned int i=0; i < nodes.size(); i++)
+	  {
+	    for (unsigned int j=0; j < nodes[i]->outgoing_connections.size(); j++)
+	    {
+	      Node* to = nodes[i]->outgoing_connections[j]->to;
+	      if (ensemble->contains_node(to)) {
+	        weights->push_back( nodes[i]->outgoing_connections[j]->weight );
+	      }
+	    }
+	  }	
+	  
+	  return(weights);
+	}
+
+	void set_weights(Ensemble* ensemble, std::vector<double>* weights) {
+	  
+	  int k = 0;
+	  
+	  for (unsigned int i=0; i < nodes.size(); i++)
+	  {
+	    for (unsigned int j=0; j < nodes[i]->outgoing_connections.size(); j++)
+	    {
+	      Node* to = nodes[i]->outgoing_connections[j]->to;
+	      if (ensemble->contains_node(to)) {
+	        nodes[i]->outgoing_connections[j]->weight =(*weights)[k];
+	        k++;
+	      }
+	    }
+	  }	
+	  
+	  
+	}	
 	
 };
 

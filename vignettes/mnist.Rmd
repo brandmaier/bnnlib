@@ -57,7 +57,7 @@ One thousand digits with 200 epochs take about 90s on a 2020 laptop.
 ```{r}
 dims<-784
 
-net_sparse <- NetworkFactory_createSparseAutoencoder(dims,10,0.1);
+net_sparse <- NetworkFactory_createSparseAutoencoder(dims,10,0.001);
 
 bp <- ImprovedRPropTrainer(net_sparse)
 Trainer_sparsity_beta_set(bp, 0.1)
@@ -127,15 +127,31 @@ if (sum(dist(result))!=0) {
 }
 ```
 
+## Hidden Layer Average Representations
+
+```{r}
+par(mfrow=c(3,3))
+sapply(1:9,  function(lb=1) {
+  smm<-colMeans(result[labels==lb,])
+  barplot(smm,main = paste0("Hidden Layer for ",lb-1))
+})
+
+
+
+#barplot(smmeans[2,],main = paste0("Hidden Layer for 1"))
+#barplot(smmeans[8,],main = paste0("Hidden Layer for 7"))
+#barplot(smmeans[10,],main = paste0("Hidden Layer for 9"))
+```
+
 ## Modify network
 
 Remove input layer
 
 ```{r eval=FALSE}
-ens <- Network_get_ensemble_by_name(net_sparse, "Input")  
-Network_remove_ensemble(net_sparse, ens)
-Network_sort_nodes(net_sparse)
-Network_in_size_set(net_sparse, 10)
+#ens <- Network_get_ensemble_by_name(net_sparse, "Input")  
+#Network_remove_ensemble(net_sparse, ens)
+#Network_sort_nodes(net_sparse)
+#Network_in_size_set(net_sparse, 10)
 ```
 
 Create artificial inputs
@@ -143,12 +159,12 @@ Create artificial inputs
 
 
 
-  seq = Sequence()
-  input_vals <- rep(0,10)
-  Sequence_add_from_array(seq, input_vals, input_vals, 784, 784)
+#  seq = Sequence()
+#  input_vals <- rep(0,10)
+#  Sequence_add_from_array(seq, input_vals, input_vals, 784, 784)
 
 
-getActivations(net_sparse, seq)
+#getActivations(net_sparse, seq)
 
 ```
 
