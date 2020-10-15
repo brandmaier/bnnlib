@@ -125,12 +125,8 @@ DOT::dot(dot.lang)
 `bnnlib` can create plots of the node activations over time using `gnuplot`. The following plot shows the LSTM CEC nodes' activations over time for a selected sequence:
 
 ```{r}
-node_vec <- Network_get_nodes_with_name(net,"CEC")
-GnuplotGenerator_plot_activations(net, seq1, node_vec)
+plotActivations(net, seq1, "CEC")
 ```
-
-![](img/gnuplot-example1.png)
-
 
 ## Examples
 

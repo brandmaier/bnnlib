@@ -44,9 +44,11 @@ also provide commands `gnuplot` and `dot` (from Graphviz).
 Getting Started
 ===============
 
-    dyn.load(paste("bnnlib", .Platform$dynlib.ext, sep=""))
-    source("bnnlib.R")
-    cacheMetaData(1)
+    library(bnnlib)
+
+    ## Loading required package: ggplot2
+
+    ## Loading required package: gridExtra
 
 Usage
 =====
@@ -122,7 +124,7 @@ With ggplot2, we can plot the training set error over iterations:
 Export Network
 --------------
 
-`bnnlib` supports export of network diagrams. THis requires external
+`bnnlib` supports export of network diagrams. This requires external
 libraries to render Graphviz files, e.g., the DOT package in R.
 
 ![](img/testfile.svg)
@@ -134,12 +136,9 @@ Plotting the activations
 `gnuplot`. The following plot shows the LSTM CEC nodes’ activations over
 time for a selected sequence:
 
-    node_vec <- Network_get_nodes_with_name(net,"CEC")
-    GnuplotGenerator_plot_activations(net, seq1, node_vec)
+    plotActivations(net, seq1, "CEC")
 
-    ## NULL
-
-![](img/gnuplot-example1.png)
+![](README_files/figure-markdown_strict/unnamed-chunk-7-1.png)
 
 Examples
 --------
@@ -154,14 +153,17 @@ library can be used:
 
 -   Predicting the Mackey-Glass time-series using a
     Long-Short-Term-Memory (LSTM) network
-    [mackey\_glass.html](examples/mackey_glass.md)
+    [mackey\_glass.md](examples/mackey_glass.md)
 
 -   Using a recurrent neural network with winner-takes-all output layer
     to predict the frequency (one out of three) of an observed signal
     [frequencies.md](examples/frequencies.md)
 
 -   Learning an internal representation of time elapsed using LSTM
-    networks ![msd.html](examples/msd.md)
+    networks [msd.md](examples/msd.md)
 
 -   Comparing various training algorithms for neural networks
     [trainer.md](/examples/trainer.md)
+
+-   Learning a compressed representation of the MNIST data
+    [mnist.md](/examples/mnist.md)
