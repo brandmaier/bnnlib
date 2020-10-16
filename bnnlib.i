@@ -107,6 +107,7 @@ using namespace std;
 #include "src/misc/Jacobian.h"
 #include "src/trainer/CGTrainer.h"
 #include "src/networks/FeedForwardNetwork.h"
+#include "src/networks/AutoAssociationNetwork.h"
 #include "src/classification/CrossValidationError.h"
 #include "src/classification/interfaces/ClassificatorInterface.h"
 #include "src/classification/interfaces/WinnerTakesAllClassificator.h"
@@ -155,6 +156,7 @@ namespace std {
 %include src/Connection.h
 %include src/Network.h
 %include src/networks/LSTMNetwork.h
+%include src/networks/AutoAssociationNetwork.h
 %include src/Sequence.h
 %include src/SequenceSet.h
 %include src/NetworkFactory.h

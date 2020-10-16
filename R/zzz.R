@@ -24,5 +24,5 @@ setClass('_p_LSTMNetwork', contains = c('ExternalReference','_p_Network'))
 # unload dynamic library once package is unloaded
 #
 .onUnload <- function (libpath) {
-  library.dynam.unload("bnn", libpath)
+  library.dynam.unload("bnnlib", libpath)
 }

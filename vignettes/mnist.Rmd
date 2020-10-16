@@ -57,7 +57,8 @@ One thousand digits with 200 epochs take about 90s on a 2020 laptop.
 ```{r}
 dims<-784
 
-net_sparse <- NetworkFactory_createSparseAutoencoder(dims,10,0.001);
+#net_sparse <- NetworkFactory_createSparseAutoencoder(dims,10,0.001);
+net_sparse <- AutoAssociationNetwork(dims, 10, bnnlib::RELU_NODE, bnnlib::SIGMOID_NODE, 0.01)
 
 bp <- ImprovedRPropTrainer(net_sparse)
 Trainer_sparsity_beta_set(bp, 0.1)
@@ -136,11 +137,6 @@ sapply(1:9,  function(lb=1) {
   barplot(smm,main = paste0("Hidden Layer for ",lb-1))
 })
 
-
-
-#barplot(smmeans[2,],main = paste0("Hidden Layer for 1"))
-#barplot(smmeans[8,],main = paste0("Hidden Layer for 7"))
-#barplot(smmeans[10,],main = paste0("Hidden Layer for 9"))
 ```
 
 ## Modify network

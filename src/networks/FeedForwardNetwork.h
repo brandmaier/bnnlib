@@ -9,6 +9,7 @@
 #define FEEDFORWARDNETWORK_H_
 
 #include "../Network.h"
+#include "../ensembles/FeedforwardEnsemble.h"
 
 struct FeedForwardNetwork : Network
 {
