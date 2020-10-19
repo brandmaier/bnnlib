@@ -1,5 +1,7 @@
 .git
 README.Rmd
+README_cache*
+README_files*
 Makefile
 ^.*\.Rproj$
 ^\.Rproj\.user$
