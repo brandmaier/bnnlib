@@ -1,7 +1,7 @@
 ---
-title: "MNIST"
+title: "fashion"
 author: "Andreas M. Brandmaier"
-date: "10/14/2020"
+date: "10/22/2020"
 output: html_document
 ---
 
@@ -9,33 +9,26 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Unsupervised Learning with the MNIST data
+## R Markdown
 
-In this task, 
+```{r message=FALSE}
+library(bnnlib)
+```
 
-## Load MNIST data
-
-The MNIST dataset contains 70.000 hand-written digits. Each digit is coded as 785 variables, which represent 28x28 pixel grey values and 1 label encoding the digit.
-
-```{r}
+```{r cars}
 library(snedata)
 
-# fetch the MNIST data set from the MNIST website
-if (!exists("mnist"))
-  mnist <- download_mnist()
+# fetch the Fashion-MNIST dataset
+fashion <- download_fashion_mnist()
 
-# view the fifth digit
-show_mnist_digit(mnist, 2)
-
+# Works as a drop-in replacement for the MNIST digits. Show a t-shirt and a shoe
+show_mnist_digit(fashion, 2)
+show_mnist_digit(fashion, 425)
 ```
 
 ## Convert data
 
-Convert the first 1000 digits to `bnnlib` sequence format.
-
 ```{r}
-
-library(bnnlib)
 
 seqset = SequenceSet()
 
@@ -43,16 +36,20 @@ n_seq <- 1000
 
 for (i in 1:n_seq) {
   seq = Sequence()
-  input_vals <- simplify2array(mnist[i,1:784]/255)
-  target_vals <- bnnlib:::onehot(mnist[i,785], alphabet = 0:9)
+  input_vals <- simplify2array(fashion[i,1:784]/255)
+  target_vals <- bnnlib:::onehot(fashion[i,785], alphabet = 0:9)
 #  Sequence_add_from_array(seq, input_vals, target_vals, 784, 10)
   Sequence_add_from_array(seq, input_vals, input_vals, 784, 784)
   SequenceSet_add_copy_of_sequence(seqset, seq)
 }
 
-labels <-  mnist[1:n_seq, 785]
+labels <-  fashion[1:n_seq, 785]
+readable.labels <-  fashion[1:n_seq, 786]
 
+label.set <- NA
+label.set[as.numeric(as.character(labels))+1] <- as.character(readable.labels)
 ```
+
 
 ## Train a network
 
@@ -61,11 +58,10 @@ One thousand digits with 200 epochs take about 90s on a 2020 laptop.
 ```{r}
 dims<-784
 
-#net_sparse <- NetworkFactory_createSparseAutoencoder(dims,10,0.001);
-net_sparse <- AutoAssociationNetwork(dims, 10, bnnlib::TANH_NODE, bnnlib::SIGMOID_NODE, 0.1)
+net_sparse <- AutoAssociationNetwork(dims, 20, bnnlib::TANH_NODE, bnnlib::SIGMOID_NODE, 0.1)
 
 bp <- ImprovedRPropTrainer(net_sparse)
-Trainer_sparsity_beta_set(bp, 1)
+Trainer_sparsity_beta_set(bp, .0)
 library(tictoc)
 tic()
 Trainer_train__SWIG_0(bp, seqset, 50)
@@ -74,6 +70,7 @@ toc()
 library(ggplot2)
 plotTrainingerror(bp) + scale_y_log10()
 ```
+
 
 ## Plot predictions
 
@@ -104,7 +101,8 @@ plotPreds(SequenceSet_get(seqset,102), net_sparse)
 plotPreds(SequenceSet_get(seqset,8), net_sparse)
 plotPreds(SequenceSet_get(seqset,40), net_sparse)
 plotPreds(SequenceSet_get(seqset,41), net_sparse)
-
+plotPreds(SequenceSet_get(seqset,141), net_sparse)
+plotPreds(SequenceSet_get(seqset,241), net_sparse)
 ```
 
 ## Plot latent space projection
@@ -138,7 +136,7 @@ if (sum(dist(result))!=0) {
 par(mfrow=c(3,3))
 sapply(1:9,  function(lb=1) {
   smm<-colMeans(result[labels==lb,])
-  barplot(smm,main = paste0("Hidden Layer for ",lb-1))
+  barplot(smm,main = paste0("Hidden Layer for ",label.set[lb]))
 })
 
 ```
@@ -171,4 +169,3 @@ image(matrix(pred, nrow=28,byrow = TRUE))
 
 
 ```
-

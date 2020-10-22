@@ -74,8 +74,6 @@ In the following, we recode the generated sequences from the formal language int
 
 myletters <- c("A","B","C")
 tfmatrix = onehot(text, myletters)
-
-
 head(tfmatrix)
 
 ```
