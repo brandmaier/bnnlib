@@ -58,9 +58,10 @@ One thousand digits with 200 epochs take about 90s on a 2020 laptop.
 ```{r}
 dims<-784
 
-net_sparse <- AutoAssociationNetwork(dims, 20, bnnlib::TANH_NODE, bnnlib::SIGMOID_NODE, 0.1)
+net_sparse <- AutoAssociationNetwork(dims, 20, bnnlib::TANH_NODE, bnnlib::SIGMOID_NODE, 0.0)
 
 bp <- ImprovedRPropTrainer(net_sparse)
+
 Trainer_sparsity_beta_set(bp, .0)
 library(tictoc)
 tic()
@@ -133,6 +134,10 @@ if (sum(dist(result))!=0) {
 ## Hidden Layer Average Representations
 
 ```{r}
+
+  smm<-colMeans(result)
+  barplot(smm,main = paste0("Hidden Layer Average "))
+
 par(mfrow=c(3,3))
 sapply(1:9,  function(lb=1) {
   smm<-colMeans(result[labels==lb,])
