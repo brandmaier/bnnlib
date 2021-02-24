@@ -96,6 +96,7 @@
 #include "classification/interfaces/WinnerTakesAllClassificator.h"
 #include "trainer/SARPropTrainer.h"
 #include "callbacks/PickBestGeneralizingNetwork.h"
+#include "ensembles/MultigroupEnsemble.h"
 // disable secure iterators
 #define _SECURE_SCL 0
 

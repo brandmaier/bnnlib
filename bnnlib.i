@@ -86,6 +86,7 @@ using namespace std;
 #include "src/ensembles/ConditionalBiasEnsemble.h"
 #include "src/ensembles/SecondOrderEnsemble.h"
 #include "src/ensembles/StochasticFeedforwardEnsemble.h"
+#include "src/ensembles/MultigroupEnsemble.h"
 #include "src/callbacks/ReportCallback.h"
 #include "src/AutoAssociationSequence.h"
 #include "src/HarmonicGateNetwork.h"
@@ -193,6 +194,7 @@ namespace std {
 %include src/ensembles/WinnerTakesAllEnsemble.h
 %include src/ensembles/SecondOrderEnsemble.h
 %include "src/ensembles/LSTMForgetEnsemble.h"
+%include "src/ensembles/MultigroupEnsemble.h"
 %include "src/ensembles/ConditionalBiasEnsemble.h"
 %include "src/ensembles/StochasticFeedforwardEnsemble.h"
 %include src/callbacks/CallbackHandler.h

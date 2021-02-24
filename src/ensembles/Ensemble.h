@@ -39,6 +39,7 @@ struct Ensemble
 	//static const unsigned int TSIN_ENSEMBLE =
 	static const unsigned int SUBTRACTIVE_ENSEMBLE = 18;
 	static const unsigned int STOCHASTIC_FEEDFORWARD_ENSEMBLE = 19;
+	static const unsigned int MULTIGROUP_ENSEMBLE = 20;
 	
 	Ensemble();
 	Ensemble(std::vector<Node*>* nodes);
