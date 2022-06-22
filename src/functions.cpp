@@ -458,7 +458,7 @@ vector<vector<weight_t>*>* transpose(vector<vector<weight_t>*>* v)
 }
 
 unsigned int randomize_seed() {
-	time_t seed = (unsigned)time(NULL);
+	time_t seed = (unsigned)std::time(NULL);
 
 	//std::cout << "seed: "<< seed << endl;
 
