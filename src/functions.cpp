@@ -7,6 +7,7 @@
 #include <cassert>
 #include <cstdlib> // for srand
 #include <ctime> // for time
+using namespace std;
 
 weight_t safeexp(weight_t value)
 {
