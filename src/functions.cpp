@@ -6,6 +6,7 @@
 #include <cmath>
 #include <cassert>
 #include <cstdlib> // for srand
+#include <ctime> // for time
 
 weight_t safeexp(weight_t value)
 {
@@ -458,7 +459,7 @@ vector<vector<weight_t>*>* transpose(vector<vector<weight_t>*>* v)
 }
 
 unsigned int randomize_seed() {
-	time_t seed = (unsigned)std::time(NULL);
+	time_t seed = (unsigned)time(NULL);
 
 	//std::cout << "seed: "<< seed << endl;
 
