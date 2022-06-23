@@ -308,7 +308,8 @@ void TrainingConfiguration::load(string filename)
 		int intStat = stat(directory.c_str(),&stFileInfo);
 		if (intStat != 0) {
 			warning("Output directory did not exist! Created it!");
-			mkdir(directory.c_str(),0711);
+			//mkdir(directory.c_str(),0711); # Linux/Unix
+			mkdir(directory.c_str()); # Windows TODO: make this platform-independent
 		}
 
 		std::cout << "Callback" << endl;	
