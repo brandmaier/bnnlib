@@ -311,7 +311,7 @@ void TrainingConfiguration::load(string filename)
 			#ifdef _WIN32
 			mkdir(directory.c_str()); // Windows TODO: make this platform-independent
 			#else
-			mkdir(directory.c_str(),0711); # Linux/Unix
+			mkdir(directory.c_str(),0711); // Linux/Unix
 			#endif
 			
 			
