@@ -16,11 +16,8 @@ ProductBiasedNode::ProductBiasedNode()
 
 void ProductBiasedNode::add_input(weight_t input, weight_t weight, unsigned int time)
 {
-//	std::cout << "before: " << this->inbuf[time]<< " pow="<< pow(input,weight) <<endl;
 	assert(input >= 0);	//TODO remove
 	this->inbuf[time] *= (pow(input,weight)-bias);
-//	std::cout << "add to input w=" << weight << ",inp=" << input << " buf="<< this->inbuf[time] << endl;
-
 }
 
 //TODO unterscheide zwischen backward und forward connection !! BUG BUG BUG
@@ -28,13 +25,13 @@ weight_t ProductBiasedNode::get_input_to_weight_derivative(Connection* connectio
 {
 	if (connection->forward)
 	 return  inbuf[time]*log( connection->from->actbuf[time] );
-	else
-	{
-	if (time > 0)
-	 return inbuf[time]*log( connection->from->actbuf[time-1] );
-	else
-	 error("not yet implemented fully! ProductBiasedNode::get_input_to_weight_derivative()");
-	 return -1;
+	else {
+		if (time > 0)
+	 	 return inbuf[time]*log( connection->from->actbuf[time-1] );
+		else {
+		 error("not yet implemented fully! ProductBiasedNode::get_input_to_weight_derivative()");
+		 return -1;
+		}
 	}
 }
 
