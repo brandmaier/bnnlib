@@ -47,32 +47,28 @@ SequenceSet::SequenceSet(SequenceSet &sequence_set)
 	{
 		set.push_back( sequence_set.set[i] );
 	}*/
-	this->set = sequence_set.set;
+        this->set = sequence_set.set;
 
 	name = sequence_set.name;
 
 	input_is_normalized = sequence_set.input_is_normalized;
 	target_is_normalized = sequence_set.target_is_normalized;
 
-	if (sequence_set.target_means != NULL) {
-		target_means = new std::vector<weight_t>();
-		copy( sequence_set.target_means->begin(),sequence_set.target_means->end(),target_means->begin() );
-	}
-	if (sequence_set.target_stds!= NULL) {
-		target_stds = new std::vector<weight_t>();
-		copy( sequence_set.target_stds->begin(),sequence_set.target_stds->end(),target_stds->begin() );
+        if (sequence_set.target_means != NULL) {
+                target_means = new std::vector<weight_t>( *sequence_set.target_means );
+        }
+        if (sequence_set.target_stds!= NULL) {
+                target_stds = new std::vector<weight_t>( *sequence_set.target_stds );
 
-	}
-	if (sequence_set.input_means != NULL) {
-		input_means = new std::vector<weight_t>();
-		copy( sequence_set.input_means->begin(),sequence_set.input_means->end(),input_means->begin() );
+        }
+        if (sequence_set.input_means != NULL) {
+                input_means = new std::vector<weight_t>( *sequence_set.input_means );
 
-	}
-	if (sequence_set.input_stds != NULL) {
-		input_stds = new std::vector<weight_t>();
-		copy( sequence_set.input_stds->begin(),sequence_set.input_stds->end(),input_stds->begin() );
+        }
+        if (sequence_set.input_stds != NULL) {
+                input_stds = new std::vector<weight_t>( *sequence_set.input_stds );
 
-	}
+        }
 
 	//TODO/BUG fill this vectors
 
@@ -134,10 +130,10 @@ SequenceSet::~SequenceSet()
 	}
 
 
-	/*for (unsigned int i=0; i < set.size(); i++)
-	{
-		delete set[i];
-	}*/
+        for (unsigned int i=0; i < set.size(); i++)
+        {
+                delete set[i];
+        }
 
 }
 

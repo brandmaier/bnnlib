@@ -69,9 +69,9 @@ bool Sequence::load_from_file(string filename)
 		if (v == NULL) continue;
 		read_line_as_vector(&ifs, v);
 
-		vector<weight_t>* v2 = new vector<weight_t>();
-		for (unsigned int i=0; i < v2->size(); i++)
-			v2->push_back( (*v)[i] );
+                vector<weight_t>* v2 = new vector<weight_t>();
+                for (unsigned int i=0; i < v->size(); i++)
+                        v2->push_back( (*v)[i] );
 
 		this->add(v,v2);
 		count++;

@@ -89,12 +89,12 @@ Network::Network() {
 Network::~Network() {
 
 	// remove Ensembles (from last to first)
-	if (ensembles.size()>0) {
-	  for (unsigned int i=ensembles.size()-1; i > 0; i--)
-	  {
-		  remove_ensemble( ensembles[i] );
-	  }
-	}
+        if (!ensembles.empty()) {
+          for (int i = static_cast<int>(ensembles.size()) - 1; i >= 0; --i)
+          {
+                  remove_ensemble( ensembles[i] );
+          }
+        }
 
 	// remove remaining Nodes that were not part of ensembles
 
@@ -1589,14 +1589,14 @@ void Network::remove_ensemble(Ensemble* ensemble)
 	}
 
 	// delete Ensemble && Ensemble entry in Network
-	for (unsigned int i=0; i < ensembles.size(); i++) {
-		if (ensembles[i] == ensemble) {
-			//cout << "ensemble #" << i << endl;
-			ensembles.erase(ensembles.begin()+i);
-			delete ensembles[i]; //TODO BUG remove ensemble somewhere?!
-			break;
-		}
-	}
+        for (unsigned int i=0; i < ensembles.size(); i++) {
+                if (ensembles[i] == ensemble) {
+                        Ensemble* to_delete = ensembles[i];
+                        ensembles.erase(ensembles.begin()+i);
+                        delete to_delete;
+                        break;
+                }
+        }
 }
 
 
