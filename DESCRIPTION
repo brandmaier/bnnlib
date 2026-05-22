@@ -6,7 +6,8 @@ Maintainer: Andreas M. Brandmaier <andy@brandmaier.de>
 Depends:
   R (>= 3.1.0),
   ggplot2,
-  gridExtra
+  gridExtra,
+  Rcpp
 Suggests:
   knitr,
   rmarkdown
@@ -20,3 +21,5 @@ RoxygenNote: 7.1.0
 SystemRequirements: C++11
 VignetteBuilder: knitr
 NeedsCompilation: yes
+
+LinkingTo: Rcpp
